@@ -1,0 +1,18 @@
+{
+  "general": {
+    "siteName": "Champions Cricket Club",
+    "siteTagline": "Official Cricket Club & Sports Academy",
+    "isDeployed": false,
+    "maintenance": false,
+    "contactFormEnabled": true,
+    "siteDescription": "Official portal of Champions Cricket Club",
+    "googleAnalyticsId": "",
+    "pageStatus": {
+      "about": true,
+      "matches": true,
+      "blogs": true,
+      "contact": true,
+      "scoring": true
+    }
+  }
+}

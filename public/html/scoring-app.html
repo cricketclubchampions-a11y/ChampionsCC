@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Scoring App | Champions Cricket Club</title>
+  <link rel="icon" href="../images/logo.png" type="image/png" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Outfit:wght@600;800&display=swap');
+
+    :root {
+      --bg-dark: #0f172a;
+      --bg-panel: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #10b981;
+      --accent-danger: #ef4444;
+      --accent-blue: #3b82f6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-main);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1rem;
+      background: var(--bg-panel);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .app-header h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+    .app-header button {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .container {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    /* MATCH SELECTION VIEW */
+    .match-list-item {
+      background: var(--bg-panel);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .match-list-item h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .match-list-item p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+    .btn-start {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ACTIVE SCORER VIEW */
+    #scorer-active-view { display: none; flex-direction: column; height: 100%; }
+
+    .score-board {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .score-main {
+      font-family: 'Outfit', sans-serif;
+      font-size: 4.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    .score-sub {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    
+    .over-timeline {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin: 1.5rem 0;
+      min-height: 44px;
+    }
+    .ball-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .ball-w { background: var(--accent-danger); color: white; border-color: var(--accent-danger); }
+    .ball-4 { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+    .ball-6 { background: var(--accent); color: white; border-color: var(--accent); }
+
+    .keypad-section {
+      margin-top: auto;
+      padding-bottom: 1rem;
+    }
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .btn-key {
+      background: var(--bg-panel);
+      color: var(--text-main);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1.25rem 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn-key:active { background: #334155; }
+    
+    .btn-wicket { background: rgba(239, 68, 68, 0.1); color: var(--accent-danger); border-color: rgba(239, 68, 68, 0.3); }
+    .btn-wicket:active { background: rgba(239, 68, 68, 0.2); }
+    
+    .btn-extra { color: var(--accent-blue); font-size: 1.1rem; }
+    
+    .btn-undo { grid-column: span 3; background: rgba(255,255,255,0.05); font-size: 1.1rem; padding: 1rem; }
+    
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1>Champions CC Scorer</h1>
+    <button id="btn-logout" style="display:none;" onclick="handleScorerLogout()">Logout</button>
+    <button id="btn-exit" style="display:none;" onclick="exitScorer()">Exit Match</button>
+  </div>
+
+  <div class="container">
+    
+    <!-- LOGIN VIEW -->
+    <div id="scorer-login-view" style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100%;">
+      <div style="background:var(--bg-panel); padding:2rem; border-radius:16px; border:1px solid rgba(255,255,255,0.05); width:100%; max-width:320px; text-align:center;">
+        <h2 style="font-family:var(--font-heading); margin-bottom:1.5rem;">Scorer Access</h2>
+        <form onsubmit="handleScorerLogin(event)">
+          <input type="text" id="scorer-username" placeholder="Username" required style="width:100%; padding:1rem; margin-bottom:1rem; border-radius:8px; border:none; background:rgba(255,255,255,0.05); color:white; font-size:1rem;" />
+          <input type="password" id="scorer-password" placeholder="Password" required style="width:100%; padding:1rem; margin-bottom:1.5rem; border-radius:8px; border:none; background:rgba(255,255,255,0.05); color:white; font-size:1rem;" />
+          <button type="submit" class="btn-start">Secure Login</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- MATCH SELECTION -->
+    <div id="scorer-selection-view" style="display:none;">
+      <h2 style="font-size:1.1rem; color:var(--text-muted); margin-bottom:1rem;">Select a match to start scoring:</h2>
+      <div id="scorer-match-list">
+        <!-- Dynamically Populated -->
+      </div>
+    </div>
+
+    <!-- ACTIVE SCORING PAD -->
+    <div id="scorer-active-view">
+      
+      <div class="score-board">
+        <div class="score-main" id="scorer-runs-wickets">0/0</div>
+        <div class="score-sub" id="scorer-overs-rr">Overs: 0.0 | RR: 0.00</div>
+        <div class="over-timeline" id="scorer-over-timeline"></div>
+      </div>
+
+      <div class="keypad-section">
+        <div class="keypad-grid">
+          <button class="btn-key" onclick="addRun(0)">0</button>
+          <button class="btn-key" onclick="addRun(1)">1</button>
+          <button class="btn-key" onclick="addRun(2)">2</button>
+          <button class="btn-key" onclick="addRun(3)">3</button>
+          <button class="btn-key" onclick="addRun(4)">4</button>
+          <button class="btn-key" onclick="addRun(6)">6</button>
+        </div>
+        <div class="keypad-grid" style="grid-template-columns: repeat(3, 1fr);">
+          <button class="btn-key btn-extra" onclick="addExtra('wd')">WD</button>
+          <button class="btn-key btn-extra" onclick="addExtra('nb')">NB</button>
+          <button class="btn-key btn-wicket" onclick="addWicket()">W</button>
+        </div>
+        <div class="keypad-grid" style="grid-template-columns: 1fr;">
+          <button class="btn-key btn-undo" onclick="undoLastBall()">Undo Last Ball</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../js/scorer.js"></script>
+</body>
+</html>

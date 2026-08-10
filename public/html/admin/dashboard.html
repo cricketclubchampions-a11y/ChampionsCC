@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Champions Cricket Club</title>
+  <link rel="stylesheet" href="/css/admin.css?v=24" />
+  <link rel="icon" href="../../images/logo.png" type="image/png" />
+</head>
+
+<body>
+
+  <div class="admin-layout">
+
+    <!-- ==========================================
+         SIDEBAR NAVIGATION (PROFESSIONAL LIGHT MODE)
+         ========================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-brand-icon">
+          <img src="../../images/logo.png" alt="Champions CC Logo" />
+        </div>
+        <div>
+          <div class="sidebar-brand-name">CHAMPIONS CC</div>
+          <div class="sidebar-brand-tag">Admin Portal</div>
+        </div>
+      </div>
+
+      <div class="sidebar-scroll">
+        <div class="sidebar-section-label">Overview</div>
+
+        <button class="nav-item active" data-section="overview">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          <span>Dashboard Overview</span>
+        </button>
+
+        <div class="sidebar-section-label">Cricket Functions</div>
+
+        <button class="nav-item" data-section="fixtures">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          <span>Live Score & Stumps Sync</span>
+        </button>
+
+        <button class="nav-item" data-section="squad">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Squad & Players</span>
+        </button>
+
+        <button class="nav-item" data-section="leads">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          <span>Contact Submissions</span>
+          <span class="nav-item-badge" id="leads-count-badge">0</span>
+        </button>
+
+        <div class="sidebar-section-label">Website Content</div>
+
+        <button class="nav-item" data-section="promotional-bar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+          <span>Promotional Bar & Popup</span>
+        </button>
+
+        <button class="nav-item" data-section="blogs">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <span>Blogs & News</span>
+        </button>
+
+        <button class="nav-item" data-section="media-gallery">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+          <span>Media & Gallery</span>
+        </button>
+
+        <button class="nav-item" data-section="content-photos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <path d="M3 9h18" />
+            <path d="M9 21V9" />
+          </svg>
+          <span>Website Assets</span>
+        </button>
+
+        <button class="nav-item" data-section="contact-editor">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          <span>Contact Form Editor</span>
+        </button>
+
+        <button class="nav-item" data-section="maps-location">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span>Maps & Location</span>
+        </button>
+
+        <button class="nav-item" data-section="social-media">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+          </svg>
+          <span>Social Media Links</span>
+        </button>
+
+        <div class="sidebar-section-label">System Settings</div>
+
+        <button class="nav-item" data-section="settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>Security Settings</span>
+        </button>
+
+        <button class="nav-item" data-section="system-settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span>Operational Settings</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <div class="sidebar-avatar-gradient">A</div>
+          <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Administrator</div>
+            <div class="sidebar-user-role">Super Admin</div>
+          </div>
+        </div>
+        <button class="btn-sidebar-logout" onclick="handleAdminLogout()">
+          <span class="material-symbols-outlined">logout</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ==========================================
+         MAIN CONTENT AREA
+         ========================================== -->
+    <main class="main-content">
+
+      <!-- Top Header Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 id="topbar-page-title">Overview</h1>
+          <p id="topbar-breadcrumb">Champions CC / Admin / Overview</p>
+        </div>
+
+        <div class="topbar-right" style="display:flex; gap: 1rem; align-items:center;">
+          <div class="status-indicator"
+            style="display:flex; align-items:center; gap:0.5rem; background:#ecfdf5; color:#10b981; padding:0.35rem 0.75rem; border-radius:50px; font-size:0.75rem; font-weight:600; border: 1px solid #d1fae5;">
+            <span style="width:6px; height:6px; background:#10b981; border-radius:50%; display:inline-block;"></span>
+            Online
+          </div>
+          <button class="btn-icon" style="background:transparent; border:none; cursor:pointer;"
+            onclick="location.reload()" title="Refresh">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2v6h-6"></path>
+              <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+              <path d="M3 22v-6h6"></path>
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Body Sections -->
+      <div class="page-content">
+
+        <!-- ==================== 1. OVERVIEW SECTION ==================== -->
+        <section class="admin-section active" id="sec-overview">
+
+          <!-- Welcome Banner -->
+          <div class="welcome-header">
+            <h1>Welcome back 👋</h1>
+            <p>Here's what's happening with your club today.</p>
+          </div>
+
+          <!-- Key Metric Stats Cards -->
+          <div class="stats-grid">
+            <div class="stat-card s1">
+              <div class="stat-icon">
+                <span class="material-symbols-outlined">group</span>
+              </div>
+              <div class="stat-body">
+                <div class="stat-value" id="stat-squad-val">0</div>
+                <div class="stat-label">Active Squad Players</div>
+              </div>
+            </div>
+
+            <div class="stat-card s2">
+              <div class="stat-icon">
+                <span class="material-symbols-outlined">newspaper</span>
+              </div>
+              <div class="stat-body">
+                <div class="stat-value" id="stat-blogs-val">0</div>
+                <div class="stat-label">Published Articles</div>
+              </div>
+            </div>
+
+            <div class="stat-card s3">
+              <div class="stat-icon">
+                <span class="material-symbols-outlined">mail</span>
+              </div>
+              <div class="stat-body">
+                <div class="stat-value" id="stat-leads-val">0</div>
+                <div class="stat-label">Contact Inquiries</div>
+              </div>
+            </div>
+
+            <div class="stat-card s4">
+              <div class="stat-icon">
+                <span class="material-symbols-outlined">collections</span>
+              </div>
+              <div class="stat-body">
+                <div class="stat-value" id="stat-gallery-val">0</div>
+                <div class="stat-label">Gallery Media</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions Grid (AS Creates Style) -->
+          <div style="margin-top: 0.25rem; margin-bottom: 0.25rem;">
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem; margin-top: 2rem;">
+              Quick Actions</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem;">
+              <button class="quick-action-tile" onclick="openAdminModal('modal-add-player')">
+                <span class="material-symbols-outlined">person_add</span>
+                Add Player
+              </button>
+              <button class="quick-action-tile" onclick="document.querySelector('[data-section=\'fixtures\']').click()">
+                <span class="material-symbols-outlined">sports_cricket</span>
+                Live Scoreboard
+              </button>
+              <button class="quick-action-tile" onclick="openAdminModal('modal-add-blog')">
+                <span class="material-symbols-outlined">post_add</span>
+                Add Article
+              </button>
+              <button class="quick-action-tile" onclick="openAdminModal('modal-add-gallery')">
+                <span class="material-symbols-outlined">add_photo_alternate</span>
+                Add Media
+              </button>
+              <button class="quick-action-tile"
+                onclick="document.querySelector('[data-section=\'system-settings\']').click()">
+                <span class="material-symbols-outlined">tune</span>
+                System Settings
+              </button>
+              <button class="quick-action-tile" onclick="window.open('../index.html', '_blank')">
+                <span class="material-symbols-outlined">open_in_new</span>
+                View Website
+              </button>
+            </div>
+          </div>
+
+          <!-- Overview Content Grid (2 Columns) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;"
+            class="overview-split-grid">
+
+            <!-- Left: Recent Contact Inquiries -->
+            <div class="card" style="margin-bottom: 0 !important;">
+              <div class="card-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                  <h3 class="card-title"
+                    style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 0.15rem;">Recent Contact
+                    Inquiries</h3>
+                  <p style="font-size: 0.775rem; color: #64748b;">Latest messages submitted via the contact form</p>
+                </div>
+                <button class="btn btn-ghost btn-sm"
+                  onclick="document.querySelector('[data-section=\'leads\']').click()"
+                  style="font-size: 0.775rem; font-weight: 700; color: #10b981;">View All ↗</button>
+              </div>
+              <div class="card-body" id="overview-recent-leads"
+                style="display: flex; flex-direction: column; gap: 0.65rem; min-height: 180px;">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Right: Squad Roster Preview -->
+            <div class="card" style="margin-bottom: 0 !important;">
+              <div class="card-header"
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <div>
+                  <h3 class="card-title"
+                    style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 0.15rem;">Squad Overview
+                  </h3>
+                  <p style="font-size: 0.775rem; color: #64748b;">Active club players and key roles</p>
+                </div>
+                <button class="btn btn-ghost btn-sm"
+                  onclick="document.querySelector('[data-section=\'squad\']').click()"
+                  style="font-size: 0.775rem; font-weight: 700; color: #10b981;">View Squad ↗</button>
+              </div>
+              <div class="card-body" id="overview-squad-preview"
+                style="display: flex; flex-direction: column; gap: 0.65rem; min-height: 180px;">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==================== 2. CONTACT SUBMISSIONS SECTION ==================== -->
+        <section class="admin-section" id="sec-leads">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Received Contact Form Submissions</h2>
+              <button class="btn btn-primary btn-sm"
+                onclick="loadDashboardData(); showAdminToast('Refreshed submissions list.');">
+                <span>Refresh List</span>
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Sender Name</th>
+                    <th>Contact Info</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leads-tbody">
+                  <!-- Rendered dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 3. LIVE SCOREBOARD & STUMPS SYNC SECTION ==================== -->
+        <section class="admin-section" id="sec-fixtures">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Live Match Scoreboard & Stumps / CricHeroes Sync</h2>
+              <span class="badge-status badge-read">Live Website Sync</span>
+            </div>
+
+            <form onsubmit="saveLiveScore(event)">
+              <!-- Stumps / CricHeroes Public Link & Auto Fetcher -->
+              <div class="form-group"
+                style="background:var(--bg-input); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color); margin-bottom:1.5rem;">
+                <label class="field-label" style="color:var(--accent-emerald-dark); font-weight:700;">🔗 Stumps /
+                  CricHeroes Public Match URL</label>
+                <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+                  <input type="url" id="live-stumps-url" class="field-input"
+                    placeholder="e.g. https://stumpsapp.com/match/10293 or CricHeroes match link"
+                    style="background:#ffffff; flex-grow:1; min-width:280px;" />
+                  <button type="button" class="btn btn-primary" onclick="autoFetchStumpsData()">
+                    <span>⚡ Auto-Fetch Match Details</span>
+                  </button>
+                </div>
+                <p style="font-size:0.775rem; color:var(--text-muted); margin-top:0.5rem;">
+                  Paste your Stumps or CricHeroes match link and click <strong>Auto-Fetch</strong>. It will extract live
+                  scores, Man of the Match, and top performances automatically into your custom website design system.
+                </p>
+              </div>
+
+              <!-- Match Stage & Status Selector -->
+              <div
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                <div>
+                  <label class="field-label" style="color:var(--accent-emerald-dark); font-weight:700;">Match Stage
+                    Status</label>
+                  <select id="live-stage" class="field-select" style="background:#ffffff;"
+                    onchange="toggleLiveScoreFields()">
+                    <option value="live">🔴 Match Live in Progress (Hide Awards)</option>
+                    <option value="ended">🏆 Match Concluded (Enable Winner & MOM Button)</option>
+                    <option value="abandoned">🌧️ Match Abandoned (Show Reason Only)</option>
+                  </select>
+                </div>
+                <div id="live-winner-container">
+                  <label class="field-label">Declared Match Winner</label>
+                  <input type="text" id="live-winner" class="field-input" placeholder="e.g. CHAMPIONS CC 1st XI"
+                    style="background:#ffffff;" />
+                </div>
+                <div id="live-stop-reason-container">
+                  <label class="field-label">Stop / Abandoned Reason</label>
+                  <input type="text" id="live-stop-reason" class="field-input"
+                    placeholder="e.g. Match abandoned due to rain" style="background:#ffffff;" />
+                </div>
+              </div>
+
+              <div
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                <div>
+                  <label class="field-label">Team 1 Name</label>
+                  <input type="text" id="live-team1" class="field-input" placeholder="CHAMPIONS CC 1st XI" required />
+                </div>
+                <div>
+                  <label class="field-label">Team 1 Score</label>
+                  <input type="text" id="live-score1" class="field-input" placeholder="248/4" required />
+                </div>
+                <div>
+                  <label class="field-label">Team 1 Overs</label>
+                  <input type="text" id="live-overs1" class="field-input" placeholder="(42.2 OV)" required />
+                </div>
+              </div>
+
+              <div
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                <div>
+                  <label class="field-label">Team 2 Name</label>
+                  <input type="text" id="live-team2" class="field-input" placeholder="METRO WARRIORS" required />
+                </div>
+                <div>
+                  <label class="field-label">Team 2 Score</label>
+                  <input type="text" id="live-score2" class="field-input" placeholder="212/10" required />
+                </div>
+                <div>
+                  <label class="field-label">Team 2 Overs</label>
+                  <input type="text" id="live-overs2" class="field-input" placeholder="(46.5 OV)" required />
+                </div>
+              </div>
+
+              <div
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem; margin-bottom:1.25rem;">
+                <div>
+                  <label class="field-label">Venue Location</label>
+                  <input type="text" id="live-venue" class="field-input" placeholder="Stadium Main Ground A" required />
+                </div>
+                <div>
+                  <label class="field-label">Tournament / League Name</label>
+                  <input type="text" id="live-tournament" class="field-input"
+                    placeholder="Regional Premier League Semi-Final" required />
+                </div>
+                <div>
+                  <label class="field-label">Match Status / Result</label>
+                  <input type="text" id="live-note" class="field-input" placeholder="Champions CC won by 36 runs"
+                    required />
+                </div>
+              </div>
+
+              <!-- Player of the Match & Performers -->
+              <div id="live-awards-container"
+                style="background:rgba(217, 119, 6, 0.05); padding:1.25rem; border-radius:var(--radius-md); border:1px solid rgba(217, 119, 6, 0.2); margin-bottom:1.5rem;">
+                <h4
+                  style="font-family:var(--font-heading); font-size:0.95rem; font-weight:700; color:var(--accent-gold); margin-bottom:1rem;">
+                  🌟 Match Awards & Top Performers</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.25rem;">
+                  <div>
+                    <label class="field-label">Player of the Match (MOM)</label>
+                    <input type="text" id="live-mom" class="field-input"
+                      placeholder="e.g. Vikram Singh — 78 (45) & 3/18" style="background:#ffffff;" />
+                  </div>
+                  <div>
+                    <label class="field-label">Best Batting Performance</label>
+                    <input type="text" id="live-best-batter" class="field-input"
+                      placeholder="e.g. Rohan Verma — 84* (52)" style="background:#ffffff;" />
+                  </div>
+                  <div>
+                    <label class="field-label">Best Bowling Performance</label>
+                    <input type="text" id="live-best-bowler" class="field-input"
+                      placeholder="e.g. Sarah Jenkins — 4/16 (4.0)" style="background:#ffffff;" />
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+                <button type="submit" class="btn btn-primary">
+                  <span>Save Live Score Updates</span>
+                </button>
+                <button type="button" id="btn-archive-match" class="btn btn-secondary" style="display:none;"
+                  onclick="archiveLiveMatch()">
+                  <span>Archive to Past Matches</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card" style="margin-top:1.25rem;">
+            <div class="card-header">
+              <h2 class="card-title">Fixtures & Past Matches</h2>
+              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-upcoming')">
+                <span>Add Upcoming Match</span>
+              </button>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Match / Title</th>
+                    <th>Date</th>
+                    <th>Status / Result</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="archived-matches-tbody">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 4. SQUAD SECTION ==================== -->
+        <section class="admin-section" id="sec-squad">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Squad Roster & Player Profiles</h2>
+              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-player')">
+                <span>Add New Player</span>
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Role / Position</th>
+                    <th>Experience</th>
+                    <th>Tenure</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="squad-tbody">
+                  <!-- Rendered dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 5. BLOGS SECTION ==================== -->
+        <section class="admin-section" id="sec-blogs">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Published Articles & News</h2>
+              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-blog')">
+                <span>Publish New Article</span>
+              </button>
+            </div>
+
+            <div class="table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Article Title</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Author</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="blogs-tbody">
+                  <!-- Rendered dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 6. SETTINGS SECTION ==================== -->
+        <section class="admin-section" id="sec-settings">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Admin Security & Password Manager</h2>
+            </div>
+
+            <form onsubmit="saveAdminCredentials(event)">
+              <div
+                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+                <div class="form-group">
+                  <label class="field-label" for="settings-username">Admin Username</label>
+                  <input type="text" id="settings-username" class="field-input" required />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="settings-new-password">New Password</label>
+                  <input type="password" id="settings-new-password" class="field-input" placeholder="Enter new password"
+                    required />
+                </div>
+                <div class="form-group">
+                  <label class="field-label" for="settings-confirm-password">Confirm Password</label>
+                  <input type="password" id="settings-confirm-password" class="field-input"
+                    placeholder="Confirm password" required />
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">
+                <span>Save New Credentials</span>
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <!-- ==================== OPERATIONAL / SYSTEM SETTINGS SECTION ==================== -->
+        <section class="admin-section" id="sec-system-settings">
+          <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h2 class="card-title" style="font-size: 1.35rem; font-weight: 800; color: #0f172a;">General & Operational Settings</h2>
+                <div class="card-subtitle" style="font-size: 0.875rem; color: #64748b;">Manage website branding, live deployment status, maintenance controls, and SEO metadata</div>
+              </div>
+              <a href="../index.html" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #10b981; display: inline-flex; align-items: center; gap: 4px;">
+                <span>Visit Website</span>
+                <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
+              </a>
+            </div>
+
+            <div class="card-body">
+              <form id="operationalSettingsForm" onsubmit="saveOperationalSettings(event)">
+
+                <!-- 1. Core Site Identity (Website Name & Tagline) -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;" class="responsive-2col-grid">
+                  <div class="field-group">
+                    <label class="field-label" for="op-site-name">Website Name <span class="required" style="color: #ef4444;">*</span></label>
+                    <input class="field-input" type="text" id="op-site-name" placeholder="Champions Cricket Club" value="Champions Cricket Club" required>
+                    <span class="field-hint">Primary title displayed on site headers and browser tabs.</span>
+                  </div>
+
+                  <div class="field-group">
+                    <label class="field-label" for="op-site-tagline">Website Tagline</label>
+                    <input class="field-input" type="text" id="op-site-tagline" placeholder="Official Cricket Club & Sports Academy">
+                    <span class="field-hint">Secondary slogan or academy descriptor.</span>
+                  </div>
+                </div>
+
+                <!-- 2. Global SEO & Analytics -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;" class="responsive-2col-grid">
+                  <div class="field-group">
+                    <label class="field-label" for="op-site-description">Default Meta Description</label>
+                    <textarea class="field-textarea" id="op-site-description" rows="3" placeholder="Official portal of Champions Cricket Club..."></textarea>
+                    <span class="field-hint">Keep under 160 characters for optimal SEO results.</span>
+                  </div>
+
+                  <div class="field-group">
+                    <label class="field-label" for="op-ga-id">Google Analytics Measurement ID (GA4)</label>
+                    <input class="field-input" type="text" id="op-ga-id" placeholder="e.g. G-XXXXXXXXXX">
+                    <span class="field-hint">Paste your Google Analytics 4 Measurement ID to track site visits.</span>
+                  </div>
+                </div>
+
+                <div class="divider" style="height: 1px; background: var(--color-border-light); margin: 1.5rem 0;"></div>
+
+                <!-- 2. Website Live Status Toggle -->
+                <div class="toggle-row" style="margin-bottom: 1.25rem; padding: 1rem 1.25rem; background: var(--color-surface-low);">
+                  <div class="toggle-info">
+                    <div class="toggle-name" style="display: flex; align-items: center; gap: 0.75rem; font-size: 1rem; font-weight: 700;">
+                      Website Status
+                      <span id="live-status-indicator" style="font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 50px; background: rgba(34, 197, 94, 0.12); color: #16a34a; border: 1px solid rgba(34, 197, 94, 0.3);">
+                        <span id="live-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);"></span>
+                        <span id="live-status-text">LIVE ONLINE</span>
+                      </span>
+                    </div>
+                    <div class="toggle-desc" style="font-size: 0.85rem; margin-top: 0.25rem;">Control whether your website is public to visitors or presenting the "Coming Soon" screen.</div>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="btn-toggle-status" type="button" onclick="toggleWebsiteLiveStatus()" style="min-width: 160px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                      <span class="material-symbols-outlined" id="toggle-status-icon">power_settings_new</span>
+                      <span id="toggle-status-btn-text">Stop Website</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="divider" style="height: 1px; background: var(--color-border-light); margin: 1.5rem 0;"></div>
+
+                <!-- 3. Maintenance Mode & Contact Submissions Toggles -->
+                <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem;">
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <div class="toggle-name" style="font-weight: 700;">Maintenance Mode</div>
+                      <div class="toggle-desc">Show a scheduled maintenance page to visitors while site updates are in progress.</div>
+                    </div>
+                    <label class="toggle-switch" aria-label="Toggle maintenance mode">
+                      <input type="checkbox" id="op-maintenance-mode">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <div class="toggle-name" style="font-weight: 700;">Allow Contact Form Submissions</div>
+                      <div class="toggle-desc">Disable to temporarily prevent visitors from submitting new inquiry messages.</div>
+                    </div>
+                    <label class="toggle-switch" aria-label="Toggle contact form">
+                      <input type="checkbox" id="op-contact-form-enabled" checked>
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="divider" style="height: 1px; background: var(--color-border-light); margin: 1.5rem 0;"></div>
+
+                <!-- 4. Page-Level Access Controls -->
+                <div style="margin-bottom: 1.5rem;">
+                  <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a; margin-bottom: 0.25rem;">Page-Level Access Controls</div>
+                  <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 1rem;">Toggle public accessibility for specific sections of the website.</div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                    <div class="toggle-row" style="padding: 0.75rem 1rem;">
+                      <div class="toggle-info">
+                        <div class="toggle-name" style="font-size: 0.9rem;">About Us Page</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="op-page-about" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="toggle-row" style="padding: 0.75rem 1rem;">
+                      <div class="toggle-info">
+                        <div class="toggle-name" style="font-size: 0.9rem;">Matches & Fixtures</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="op-page-matches" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="toggle-row" style="padding: 0.75rem 1rem;">
+                      <div class="toggle-info">
+                        <div class="toggle-name" style="font-size: 0.9rem;">News & Blog</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="op-page-blogs" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="toggle-row" style="padding: 0.75rem 1rem;">
+                      <div class="toggle-info">
+                        <div class="toggle-name" style="font-size: 0.9rem;">Contact Page</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="op-page-contact" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+
+                    <div class="toggle-row" style="padding: 0.75rem 1rem;">
+                      <div class="toggle-info">
+                        <div class="toggle-name" style="font-size: 0.9rem;">Live Scoreboard</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="op-page-scoring" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-footer" style="display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--color-border-light);">
+                  <button type="reset" class="btn btn-secondary" style="font-weight: 700;">Reset</button>
+                  <button type="submit" class="btn btn-primary" id="saveOpSettingsBtn" style="font-weight: 700; padding: 0.75rem 2rem; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <span class="material-symbols-outlined">save</span>
+                    <span>Save Settings</span>
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 7. PROMOTIONAL BAR & POPUP SECTION ==================== -->
+        <section class="admin-section" id="sec-promotional-bar">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Promotional Bar & Popup Content</h2>
+            </div>
+
+            <div class="card"
+              style="margin-bottom: var(--space-6); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+              <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div class="card-title" style="font-weight: 600;">Announcement Bar</div>
+                  <div class="card-subtitle" style="font-size: 0.85rem; color: var(--text-secondary);">Scrolling banner
+                    at the top of every page</div>
+                </div>
+                <label class="toggle-switch" aria-label="Toggle promotion bar">
+                  <input type="checkbox" id="promoEnabled">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="card-body" style="margin-top: 1rem;">
+                <form id="promoBarForm">
+                  <div class="form-row form-row-2"
+                    style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="field-group">
+                      <label class="field-label" for="promoText" style="display:block; margin-bottom:0.25rem;">Message
+                        <span class="required">*</span></label>
+                      <input class="form-control" type="text" id="promoText"
+                        placeholder="🚀 Special offer — join CCC today!"
+                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <span class="field-hint" style="font-size:0.8rem; color:#666;">This text scrolls across the top of
+                        the site.</span>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="promoBtnText" style="display:block; margin-bottom:0.25rem;">Button
+                        Label</label>
+                      <input class="form-control" type="text" id="promoBtnText" placeholder="Learn More →"
+                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <span class="field-hint" style="font-size:0.8rem; color:#666;">Leave empty to hide the CTA
+                        button.</span>
+                    </div>
+                  </div>
+                  <div class="form-row form-row-2"
+                    style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="field-group">
+                      <label class="field-label" for="promoBtnUrl" style="display:block; margin-bottom:0.25rem;">Button
+                        Destination</label>
+                      <input class="form-control" type="url" id="promoBtnUrl"
+                        placeholder="https://championscricketclub.com/contact"
+                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <span class="field-hint" style="font-size:0.8rem; color:#666;">Where visitors land when they tap
+                        the button.</span>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" for="promoSpeed"
+                        style="display:block; margin-bottom:0.25rem;">Animation Speed</label>
+                      <input class="form-control" type="number" id="promoSpeed" placeholder="15" min="5" max="60"
+                        step="1" style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <span class="field-hint" style="font-size:0.8rem; color:#666;">Seconds per scroll cycle. Lower =
+                        faster. Default: 15.</span>
+                    </div>
+                  </div>
+                  <div class="card-footer" style="margin-top: 1rem;">
+                    <button class="btn btn-primary" type="submit" id="savePromoBtn">
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="card"
+              style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+              <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div class="card-title" style="font-weight: 600;">First-Visit Popup</div>
+                  <div class="card-subtitle" style="font-size: 0.85rem; color: var(--text-secondary);">Image modal that
+                    appears once per visitor</div>
+                </div>
+                <label class="toggle-switch" aria-label="Toggle promotion popup">
+                  <input type="checkbox" id="popupEnabled">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="card-body" style="margin-top: 1rem;">
+                <form id="promoPopupForm">
+                  <div class="form-row form-row-2"
+                    style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="field-group">
+                      <label class="field-label" style="display:block; margin-bottom:0.25rem;">Desktop Image URL</label>
+                      <input class="form-control" type="text" id="popupDesktopImageUrl"
+                        placeholder="https://example.com/image.jpg"
+                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <div style="margin-top: 10px;">
+                        <img id="popupDesktopPreview" src="" alt="Desktop Preview"
+                          style="max-width: 100%; max-height: 200px; display: none; border-radius: 8px; border: 1px solid #ccc;">
+                      </div>
+                      <span class="field-hint" style="font-size:0.8rem; color:#666;">Recommended: 1200×800px or
+                        wider.</span>
+                    </div>
+                    <div class="field-group">
+                      <label class="field-label" style="display:block; margin-bottom:0.25rem;">Mobile Image URL</label>
+                      <input class="form-control" type="text" id="popupMobileImageUrl"
+                        placeholder="https://example.com/image-mobile.jpg"
+                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <div style="margin-top: 10px;">
+                        <img id="popupMobilePreview" src="" alt="Mobile Preview"
+                          style="max-width: 100%; max-height: 200px; display: none; border-radius: 8px; border: 1px solid #ccc;">
+                      </div>
+                      <span class="field-hint" style="font-size:0.8rem; color:#666;">Recommended: 800×1200px or
+                        taller.</span>
+                    </div>
+                  </div>
+                  <div class="field-group" style="margin-bottom: 1rem;">
+                    <label class="field-label" for="popupLinkUrl" style="display:block; margin-bottom:0.25rem;">Popup
+                      Link URL</label>
+                    <input class="form-control" type="url" id="popupLinkUrl"
+                      placeholder="https://championscricketclub.com/contact"
+                      style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                    <span class="field-hint" style="font-size:0.8rem; color:#666;">Where visitors go when they click the
+                      popup image.</span>
+                  </div>
+                  <div class="card-footer" style="margin-top: 1rem;">
+                    <button class="btn btn-primary" type="submit" id="savePopupBtn">
+                      Save Popup
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================== 8. MEDIA & GALLERY SECTION ==================== -->
+        <section class="admin-section" id="sec-media-gallery">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Media & Video Gallery</h2>
+            </div>
+            <p style="color:var(--text-secondary);">Placeholder for managing photo and video gallery.</p>
+          </div>
+        </section>
+
+        <!-- ==================== 9. WEBSITE ASSETS SECTION ==================== -->
+        <section class="admin-section" id="sec-content-photos">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Website Content & Photos</h2>
+            </div>
+            <p style="color:var(--text-secondary);">Placeholder for managing general website copy and images.</p>
+          </div>
+        </section>
+
+        <!-- ==================== 11. CONTACT FORM EDITOR ==================== -->
+        <section class="admin-section" id="sec-contact-editor">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Contact Form Editor</h2>
+            </div>
+            <p style="color:var(--text-secondary);">Placeholder for editing contact form fields and routing.</p>
+          </div>
+        </section>
+
+        <!-- ==================== 12. MAPS & LOCATION ==================== -->
+        <section class="admin-section" id="sec-maps-location">
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">Maps & Location Configuration</h2>
+              <button class="modal-close" onclick="closeAdminModal('modal-lead')">✕</button>
+            </div>
+            <div class="modal-body" id="modal-lead-body"></div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" style="width:auto; padding:0.5rem 1.25rem;"
+                onclick="closeAdminModal('modal-lead')">Close</button>
+            </div>
+          </div>
+      </div>
+
+      <!-- Modal 2: Add Player -->
+      <div class="modal-overlay" id="modal-add-player">
+        <div class="modal modal-lg">
+          <div class="modal-header">
+            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add New Player to Squad</h3>
+            <button class="modal-close" onclick="closeAdminModal('modal-add-player')">✕</button>
+          </div>
+          <form onsubmit="handleCreatePlayer(event)">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="field-label">Full Name</label>
+                <input type="text" id="new-player-name" class="field-input" placeholder="e.g. Vikram Singh" required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Role Category</label>
+                <input type="text" id="new-player-category" class="field-input" placeholder="e.g. Batsman, Bowler, etc."
+                  required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Display Role</label>
+                <input type="text" id="new-player-role" class="field-input" placeholder="e.g. Right-Hand All-Rounder"
+                  required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Experience & Bio</label>
+                <input type="text" id="new-player-bio" class="field-input"
+                  placeholder="e.g. State-level all-rounder with strong middle-order runs." required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Profile Image URL</label>
+                <input type="url" id="new-player-photo" class="field-input"
+                  value="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500"
+                  required />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-player')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save
+                Player</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal 3: Add Blog -->
+      <div class="modal-overlay" id="modal-add-blog">
+        <div class="modal modal-md">
+          <div class="modal-header">
+            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Publish New Article</h3>
+            <button class="modal-close" onclick="closeAdminModal('modal-add-blog')">✕</button>
+          </div>
+          <form onsubmit="handleCreateBlog(event)">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="field-label">Article Title</label>
+                <input type="text" id="new-blog-title" class="field-input"
+                  placeholder="e.g. Mastering Multi-Day Match Conditions" required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Category</label>
+                <select id="new-blog-category" class="field-select">
+                  <option value="coaching">Coaching Tips</option>
+                  <option value="tactics">Match Tactics</option>
+                  <option value="fitness">Fitness & Biomechanics</option>
+                  <option value="news">Club News</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Article Excerpt</label>
+                <textarea id="new-blog-excerpt" class="field-textarea" placeholder="Brief summary of the article..."
+                  required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Author Name</label>
+                <input type="text" id="new-blog-author" class="field-input" value="Coach Rahul Sharma" required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Thumbnail Image URL</label>
+                <input type="url" id="new-blog-image" class="field-input"
+                  value="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?crop=entropy&cs=srgb&fm=jpg&q=85&w=800"
+                  required />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-blog')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Publish
+                Article</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal 4: Add Upcoming Match -->
+      <div class="modal-overlay" id="modal-add-upcoming">
+        <div class="modal modal-md">
+          <div class="modal-header">
+            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add Upcoming Match</h3>
+            <button class="modal-close" onclick="closeAdminModal('modal-add-upcoming')">✕</button>
+          </div>
+          <form onsubmit="handleCreateUpcomingMatch(event)">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="field-label">Match Title / Type</label>
+                <input type="text" id="new-match-title" class="field-input" placeholder="e.g. League Match vs Royals"
+                  required />
+              </div>
+              <div style="display:flex; gap:1rem; margin-bottom:1.25rem;">
+                <div style="flex:1;">
+                  <label class="field-label">Home Team</label>
+                  <input type="text" id="new-match-team1" class="field-input" placeholder="Champions CC" required />
+                </div>
+                <div style="flex:1;">
+                  <label class="field-label">Away Team</label>
+                  <input type="text" id="new-match-team2" class="field-input" placeholder="Away Team" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Date</label>
+                <input type="text" id="new-match-date" class="field-input" placeholder="e.g. Saturday, Aug 20, 2026"
+                  required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Venue</label>
+                <input type="text" id="new-match-venue" class="field-input" placeholder="e.g. Main Stadium Ground"
+                  required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Description / Notes</label>
+                <input type="text" id="new-match-desc" class="field-input" placeholder="e.g. Semi-final clash"
+                  required />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost"
+                onclick="closeAdminModal('modal-add-upcoming')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save Upcoming
+                Match</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+      <!-- Modal: Add Gallery Media -->
+      <div class="modal-overlay" id="modal-add-gallery" style="display:none;">
+        <div class="modal modal-md">
+          <div class="modal-header">
+            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add Gallery Media</h3>
+            <button class="modal-close" onclick="closeAdminModal('modal-add-gallery')">✕</button>
+          </div>
+          <form onsubmit="handleCreateGallery(event)">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="field-label">Media Title / Description</label>
+                <input type="text" id="new-gallery-title" class="field-input" placeholder="e.g. Winning Moment 2025"
+                  required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Media Type</label>
+                <select id="new-gallery-type" class="field-select">
+                  <option value="photo">Photo</option>
+                  <option value="video">Video</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Category</label>
+                <input type="text" id="new-gallery-category" class="field-input"
+                  placeholder="e.g. Matches, Net Practices, Awards" required />
+              </div>
+              <div class="form-group">
+                <label class="field-label">Media URL</label>
+                <input type="url" id="new-gallery-url" class="field-input" placeholder="https://..." required />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-gallery')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save
+                Media</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Scripts -->
+      <script src="../../js/data.js"></script>
+      <script src="../../js/admin.js?v=18"></script>
+</body>
+
+</html>

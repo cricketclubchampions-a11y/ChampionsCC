@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coming Soon | Champions Cricket Club</title>
+    <meta name="application-name" content="Champions Cricket Club">
+    <meta name="apple-mobile-web-app-title" content="Champions Cricket Club">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-background: #061e16;
+            --color-surface: rgba(6, 42, 30, 0.78);
+            --color-primary: #10b981;
+            --color-gold: #f59e0b;
+            --color-outline: rgba(16, 185, 129, 0.25);
+            --color-on-surface: #f1f5f9;
+            --color-on-surface-variant: #cbd5e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-on-surface);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Responsive Video Wrapper */
+        .video-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            background: var(--color-background);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Overlay to make text readable */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(6, 42, 30, 0.45) 0%, rgba(4, 20, 14, 0.88) 85%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Header Logos (Always Visible) */
+        .header-logos {
+            position: absolute;
+            top: 24px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .header-logos * {
+            pointer-events: auto;
+        }
+
+        .club-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .club-logo img {
+            height: 52px;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+            transition: transform 0.3s;
+        }
+
+        .club-logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900;
+            font-size: 1.25rem;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.7);
+        }
+
+        .club-logo-text span {
+            color: var(--color-primary);
+        }
+
+        .as-creates-logo {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 15px;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .as-creates-logo strong {
+            color: var(--color-gold);
+        }
+
+        /* Coming Soon Card */
+        .coming-soon-card {
+            position: relative;
+            z-index: 3;
+            max-width: 520px;
+            width: 90%;
+            background: var(--color-surface);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border: 1px solid var(--color-outline);
+            padding: 48px 40px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 50px rgba(16, 185, 129, 0.12);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .coming-soon-card.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        /* Close Button inside Card */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--color-on-surface-variant);
+            font-size: 24px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .rocket-icon {
+            font-size: 54px;
+            color: var(--color-gold);
+            margin-bottom: 20px;
+            display: inline-flex;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+            margin-bottom: 16px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.65;
+            color: var(--color-on-surface-variant);
+            margin-bottom: 28px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            padding: 8px 18px;
+            border-radius: 9999px;
+            color: var(--color-gold);
+            font-size: 13px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-gold);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
+        }
+
+        .footer-text {
+            margin-top: 32px;
+            font-size: 13px;
+            color: rgba(203, 213, 225, 0.5);
+        }
+
+        /* Trigger Button when Card Hidden */
+        .info-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9;
+            background: rgba(6, 42, 30, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--color-outline);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(10px);
+        }
+
+        .info-trigger.visible {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .info-trigger:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 12px 32px rgba(16, 185, 129, 0.25);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            .header-logos { padding: 0 20px; top: 16px; }
+            .club-logo img { height: 40px; }
+            .club-logo-text { font-size: 1.05rem; }
+            .as-creates-logo { font-size: 12px; }
+            .coming-soon-card { padding: 36px 24px; }
+            h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Logos -->
+    <header class="header-logos">
+        <a href="#" class="club-logo">
+            <img src="/favicon.png" alt="Champions Cricket Club Logo">
+            <span class="club-logo-text">CHAMPIONS <span>CC</span></span>
+        </a>
+        <div class="as-creates-logo">
+            Powered by <strong>AS Creates</strong>
+        </div>
+    </header>
+
+    <!-- Background Video Player -->
+    <div class="video-wrapper" id="video-wrapper">
+        <video id="maintenance-video" autoplay loop muted playsinline preload="auto">
+            <source src="https://res.cloudinary.com/nsqqegj1/video/upload/q_auto,f_auto/v1784749054/coming_soon_dzqqpd.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Coming Soon Card -->
+    <div class="coming-soon-card" id="fallback-card">
+        <button class="close-btn" id="close-card-btn" aria-label="Minimize Info">&times;</button>
+        
+        <div class="rocket-icon">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-3.05 11a22.35 22.35 0 0 1-3.95 2z"/><path d="M9 12H4.5s.55-3.03 2-4.5c1.45-1.47 4.5-2 4.5-2"/><path d="M12 15v4.5s3.03-.55 4.5-2c1.47-1.45 2-4.5 2-4.5"/></svg>
+        </div>
+
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            Launching Soon
+        </div>
+
+        <h1 style="margin-top: 16px;">Something Big Is Coming</h1>
+        <p>The Champions Cricket Club official platform is receiving final touches. We are launching brand-new features, live scoring tools, and player stats very soon.</p>
+
+        <div class="footer-text">
+            &copy; 2026 Champions Cricket Club. All Rights Reserved.
+        </div>
+    </div>
+
+    <!-- Info Trigger Button -->
+    <button class="info-trigger" id="info-btn">
+        Status Info
+    </button>
+
+    <script>
+        var video = document.getElementById('maintenance-video');
+        var fallbackCard = document.getElementById('fallback-card');
+        var closeBtn = document.getElementById('close-card-btn');
+        var infoBtn = document.getElementById('info-btn');
+        var hideTimeout;
+        
+        var desktopVideoSrc = "https://res.cloudinary.com/nsqqegj1/video/upload/q_auto,f_auto/v1784749054/coming_soon_dzqqpd.mp4";
+        var mobileVideoSrc = "https://res.cloudinary.com/nsqqegj1/video/upload/q_auto,f_auto/v1784749050/coming_soon_mobile_yuxk9x.mp4";
+        var currentVideoSrc = "";
+
+        function updateVideoSource() {
+            var isPortrait = window.matchMedia("(orientation: portrait)").matches;
+            var isMobileOrTab = window.innerWidth <= 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            var newSrc = (isPortrait && isMobileOrTab) ? mobileVideoSrc : desktopVideoSrc;
+            
+            if (currentVideoSrc !== newSrc) {
+                currentVideoSrc = newSrc;
+                video.src = newSrc;
+                video.load();
+                var playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function(error) { 
+                        console.log('Video autoplay prevented'); 
+                    });
+                }
+            }
+        }
+
+        window.addEventListener('resize', updateVideoSource);
+        updateVideoSource();
+
+        function showCard() {
+            fallbackCard.classList.remove('hidden');
+            infoBtn.classList.remove('visible');
+        }
+
+        function hideCard() {
+            fallbackCard.classList.add('hidden');
+            infoBtn.classList.add('visible');
+        }
+
+        closeBtn.addEventListener('click', function() {
+            clearTimeout(hideTimeout);
+            hideCard();
+        });
+
+        infoBtn.addEventListener('click', function() {
+            showCard();
+        });
+
+        hideTimeout = setTimeout(hideCard, 4000);
+    </script>
+</body>
+</html>
