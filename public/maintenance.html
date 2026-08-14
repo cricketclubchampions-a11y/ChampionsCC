@@ -55,6 +55,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            pointer-events: none;
         }
 
         /* Overlay to make text readable */
@@ -67,6 +68,7 @@
             background: radial-gradient(circle at center, rgba(6, 42, 30, 0.5) 0%, rgba(4, 20, 14, 0.9) 85%);
             z-index: 2;
             pointer-events: none;
+            display: none;
         }
 
         /* Header Logos (Always Visible) */
@@ -186,8 +188,8 @@
         }
 
         @keyframes pulse-slow {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.08); opacity: 1; }
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+            50% { transform: scale(1.08) rotate(5deg); opacity: 1; }
         }
 
         h1 {
@@ -212,15 +214,24 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(245, 158, 11, 0.15);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(245, 158, 11, 0.05) 100%);
             border: 1px solid rgba(245, 158, 11, 0.4);
-            padding: 8px 18px;
+            padding: 8px 20px;
             border-radius: 9999px;
             color: var(--color-amber);
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.1);
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        .status-badge:hover {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+            border-color: rgba(245, 158, 11, 0.6);
+            transform: scale(1.02);
         }
 
         .status-dot {
@@ -293,7 +304,7 @@
     <!-- Header Logos -->
     <header class="header-logos">
         <a href="#" class="club-logo">
-            <img src="/favicon.png" alt="Champions Cricket Club Logo">
+            <img src="/images/logo.png" alt="Champions Cricket Club Logo">
             <span class="club-logo-text">CHAMPIONS <span>CC</span></span>
         </a>
         <div class="as-creates-logo">
@@ -303,7 +314,7 @@
 
     <!-- Background Video Player -->
     <div class="video-wrapper" id="video-wrapper">
-        <video id="maintenance-video" autoplay loop muted playsinline preload="auto">
+        <video id="maintenance-video" autoplay loop muted playsinline preload="auto" disablePictureInPicture disableremoteplayback controlslist="nodownload nofullscreen noremoteplayback" oncontextmenu="return false;">
             <source src="https://res.cloudinary.com/nsqqegj1/video/upload/q_auto,f_auto/v1784749049/Video_Maintain_u8gk0f.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
@@ -317,15 +328,15 @@
             <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
         </div>
 
-        <div class="status-badge">
+        <h1 style="margin-top: 16px;">We'll Be Back Shortly</h1>
+        <p style="margin-bottom: 24px;">We are performing routine upgrades and performance optimizations to deliver a faster experience. The Champions Cricket Club portal will be back online shortly with enhanced real-time features.</p>
+
+        <div class="status-badge" style="margin-bottom: 8px;">
             <span class="status-dot"></span>
             System Maintenance Active
         </div>
 
-        <h1 style="margin-top: 16px;">We'll Be Back Shortly</h1>
-        <p>Champions Cricket Club portal is currently undergoing scheduled platform upgrades and database optimizations. We will return online shortly with improved speeds and performance.</p>
-
-        <div class="footer-text">
+        <div class="footer-text" style="margin-top: 24px;">
             &copy; 2026 Champions Cricket Club. All Rights Reserved.
         </div>
     </div>

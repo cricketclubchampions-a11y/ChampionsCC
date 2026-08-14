@@ -139,5 +139,16 @@ const APP_DATA = {
       title: "Annual Awards Gala Celebration",
       image: "https://images.unsplash.com/photo-1511578314322-379afb476865?crop=entropy&cs=srgb&fm=jpg&q=85&w=800"
     }
-  ]
+  ],
+
+  contact: {
+    address: "Champions Cricket Ground, High Way, Sisua, Odisha 754202",
+    markerLabel: "Champions Cricket Club HQ",
+    coords: "20.4831593, 86.0763922",
+    mapLink: "https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922",
+    zoom: 14,
+    email: "info@championscricketclub.com",
+    phone: "+91 8018977085",
+    showMap: true
+  }
 };

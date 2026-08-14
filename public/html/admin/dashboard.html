@@ -5,11 +5,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard | Champions Cricket Club</title>
-  <link rel="stylesheet" href="/css/admin.css?v=24" />
+  <link rel="stylesheet" href="/css/admin.css?v=9999" />
   <link rel="icon" href="../../images/logo.png" type="image/png" />
 </head>
 
 <body>
+
+  <!-- Global Admin Console Loading Screen (Preloader) -->
+  <div id="page-preloader" class="page-preloader">
+    <div class="preloader-content">
+      <div class="preloader-logo-badge">
+        <img src="../../images/logo.png" alt="Champions CC Admin" class="preloader-logo-img" />
+        <div class="preloader-spin-ring"></div>
+      </div>
+      <div class="preloader-brand-title">CHAMPIONS</div>
+      <div class="preloader-brand-sub">ADMIN DASHBOARD ENGINE</div>
+      <div class="preloader-progress-track">
+        <div id="preloader-progress-bar" class="preloader-progress-fill"></div>
+      </div>
+      <div id="preloader-status" class="preloader-status-text">Loading Admin Console...</div>
+    </div>
+  </div>
 
   <div class="admin-layout">
 
@@ -105,6 +121,15 @@
             <path d="M9 21V9" />
           </svg>
           <span>Website Assets</span>
+        </button>
+
+        <button class="nav-item" data-section="image-library">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>Image Library</span>
         </button>
 
         <button class="nav-item" data-section="contact-editor">
@@ -203,10 +228,19 @@
         <!-- ==================== 1. OVERVIEW SECTION ==================== -->
         <section class="admin-section active" id="sec-overview">
 
-          <!-- Welcome Banner -->
-          <div class="welcome-header">
-            <h1>Welcome back 👋</h1>
-            <p>Here's what's happening with your club today.</p>
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-purple">
+                  <span class="material-symbols-outlined">dashboard</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Welcome back, Administrator 👋</h2>
+                  <div class="card-subtitle">Here's a quick look at your club metrics and operations today.</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Key Metric Stats Cards -->
@@ -286,13 +320,13 @@
           </div>
 
           <!-- Overview Content Grid (2 Columns) -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;"
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem; align-items: start;"
             class="overview-split-grid">
 
             <!-- Left: Recent Contact Inquiries -->
-            <div class="card" style="margin-bottom: 0 !important;">
+            <div class="card" style="margin-bottom: 0 !important; display: flex; flex-direction: column;">
               <div class="card-header"
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0 !important;">
                 <div>
                   <h3 class="card-title"
                     style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 0.15rem;">Recent Contact
@@ -304,15 +338,15 @@
                   style="font-size: 0.775rem; font-weight: 700; color: #10b981;">View All ↗</button>
               </div>
               <div class="card-body" id="overview-recent-leads"
-                style="display: flex; flex-direction: column; gap: 0.65rem; min-height: 180px;">
+                style="padding: 0.85rem 1.5rem 1.25rem 1.5rem !important; display: flex !important; flex-direction: column !important; gap: 0.65rem !important; justify-content: flex-start !important; align-items: stretch !important; align-content: flex-start !important;">
                 <!-- Rendered dynamically -->
               </div>
             </div>
 
             <!-- Right: Squad Roster Preview -->
-            <div class="card" style="margin-bottom: 0 !important;">
+            <div class="card" style="margin-bottom: 0 !important; display: flex; flex-direction: column;">
               <div class="card-header"
-                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0 !important;">
                 <div>
                   <h3 class="card-title"
                     style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin-bottom: 0.15rem;">Squad Overview
@@ -324,7 +358,7 @@
                   style="font-size: 0.775rem; font-weight: 700; color: #10b981;">View Squad ↗</button>
               </div>
               <div class="card-body" id="overview-squad-preview"
-                style="display: flex; flex-direction: column; gap: 0.65rem; min-height: 180px;">
+                style="padding: 0.85rem 1.5rem 1.25rem 1.5rem !important; display: flex !important; flex-direction: column !important; gap: 0.65rem !important; justify-content: flex-start !important; align-items: stretch !important; align-content: flex-start !important;">
                 <!-- Rendered dynamically -->
               </div>
             </div>
@@ -335,25 +369,67 @@
 
         <!-- ==================== 2. CONTACT SUBMISSIONS SECTION ==================== -->
         <section class="admin-section" id="sec-leads">
-          <div class="card">
+
+          <!-- Header Card -->
+          <div class="card section-header-card">
             <div class="card-header">
-              <h2 class="card-title">Received Contact Form Submissions</h2>
-              <button class="btn btn-primary btn-sm"
-                onclick="loadDashboardData(); showAdminToast('Refreshed submissions list.');">
-                <span>Refresh List</span>
-              </button>
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-purple">
+                  <span class="material-symbols-outlined">mail</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Contact Submissions</h2>
+                  <div class="card-subtitle">Manage customer inquiries, messages, and contact form leads.</div>
+                </div>
+              </div>
+              <div class="header-actions-container">
+                <button class="btn btn-primary btn-sm" onclick="fetchLeads(); showAdminToast('Refreshed submissions list.');" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+                  <span>Refresh List</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #6366f1; font-size: 20px;">list_alt</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Received Contact Form Submissions</h3>
+              </div>
+
+              <!-- Filter Tabs & Search Bar -->
+              <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 6px; background: #f1f5f9; padding: 4px; border-radius: 24px; border: 1px solid #e2e8f0;">
+                  <button type="button" class="lead-filter-btn active" id="btn-filter-all" onclick="setLeadFilter('all')">
+                    All <span id="cnt-leads-all" style="font-weight: 800; font-size: 0.75rem;">(0)</span>
+                  </button>
+                  <button type="button" class="lead-filter-btn" id="btn-filter-unread" onclick="setLeadFilter('unread')">
+                    <span class="unread-pulse-dot" style="display: inline-block;"></span> Unread <span id="cnt-leads-unread" style="font-weight: 800; font-size: 0.75rem;">(0)</span>
+                  </button>
+                  <button type="button" class="lead-filter-btn" id="btn-filter-read" onclick="setLeadFilter('read')">
+                    Read <span id="cnt-leads-read" style="font-weight: 800; font-size: 0.75rem;">(0)</span>
+                  </button>
+                </div>
+
+                <div style="position: relative; width: 210px; display: inline-flex; align-items: center;">
+                  <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 18px; color: #94a3b8; pointer-events: none; z-index: 2;">search</span>
+                  <input type="text" id="lead-search-input" class="field-input lead-search-box-input" placeholder="Search inquiries..." oninput="handleLeadSearch(this.value)" />
+                </div>
+              </div>
             </div>
 
             <div class="table-wrap">
               <table class="data-table">
                 <thead>
                   <tr>
+                    <th style="width: 50px;">Sl No</th>
                     <th>Sender Name</th>
                     <th>Contact Info</th>
-                    <th>Subject</th>
+                    <th>Subject / Topic</th>
                     <th>Status</th>
                     <th>Date</th>
-                    <th>Actions</th>
+                    <th style="text-align: right; padding-right: 1.5rem;">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="leads-tbody">
@@ -366,10 +442,34 @@
 
         <!-- ==================== 3. LIVE SCOREBOARD & STUMPS SYNC SECTION ==================== -->
         <section class="admin-section" id="sec-fixtures">
+
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-emerald">
+                  <span class="material-symbols-outlined">sports_cricket</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Live Scoreboard & Stumps Sync</h2>
+                  <div class="card-subtitle">Synchronize live matches with CricHeroes/Stumps and update live scoreboard.</div>
+                </div>
+              </div>
+              <div class="header-actions-container">
+                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25); font-weight: 700; padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                  Live Website Sync
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">
-              <h2 class="card-title">Live Match Scoreboard & Stumps / CricHeroes Sync</h2>
-              <span class="badge-status badge-read">Live Website Sync</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #059669; font-size: 20px;">edit_square</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Match Scoreboard & CricHeroes Sync</h3>
+              </div>
             </div>
 
             <form onsubmit="saveLiveScore(event)">
@@ -506,8 +606,12 @@
 
           <div class="card" style="margin-top:1.25rem;">
             <div class="card-header">
-              <h2 class="card-title">Fixtures & Past Matches</h2>
-              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-upcoming')">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #059669; font-size: 20px;">calendar_month</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Fixtures & Past Matches</h3>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-upcoming')" style="display: inline-flex; align-items: center; gap: 6px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
                 <span>Add Upcoming Match</span>
               </button>
             </div>
@@ -531,18 +635,41 @@
 
         <!-- ==================== 4. SQUAD SECTION ==================== -->
         <section class="admin-section" id="sec-squad">
+
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-blue">
+                  <span class="material-symbols-outlined">groups</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Squad & Players</h2>
+                  <div class="card-subtitle">Manage squad roster, active player profiles, categories, and bio details.</div>
+                </div>
+              </div>
+              <div class="header-actions-container">
+                <button class="btn btn-primary" onclick="openAddPlayerModal()">
+                  <span class="material-symbols-outlined">person_add</span>
+                  <span>Add New Player</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">
-              <h2 class="card-title">Squad Roster & Player Profiles</h2>
-              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-player')">
-                <span>Add New Player</span>
-              </button>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #2563eb; font-size: 20px;">badge</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Squad Roster & Player Profiles</h3>
+              </div>
             </div>
 
             <div class="table-wrap">
               <table class="data-table">
                 <thead>
                   <tr>
+                    <th style="width: 60px;">Sl No</th>
                     <th>Player</th>
                     <th>Role / Position</th>
                     <th>Experience</th>
@@ -560,12 +687,34 @@
 
         <!-- ==================== 5. BLOGS SECTION ==================== -->
         <section class="admin-section" id="sec-blogs">
+
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-amber">
+                  <span class="material-symbols-outlined">newspaper</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Blogs & News</h2>
+                  <div class="card-subtitle">Publish coaching articles, match recaps, club news, and announcements.</div>
+                </div>
+              </div>
+              <div class="header-actions-container">
+                <button class="btn btn-primary" onclick="openAdminModal('modal-add-blog')">
+                  <span class="material-symbols-outlined">post_add</span>
+                  <span>Publish New Article</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">
-              <h2 class="card-title">Published Articles & News</h2>
-              <button class="btn btn-primary btn-sm" onclick="openAdminModal('modal-add-blog')">
-                <span>Publish New Article</span>
-              </button>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #d97706; font-size: 20px;">article</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Published Articles & News</h3>
+              </div>
             </div>
 
             <div class="table-wrap">
@@ -587,53 +736,463 @@
           </div>
         </section>
 
-        <!-- ==================== 6. SETTINGS SECTION ==================== -->
+        <!-- ==================== 6. SETTINGS SECTION (SECURITY & ACCESS CONTROLS) ==================== -->
         <section class="admin-section" id="sec-settings">
-          <div class="card">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
             <div class="card-header">
-              <h2 class="card-title">Admin Security & Password Manager</h2>
-            </div>
-
-            <form onsubmit="saveAdminCredentials(event)">
-              <div
-                style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
-                <div class="form-group">
-                  <label class="field-label" for="settings-username">Admin Username</label>
-                  <input type="text" id="settings-username" class="field-input" required />
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-emerald">
+                  <span class="material-symbols-outlined">security</span>
                 </div>
-                <div class="form-group">
-                  <label class="field-label" for="settings-new-password">New Password</label>
-                  <input type="password" id="settings-new-password" class="field-input" placeholder="Enter new password"
-                    required />
-                </div>
-                <div class="form-group">
-                  <label class="field-label" for="settings-confirm-password">Confirm Password</label>
-                  <input type="password" id="settings-confirm-password" class="field-input"
-                    placeholder="Confirm password" required />
+                <div>
+                  <h2 class="card-title">Security Settings</h2>
+                  <div class="card-subtitle">Manage administrative password credentials and session timeout policies.</div>
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary">
-                <span>Save New Credentials</span>
-              </button>
-            </form>
+              <div class="header-actions-container">
+                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.25); font-weight: 700; padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 6px;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                  SSL Active
+                </span>
+                <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.25); font-weight: 700; padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 6px;">
+                  <span class="material-symbols-outlined" style="font-size: 14px;">verified_user</span>
+                  Super Admin
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Card 1: Admin Account Credentials -->
+            <div class="card">
+              <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="material-symbols-outlined" style="color: #059669; font-size: 20px;">key</span>
+                  <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Account Credentials</h3>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <form onsubmit="saveAdminCredentials(event)">
+                  <!-- Explicit 2-column Grid on Desktop -->
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;" class="responsive-2col-grid">
+                    
+                    <!-- Current Password -->
+                    <div class="form-group">
+                      <label class="field-label" for="settings-current-password">Current Password <span class="required" style="color:#ef4444;">*</span></label>
+                      <div style="position: relative;">
+                        <input type="password" id="settings-current-password" class="field-input" placeholder="Enter current password" style="padding-right: 40px;" required />
+                        <button type="button" onclick="togglePasswordVisibility('settings-current-password', 'eye-curr')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 4px; display: flex; align-items: center;" aria-label="Toggle password visibility">
+                          <span class="material-symbols-outlined" id="eye-curr" style="font-size: 18px;">visibility</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Admin Username -->
+                    <div class="form-group">
+                      <label class="field-label" for="settings-username">Admin Username <span class="required" style="color:#ef4444;">*</span></label>
+                      <input type="text" id="settings-username" class="field-input" placeholder="Username / Email" required />
+                    </div>
+
+                    <!-- New Password -->
+                    <div class="form-group">
+                      <label class="field-label" for="settings-new-password">New Password <span class="required" style="color:#ef4444;">*</span></label>
+                      <div style="position: relative;">
+                        <input type="password" id="settings-new-password" class="field-input" placeholder="Enter new password" oninput="checkPasswordStrength(this.value)" style="padding-right: 40px;" required />
+                        <button type="button" onclick="togglePasswordVisibility('settings-new-password', 'eye-new')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 4px; display: flex; align-items: center;" aria-label="Toggle password visibility">
+                          <span class="material-symbols-outlined" id="eye-new" style="font-size: 18px;">visibility</span>
+                        </button>
+                      </div>
+                      <div style="margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <div style="flex: 1; height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden;">
+                          <div id="pwd-strength-bar" style="width: 0%; height: 100%; background: #ef4444; transition: width 0.3s ease, background 0.3s ease;"></div>
+                        </div>
+                        <span id="pwd-strength-label" style="font-size: 0.72rem; font-weight: 700; color: #94a3b8; min-width: 65px; text-align: right;">Strength</span>
+                      </div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group">
+                      <label class="field-label" for="settings-confirm-password">Confirm Password <span class="required" style="color:#ef4444;">*</span></label>
+                      <div style="position: relative;">
+                        <input type="password" id="settings-confirm-password" class="field-input" placeholder="Confirm new password" oninput="checkPasswordMatch()" style="padding-right: 40px;" required />
+                        <button type="button" onclick="togglePasswordVisibility('settings-confirm-password', 'eye-conf')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #64748b; padding: 4px; display: flex; align-items: center;" aria-label="Toggle password visibility">
+                          <span class="material-symbols-outlined" id="eye-conf" style="font-size: 18px;">visibility</span>
+                        </button>
+                      </div>
+                      <div id="pwd-match-msg" style="font-size: 0.75rem; font-weight: 600; margin-top: 4px; min-height: 16px;"></div>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 1rem;">
+                    <button type="button" class="btn btn-ghost" onclick="resetPasswordForm()">Reset</button>
+                    <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+                      <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                      <span>Save Credentials</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Card 2: Session Security Controls -->
+            <div class="card">
+              <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="material-symbols-outlined" style="color: #2563eb; font-size: 20px;">shield</span>
+                  <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Session Security Controls</h3>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div style="display: flex; flex-direction: column;">
+                  
+                  <!-- Row 1: Session Timeout -->
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(217, 119, 6, 0.1); color: #d97706; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">timer</span>
+                      </div>
+                      <div>
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a;">Inactivity Auto-Logout</div>
+                        <div style="font-size: 0.78rem; color: #64748b;">Automatically log out idle admin sessions</div>
+                      </div>
+                    </div>
+                    <select id="sec-session-timeout" class="field-select" style="width: auto; min-width: 120px; font-weight: 600;" onchange="saveSessionSecurity()">
+                      <option value="15">15 Minutes</option>
+                      <option value="30" selected>30 Minutes</option>
+                      <option value="60">1 Hour</option>
+                      <option value="240">4 Hours</option>
+                    </select>
+                  </div>
+
+                  <!-- Row 2: Single Device Policy -->
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0; border-bottom: 1px solid #f1f5f9; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(99, 102, 241, 0.1); color: #6366f1; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="color: #6366f1; font-size: 20px;">devices_other</span>
+                      </div>
+                      <div>
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a;">Single Active Session Policy</div>
+                        <div style="font-size: 0.78rem; color: #64748b;">Force log out older sessions on new device sign-in</div>
+                      </div>
+                    </div>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="sec-single-session" checked onchange="saveSessionSecurity()">
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <!-- Row 3: Active Device Session -->
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 0 0.2rem 0; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                      <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(5, 150, 105, 0.1); color: #059669; display: flex; align-items: center; justify-content: center;">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">laptop_windows</span>
+                      </div>
+                      <div>
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a;">Active Session (This Device)</div>
+                        <div style="font-size: 0.78rem; color: #64748b;">Windows • Chrome • IP: 127.0.0.1</div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-ghost" onclick="revokeAllSessions()" style="color: #dc2626; border: 1px solid #fca5a5; font-weight: 700; font-size: 0.82rem; padding: 6px 14px;">
+                      <span class="material-symbols-outlined" style="font-size: 16px;">no_accounts</span> Revoke Other Sessions
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================== SOCIAL MEDIA LINKS SECTION ==================== -->
+        <section class="admin-section" id="sec-social-media">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-blue">
+                  <span class="material-symbols-outlined">share</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Social Media Profiles & Channels</h2>
+                  <div class="card-subtitle">Connect and configure official links for Facebook, Instagram, Threads, and YouTube.</div>
+                </div>
+              </div>
+
+              <div class="header-actions-container">
+                <button type="button" class="btn btn-ghost" onclick="loadSocialMediaSettings()">Reset</button>
+                <button type="button" class="btn btn-primary save-socials-btn" onclick="saveSocialMediaSettings()" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                  <span>Save Links</span>
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="addSocialPlatform()" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                  <span>Add Platform</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <!-- Card: Profiles Configuration -->
+            <div class="card">
+              <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="material-symbols-outlined" style="color: #059669; font-size: 20px;">link</span>
+                  <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Profiles Configuration</h3>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <div id="socialsContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+                  <!-- Loaded dynamically by admin.js -->
+                </div>
+
+                <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 1.25rem; margin-top: 1.5rem;">
+                  <button type="button" class="btn btn-ghost" onclick="loadSocialMediaSettings()">Reset</button>
+                  <button type="button" class="btn btn-primary save-socials-btn" id="saveSocialsBtn" onclick="saveSocialMediaSettings()" style="display: inline-flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                    <span>Save Social Links</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+
+        <!-- ==================== CONTACT FORM EDITOR SECTION ==================== -->
+        <section class="admin-section" id="sec-contact-editor">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-purple">
+                  <span class="material-symbols-outlined">edit_note</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Contact Form Editor</h2>
+                  <div class="card-subtitle">Customize public form inquiry categories, services options, and fields settings.</div>
+                </div>
+              </div>
+
+              <div class="header-actions-container">
+                <a href="../contact.html" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #6366f1; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 6px; padding: 6px 12px; background: rgba(99, 102, 241, 0.05);">
+                  <span>View Public Form</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <div class="card">
+              <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="material-symbols-outlined" style="color: #6366f1; font-size: 20px;">tune</span>
+                  <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Form Fields & Options Customization</h3>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <form id="contactFormSettingsForm" onsubmit="saveContactFormSettings(event)">
+                  
+                  <!-- Section 1: Fields Visibility -->
+                  <div style="margin-bottom: 1.5rem;">
+                    <div style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; margin-bottom: 0.75rem;">Form Fields Visibility</div>
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                      <div>
+                        <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a;">Show Mobile / Phone Number Field</div>
+                        <div style="font-size: 0.78rem; color: #64748b;">Include a mobile phone number field in the customer contact form</div>
+                      </div>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="formMobileShow" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div style="border-top: 1px solid #f1f5f9; padding-top: 1.25rem; margin-top: 1.5rem;">
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                      <div>
+                        <div style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em;">Service / Inquiry Dropdown Options</div>
+                        <div style="font-size: 0.78rem; color: #94a3b8;">Options shown in "Subject / Interest Area" dropdown</div>
+                      </div>
+                      <button type="button" class="btn btn-ghost btn-sm" onclick="addNewFormServiceOption()" style="display: inline-flex; align-items: center; gap: 4px; border: 1px solid #e2e8f0; font-weight: 700; color: #6366f1;">
+                        <span class="material-symbols-outlined" style="font-size: 16px;">add</span> Add Option
+                      </button>
+                    </div>
+
+                    <div id="formServicesListContainer" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                      <!-- Loaded dynamically by admin.js -->
+                    </div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-ghost" onclick="loadContactFormSettings()">Reset</button>
+                    <button type="submit" class="btn btn-primary" id="saveContactFormSettingsBtn" style="display: inline-flex; align-items: center; gap: 6px;">
+                      <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                      <span>Save Form Settings</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================== MAPS & LOCATION SECTION ==================== -->
+        <section class="admin-section" id="sec-maps-location">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-emerald" style="background: rgba(5, 150, 105, 0.1); color: #059669;">
+                  <span class="material-symbols-outlined">map</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Maps & Location Settings</h2>
+                  <div class="card-subtitle">Configure ground address, GPS coordinates, Google Maps URL, directions button, and toggle map visibility site-wide.</div>
+                </div>
+              </div>
+
+              <div class="header-actions-container">
+                <a href="../contact.html" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #059669; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(5, 150, 105, 0.25); border-radius: 6px; padding: 6px 12px; background: rgba(5, 150, 105, 0.05);">
+                  <span>View Public Map</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <div class="card">
+              <form id="contactMapSettingsForm" onsubmit="saveContactMapSettings(event)">
+                <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="material-symbols-outlined" style="color: #059669; font-size: 22px;">location_on</span>
+                    <div>
+                      <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Interactive Location Map & Ground Details</h3>
+                      <div class="card-subtitle" style="font-size: 0.82rem; color: #64748b;">Control map display status across all website pages and customize pin location data.</div>
+                    </div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 12px; background: #f8fafc; padding: 8px 16px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                    <span style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">Show Interactive Map on Site</span>
+                    <label class="toggle-switch" aria-label="Toggle location map display">
+                      <input type="checkbox" id="contactShowMap" checked>
+                      <span class="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;" class="responsive-2col-grid">
+                    <div class="form-group">
+                      <label class="field-label" for="contactAddress">Ground / Facility Address</label>
+                      <input class="field-input" type="text" id="contactAddress" placeholder="e.g. Champions Cricket Ground, High Way, Sisua, Odisha 754202" required />
+                      <span class="field-hint">Physical stadium or academy ground address.</span>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="field-label" for="contactMarkerLabel">Map Marker Title</label>
+                      <input class="field-input" type="text" id="contactMarkerLabel" placeholder="e.g. Champions Cricket Club HQ" required />
+                      <span class="field-hint">Label shown above the location map pin.</span>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;" class="responsive-2col-grid">
+                    <div class="form-group">
+                      <label class="field-label" for="contactCoords">GPS Coordinates (Latitude, Longitude)</label>
+                      <input class="field-input" type="text" id="contactCoords" placeholder="e.g. 20.4831593, 86.0763922" required />
+                      <span class="field-hint">Latitude and Longitude for map centering.</span>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="field-label" for="contactMapLink">Google Maps Embed URL / Share Link / Directions Link</label>
+                      <input class="field-input" type="text" id="contactMapLink" placeholder="e.g. https://www.google.com/maps/embed?... or Share link" />
+                      <span class="field-hint">Direct link, embed URL, or full iframe code snippet for Google Maps.</span>
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;" class="responsive-2col-grid">
+                    <div class="form-group">
+                      <label class="field-label" for="contactZoom">Map Zoom Level (1-20)</label>
+                      <input class="field-input" type="number" id="contactZoom" placeholder="14" min="1" max="20" value="14" />
+                      <span class="field-hint">Default zoom level (e.g. 14 for neighborhood view).</span>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="field-label" for="contactEmail">Public Contact Email</label>
+                      <input class="field-input" type="email" id="contactEmail" placeholder="info@championscricketclub.com" required />
+                    </div>
+
+                    <div class="form-group">
+                      <label class="field-label" for="contactPhone">Public Phone Number</label>
+                      <input class="field-input" type="text" id="contactPhone" placeholder="+91 8018977085" required />
+                    </div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-ghost" onclick="loadContactMapSettings()">Reset</button>
+                    <button type="submit" class="btn btn-primary" id="saveContactMapBtn" style="display: inline-flex; align-items: center; gap: 6px; background: #059669; border-color: #059669;">
+                      <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                      <span>Save Maps & Location Settings</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+
           </div>
         </section>
 
         <!-- ==================== OPERATIONAL / SYSTEM SETTINGS SECTION ==================== -->
         <section class="admin-section" id="sec-system-settings">
-          <div class="card">
-            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <h2 class="card-title" style="font-size: 1.35rem; font-weight: 800; color: #0f172a;">General & Operational Settings</h2>
-                <div class="card-subtitle" style="font-size: 0.875rem; color: #64748b;">Manage website branding, live deployment status, maintenance controls, and SEO metadata</div>
-              </div>
-              <a href="../index.html" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #10b981; display: inline-flex; align-items: center; gap: 4px;">
-                <span>Visit Website</span>
-                <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
-              </a>
-            </div>
 
+          <!-- Header Card -->
+          <div class="card section-header-card">
+            <div class="card-header">
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-purple">
+                  <span class="material-symbols-outlined">settings</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Operational Settings</h2>
+                  <div class="card-subtitle">Manage website branding, live deployment status, maintenance controls, and SEO metadata.</div>
+                </div>
+              </div>
+              <div class="header-actions-container">
+                <a href="../index.html" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #6366f1; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 6px; padding: 6px 12px; background: rgba(99, 102, 241, 0.05);">
+                  <span>Visit Website</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #6366f1; font-size: 20px;">tune</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Configuration & Operational Parameters</h3>
+              </div>
+            </div>
             <div class="card-body">
               <form id="operationalSettingsForm" onsubmit="saveOperationalSettings(event)">
 
@@ -791,10 +1350,21 @@
 
         <!-- ==================== 7. PROMOTIONAL BAR & POPUP SECTION ==================== -->
         <section class="admin-section" id="sec-promotional-bar">
-          <div class="card">
+
+          <!-- Header Card -->
+          <div class="card section-header-card">
             <div class="card-header">
-              <h2 class="card-title">Promotional Bar & Popup Content</h2>
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-amber">
+                  <span class="material-symbols-outlined">campaign</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Promotional Bar & Popup</h2>
+                  <div class="card-subtitle">Configure announcement banner messaging, button links, and popup banners.</div>
+                </div>
+              </div>
             </div>
+          </div>
 
             <div class="card"
               style="margin-bottom: var(--space-6); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
@@ -879,9 +1449,15 @@
                     style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
                     <div class="field-group">
                       <label class="field-label" style="display:block; margin-bottom:0.25rem;">Desktop Image URL</label>
-                      <input class="form-control" type="text" id="popupDesktopImageUrl"
-                        placeholder="https://example.com/image.jpg"
-                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <div style="display:flex; gap:0.5rem;">
+                        <input class="form-control" type="text" id="popupDesktopImageUrl"
+                          placeholder="https://example.com/image.jpg"
+                          style="flex:1; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                        <input type="file" id="popupDesktopFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'popupDesktopImageUrl', 'popupDesktopPreview')">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('popupDesktopFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                          <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                        </button>
+                      </div>
                       <div style="margin-top: 10px;">
                         <img id="popupDesktopPreview" src="" alt="Desktop Preview"
                           style="max-width: 100%; max-height: 200px; display: none; border-radius: 8px; border: 1px solid #ccc;">
@@ -891,9 +1467,15 @@
                     </div>
                     <div class="field-group">
                       <label class="field-label" style="display:block; margin-bottom:0.25rem;">Mobile Image URL</label>
-                      <input class="form-control" type="text" id="popupMobileImageUrl"
-                        placeholder="https://example.com/image-mobile.jpg"
-                        style="width:100%; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                      <div style="display:flex; gap:0.5rem;">
+                        <input class="form-control" type="text" id="popupMobileImageUrl"
+                          placeholder="https://example.com/image-mobile.jpg"
+                          style="flex:1; padding:0.5rem; border-radius:4px; border:1px solid #ccc;">
+                        <input type="file" id="popupMobileFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'popupMobileImageUrl', 'popupMobilePreview')">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('popupMobileFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                          <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                        </button>
+                      </div>
                       <div style="margin-top: 10px;">
                         <img id="popupMobilePreview" src="" alt="Mobile Preview"
                           style="max-width: 100%; max-height: 200px; display: none; border-radius: 8px; border: 1px solid #ccc;">
@@ -920,145 +1502,547 @@
               </div>
             </div>
 
-          </div>
         </section>
 
-        <!-- ==================== 8. MEDIA & GALLERY SECTION ==================== -->
+        <!-- ==================== MEDIA & GALLERY SECTION ==================== -->
         <section class="admin-section" id="sec-media-gallery">
-          <div class="card">
-            <div class="card-header">
-              <h2 class="card-title">Media & Video Gallery</h2>
+          
+          <!-- Header Card -->
+          <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 42px; height: 42px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #059669; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <span class="material-symbols-outlined" style="font-size: 24px;">collections</span>
+                </div>
+                <div>
+                  <h2 class="card-title" style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 0;">Visual Moments — Photo & Video Gallery</h2>
+                  <div class="card-subtitle" style="font-size: 0.85rem; color: #64748b;">Manage photos, video clips, net practice highlights, and tournament media</div>
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <a href="../index.html#gallery" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #059669; display: inline-flex; align-items: center; gap: 4px;">
+                  <span>View Live Gallery</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
+                </a>
+                <button type="button" class="btn btn-primary" onclick="openAdminModal('modal-add-gallery')" style="display: inline-flex; align-items: center; gap: 6px;">
+                  <span class="material-symbols-outlined" style="font-size: 18px;">add_photo_alternate</span>
+                  <span>+ Add New Media</span>
+                </button>
+              </div>
             </div>
-            <p style="color:var(--text-secondary);">Placeholder for managing photo and video gallery.</p>
           </div>
+
+          <!-- Media Table Card -->
+          <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #059669; font-size: 20px;">photo_library</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">All Uploaded Gallery Assets</h3>
+              </div>
+              
+              <button class="btn btn-ghost btn-sm" onclick="fetchGallery()" title="Refresh Gallery" style="font-size: 0.8rem; color: #64748b; display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 80px;">Preview</th>
+                    <th>Media Title</th>
+                    <th>Type</th>
+                    <th>Category</th>
+                    <th>Added Date</th>
+                    <th style="text-align: right;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tbl-gallery-body">
+                  <!-- Loaded dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </section>
 
-        <!-- ==================== 9. WEBSITE ASSETS SECTION ==================== -->
+        <!-- ==================== WEBSITE ASSETS / IMAGE LIBRARY SECTION ==================== -->
         <section class="admin-section" id="sec-content-photos">
-          <div class="card">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
             <div class="card-header">
-              <h2 class="card-title">Website Content & Photos</h2>
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-blue">
+                  <span class="material-symbols-outlined">photo_library</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Website Assets & Image Library</h2>
+                  <div class="card-subtitle">Manage section background images, main hero banners, and "A Community United by Cricket" images.</div>
+                </div>
+              </div>
+
+              <div class="header-actions-container">
+                <a href="../index.html#about" target="_blank" class="btn btn-ghost btn-sm" style="font-size: 0.85rem; font-weight: 700; color: #3b82f6; display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 6px; padding: 6px 12px; background: rgba(59, 130, 246, 0.05);">
+                  <span>View About Section</span>
+                  <span class="material-symbols-outlined" style="font-size: 18px;">open_in_new</span>
+                </a>
+              </div>
             </div>
-            <p style="color:var(--text-secondary);">Placeholder for managing general website copy and images.</p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            
+            <div class="card">
+              <div class="card-header">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <span class="material-symbols-outlined" style="color: #3b82f6; font-size: 20px;">tune</span>
+                  <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Section Media & Assets Editor</h3>
+                </div>
+              </div>
+
+              <div class="card-body">
+                <form id="mediaAssetsForm" onsubmit="saveMediaAssetsSettings(event)">
+                  
+                  <!-- Select Section -->
+                  <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label class="field-label" for="mediaSectionSelect">Select Website Section to Configure</label>
+                    <select class="field-select" id="mediaSectionSelect" onchange="onMediaSectionChange()">
+                      <option value="about_community" selected>About Champions CC — A Community United by Cricket</option>
+                      <option value="hero_section">Hero Banner & Main Welcome Section</option>
+                      <option value="academy_section">Cricket Academy & Training Nets</option>
+                    </select>
+                  </div>
+
+                  <!-- Image Preview Grid -->
+                  <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;" class="responsive-2col-grid">
+                    
+                    <!-- Main Action Image -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                      <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.5rem;">Main Action Image</div>
+                      <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 1rem;">Primary visual image for this section</div>
+                      
+                      <div style="width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #e2e8f0; margin-bottom: 1rem; border: 1px solid #cbd5e1;">
+                        <img id="mediaMainPreview" src="https://images.unsplash.com/photo-1565787154274-c8d076ad34e7?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" alt="Main Action Image" style="width: 100%; height: 100%; object-fit: cover;" />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="field-label" for="mediaMainImageUrl">Main Image URL</label>
+                        <div style="display:flex; gap:0.5rem;">
+                          <input class="field-input" type="url" id="mediaMainImageUrl" placeholder="https://..." oninput="updateMediaPreviews()" style="flex:1;" required />
+                          <input type="file" id="mediaMainFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'mediaMainImageUrl', 'mediaMainPreview')">
+                          <button type="button" class="btn btn-secondary" onclick="document.getElementById('mediaMainFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                            <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Secondary / Badge Image -->
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;">
+                      <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.5rem;">Secondary / Celebration Badge Image</div>
+                      <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 1rem;">Overlay badge thumbnail (e.g. Cricket celebration)</div>
+                      
+                      <div style="width: 100%; height: 160px; border-radius: 8px; overflow: hidden; background: #e2e8f0; margin-bottom: 1rem; border: 1px solid #cbd5e1;">
+                        <img id="mediaSubPreview" src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?crop=entropy&cs=srgb&fm=jpg&q=85&w=600" alt="Secondary Image" style="width: 100%; height: 100%; object-fit: cover;" />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="field-label" for="mediaSubImageUrl">Secondary Image URL</label>
+                        <div style="display:flex; gap:0.5rem;">
+                          <input class="field-input" type="url" id="mediaSubImageUrl" placeholder="https://..." oninput="updateMediaPreviews()" style="flex:1;" />
+                          <input type="file" id="mediaSubFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'mediaSubImageUrl', 'mediaSubPreview')">
+                          <button type="button" class="btn btn-secondary" onclick="document.getElementById('mediaSubFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                            <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Video Embed & Controls -->
+                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                    <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.5rem;">Optional Video Embed Settings</div>
+                    <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 1rem;">Replace or combine static images with YouTube videos or direct MP4 clips</div>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1rem;" class="responsive-2col-grid">
+                      <div class="form-group">
+                        <label class="field-label" for="mediaVideoUrl">YouTube / Video URL</label>
+                        <input class="field-input" type="url" id="mediaVideoUrl" placeholder="https://www.youtube.com/watch?v=..." />
+                      </div>
+
+                      <div class="form-group">
+                        <label class="field-label" for="mediaVideoType">Video Player Type</label>
+                        <select class="field-select" id="mediaVideoType">
+                          <option value="none">None (Images Only)</option>
+                          <option value="youtube">YouTube Embed</option>
+                          <option value="video">Direct MP4 Video Link</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
+                      <div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">Autoplay Video</div>
+                        <div style="font-size: 0.75rem; color: #64748b;">Automatically play video on page scroll</div>
+                      </div>
+                      <label class="toggle-switch" style="transform: scale(0.85);">
+                        <input type="checkbox" id="mediaAutoplay">
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 1rem; margin-top: 1.5rem;">
+                    <button type="button" class="btn btn-ghost" onclick="loadMediaAssetsSettings()">Reset</button>
+                    <button type="submit" class="btn btn-primary" id="saveMediaAssetsBtn" style="display: inline-flex; align-items: center; gap: 6px;">
+                      <span class="material-symbols-outlined" style="font-size: 18px;">save</span>
+                      <span>Save Section Assets</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+          </div>
           </div>
         </section>
 
-        <!-- ==================== 11. CONTACT FORM EDITOR ==================== -->
-        <section class="admin-section" id="sec-contact-editor">
-          <div class="card">
+        <!-- ==================== DEDICATED IMAGE LIBRARY SECTION ==================== -->
+        <section class="admin-section" id="sec-image-library">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
             <div class="card-header">
-              <h2 class="card-title">Contact Form Editor</h2>
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-blue">
+                  <span class="material-symbols-outlined">folder_special</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Image Library & Media Asset Storage</h2>
+                  <div class="card-subtitle">Upload, manage, and retrieve image URLs stored locally in backend /public/uploads/.</div>
+                </div>
+              </div>
+
+              <div class="header-actions-container">
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('dedicatedLibraryUploadInput').click()">
+                  <span class="material-symbols-outlined">cloud_upload</span>
+                  <span>Upload Image Assets</span>
+                </button>
+                <input type="file" id="dedicatedLibraryUploadInput" accept="image/*" style="display: none;" onchange="handleImageLibraryUpload(event)" multiple />
+              </div>
             </div>
-            <p style="color:var(--text-secondary);">Placeholder for editing contact form fields and routing.</p>
           </div>
+
+          <!-- Image Library Grid Card -->
+          <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #3b82f6; font-size: 20px;">grid_view</span>
+                <h3 class="card-title" style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">All Stored Media Files</h3>
+              </div>
+
+              <button class="btn btn-ghost btn-sm" onclick="fetchMediaLibrary()" title="Refresh Library" style="font-size: 0.8rem; color: #64748b; display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">refresh</span>
+                <span>Refresh</span>
+              </button>
+            </div>
+
+            <div class="card-body">
+              <div id="mediaLibraryGridContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem;">
+                <!-- Loaded dynamically by admin.js -->
+              </div>
+            </div>
+          </div>
+
         </section>
 
-        <!-- ==================== 12. MAPS & LOCATION ==================== -->
-        <section class="admin-section" id="sec-maps-location">
-          <div class="card">
+        <!-- ==================== MEDIA & GALLERY MANAGEMENT SECTION ==================== -->
+        <section class="admin-section" id="sec-media-gallery">
+          
+          <!-- Header Card -->
+          <div class="card section-header-card">
             <div class="card-header">
-              <h2 class="card-title">Maps & Location Configuration</h2>
-              <button class="modal-close" onclick="closeAdminModal('modal-lead')">✕</button>
-            </div>
-            <div class="modal-body" id="modal-lead-body"></div>
-            <div class="modal-footer">
-              <button class="btn btn-primary" style="width:auto; padding:0.5rem 1.25rem;"
-                onclick="closeAdminModal('modal-lead')">Close</button>
+              <div class="header-title-container">
+                <div class="header-icon-box icon-box-emerald">
+                  <span class="material-symbols-outlined">collections</span>
+                </div>
+                <div>
+                  <h2 class="card-title">Media & Gallery Management</h2>
+                  <div class="card-subtitle">Upload photos & videos, assign typable categories (Matches, Training, Events, Biometrics), and manage public website gallery.</div>
+                </div>
+              </div>
+
+              <div class="header-actions-container">
+                <button type="button" class="btn btn-primary" onclick="openAddGalleryModal()">
+                  <span class="material-symbols-outlined">add_circle</span>
+                  <span>+ Add New Gallery Media</span>
+                </button>
+              </div>
             </div>
           </div>
+
+          <!-- Gallery Filter & Search Card -->
+          <div class="card">
+            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;" id="galleryCategoryFilterContainer">
+                <button class="btn btn-ghost btn-sm active" onclick="filterAdminGallery('all', this)">All Media</button>
+              </div>
+
+              <div style="position: relative; width: 260px;">
+                <span class="material-symbols-outlined" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 18px; color: #94a3b8;">search</span>
+                <input type="text" class="field-input lead-search-box-input" placeholder="Search gallery..." oninput="handleGallerySearch(this.value)" />
+              </div>
+            </div>
+
+            <div class="card-body">
+              <div id="adminGalleryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;">
+                <!-- Dynamically populated by admin.js -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
       </div>
 
-      <!-- Modal 2: Add Player -->
+      <!-- Modal 2: Add / Edit Player -->
       <div class="modal-overlay" id="modal-add-player">
-        <div class="modal modal-lg">
-          <div class="modal-header">
-            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add New Player to Squad</h3>
+        <div class="modal modal-lg" style="max-width: 650px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+          <div class="modal-header" style="flex-shrink: 0; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+            <h3 id="player-modal-title" style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add New Player to Squad</h3>
             <button class="modal-close" onclick="closeAdminModal('modal-add-player')">✕</button>
           </div>
-          <form onsubmit="handleCreatePlayer(event)">
-            <div class="modal-body">
+          <form onsubmit="handleCreatePlayer(event)" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; margin: 0;">
+            <input type="hidden" id="edit-player-id" value="" />
+            <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem;">
               <div class="form-group">
-                <label class="field-label">Full Name</label>
+                <label class="field-label">Full Name <span class="required" style="color:red;">*</span></label>
                 <input type="text" id="new-player-name" class="field-input" placeholder="e.g. Vikram Singh" required />
               </div>
-              <div class="form-group">
-                <label class="field-label">Role Category</label>
-                <input type="text" id="new-player-category" class="field-input" placeholder="e.g. Batsman, Bowler, etc."
-                  required />
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                  <label class="field-label">Role Category <span class="required" style="color:red;">*</span></label>
+                  <input type="text" id="new-player-category" class="field-input" placeholder="e.g. batters, bowlers, allrounders, coaches" required />
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Display Role / Position <span class="required" style="color:red;">*</span></label>
+                  <input type="text" id="new-player-role" class="field-input" placeholder="e.g. Right-Hand All-Rounder, Vice Captain" required />
+                </div>
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                  <label class="field-label">Experience</label>
+                  <input type="text" id="new-player-experience" class="field-input" placeholder="e.g. 5 Years Pro, State Player" />
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Tenure</label>
+                  <input type="text" id="new-player-tenure" class="field-input" placeholder="e.g. Member for 3 Years" />
+                </div>
               </div>
               <div class="form-group">
-                <label class="field-label">Display Role</label>
-                <input type="text" id="new-player-role" class="field-input" placeholder="e.g. Right-Hand All-Rounder"
-                  required />
+                <label class="field-label">Bio & Achievements <span class="required" style="color:red;">*</span></label>
+                <input type="text" id="new-player-bio" class="field-input" placeholder="e.g. State-level all-rounder with strong middle-order runs." required />
               </div>
               <div class="form-group">
-                <label class="field-label">Experience & Bio</label>
-                <input type="text" id="new-player-bio" class="field-input"
-                  placeholder="e.g. State-level all-rounder with strong middle-order runs." required />
-              </div>
-              <div class="form-group">
-                <label class="field-label">Profile Image URL</label>
-                <input type="url" id="new-player-photo" class="field-input"
-                  value="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500"
-                  required />
+                <label class="field-label">Profile Image URL <span class="required" style="color:red;">*</span></label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="url" id="new-player-photo" class="field-input" value="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500" style="flex:1;" required />
+                  <input type="file" id="playerPhotoFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'new-player-photo')">
+                  <button type="button" class="btn btn-secondary" onclick="document.getElementById('playerPhotoFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                    <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="flex-shrink:0; background:#ffffff; border-top:1px solid #e2e8f0; padding:1rem 1.5rem; display:flex; justify-content:flex-end; gap:0.75rem; position:sticky; bottom:0; z-index:10;">
               <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-player')">Cancel</button>
-              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save
-                Player</button>
+              <button type="submit" id="player-submit-btn" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save Player Credentials</button>
             </div>
           </form>
         </div>
       </div>
 
-      <!-- Modal 3: Add Blog -->
+      <!-- Modal 3: Add / Edit Blog & News Article -->
       <div class="modal-overlay" id="modal-add-blog">
-        <div class="modal modal-md">
-          <div class="modal-header">
-            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Publish New Article</h3>
+        <div class="modal modal-lg" style="max-width:850px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; padding:0;">
+          <div class="modal-header" style="flex-shrink:0; padding:1.25rem 1.5rem; border-bottom:1px solid #e2e8f0; background:#ffffff;">
+            <h3 id="blog-modal-title" style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Publish New Article & News</h3>
             <button class="modal-close" onclick="closeAdminModal('modal-add-blog')">✕</button>
           </div>
-          <form onsubmit="handleCreateBlog(event)">
-            <div class="modal-body">
+          <form onsubmit="handleCreateOrUpdateBlog(event)" style="display:flex; flex-direction:column; flex:1; overflow:hidden; margin:0;">
+            <input type="hidden" id="edit-blog-id" value="" />
+            <div class="modal-body" style="flex:1; overflow-y:auto; padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+              
+              <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1rem;">
+                <div class="form-group">
+                  <label class="field-label">Article Title <span class="required" style="color:red;">*</span></label>
+                  <input type="text" id="new-blog-title" class="field-input"
+                    placeholder="e.g. How to Perfect Your Cover Drive: Biomechanics & Timing" required />
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Category (Type Manually) <span class="required" style="color:red;">*</span></label>
+                  <input type="text" id="new-blog-category" class="field-input"
+                    placeholder="e.g. Coaching Tips, Match Recaps..." required />
+                </div>
+              </div>
+
+              <!-- MS Word Style Rich Text Toolbar & Content Editor -->
               <div class="form-group">
-                <label class="field-label">Article Title</label>
-                <input type="text" id="new-blog-title" class="field-input"
-                  placeholder="e.g. Mastering Multi-Day Match Conditions" required />
+                <label class="field-label" style="display:flex; justify-content:space-between; align-items:center;">
+                  <span>Article Body / Excerpt (MS Word Rich Editor) <span class="required" style="color:red;">*</span></span>
+                  <span style="font-size:0.75rem; color:var(--text-muted);">Insert styled text, headings & wrapped images</span>
+                </label>
+                
+                <div class="editor-container">
+                  <!-- Toolbar -->
+                  <div class="editor-toolbar">
+                    <div class="editor-toolbar-group">
+                      <select onmousedown="event.stopPropagation();" onchange="formatDoc('formatBlock', this.value); this.selectedIndex=0;" class="editor-select" title="Headings">
+                        <option value="" disabled selected>Heading Format</option>
+                        <option value="h1">Heading 1</option>
+                        <option value="h2">Heading 2</option>
+                        <option value="h3">Heading 3</option>
+                        <option value="p">Paragraph</option>
+                        <option value="blockquote">Quote Block</option>
+                      </select>
+                    </div>
+
+                    <div class="editor-toolbar-group">
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('bold')" title="Bold (Ctrl+B)"><b>B</b></button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('italic')" title="Italic (Ctrl+I)"><i>I</i></button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('strikeThrough')" title="Strikethrough"><s>S</s></button>
+                    </div>
+
+                    <div class="editor-toolbar-group">
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('justifyLeft')" title="Align Left">
+                        <span class="material-symbols-outlined" style="font-size:18px;">format_align_left</span>
+                      </button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('justifyCenter')" title="Align Center">
+                        <span class="material-symbols-outlined" style="font-size:18px;">format_align_center</span>
+                      </button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('justifyRight')" title="Align Right">
+                        <span class="material-symbols-outlined" style="font-size:18px;">format_align_right</span>
+                      </button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('justifyFull')" title="Justify">
+                        <span class="material-symbols-outlined" style="font-size:18px;">format_align_justify</span>
+                      </button>
+                    </div>
+
+                    <div class="editor-toolbar-group">
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('insertUnorderedList')" title="Bullet List">
+                        <span class="material-symbols-outlined" style="font-size:18px;">format_list_bulleted</span>
+                      </button>
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" onclick="formatDoc('insertOrderedList')" title="Numbered List">
+                        <span class="material-symbols-outlined" style="font-size:18px;">format_list_numbered</span>
+                      </button>
+                    </div>
+
+                    <div class="editor-toolbar-group">
+                      <label style="font-size:0.75rem; font-weight:600; display:flex; align-items:center; gap:4px; color:#475569;" title="Text Color">
+                        <span>Color:</span>
+                        <input type="color" onchange="formatDoc('foreColor', this.value)" class="editor-color-picker" value="#0f172a" />
+                      </label>
+                    </div>
+
+                    <div class="editor-toolbar-group">
+                      <button type="button" class="editor-btn" onmousedown="event.preventDefault();" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0;" onclick="openEditorImageModal()" title="Insert Image with Resizing & Text Wrap">
+                        <span class="material-symbols-outlined" style="font-size:18px; margin-right:4px;">image</span>
+                        <span>+ Image</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Editable Canvas -->
+                  <div id="new-blog-editor" class="editor-content" contenteditable="true" data-placeholder="Write or paste your article contents here..."></div>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                  <label class="field-label">Author Name</label>
+                  <input type="text" id="new-blog-author" class="field-input" value="Coach Rahul Sharma" required />
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Thumbnail Image URL</label>
+                  <div style="display:flex; gap:0.5rem;">
+                    <input type="url" id="new-blog-image" class="field-input"
+                      value="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?crop=entropy&cs=srgb&fm=jpg&q=85&w=800"
+                      style="flex:1;" required />
+                    <input type="file" id="blogImageFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'new-blog-image')">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('blogImageFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                      <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Optional Video URL (YouTube Link)</label>
+                  <input type="text" id="new-blog-video" class="field-input"
+                    placeholder="e.g. https://www.youtube.com/watch?v=..." />
+                </div>
+              </div>
+
+            </div>
+            <div class="modal-footer" style="flex-shrink:0; background:#ffffff; border-top:1px solid #e2e8f0; padding:1rem 1.5rem; display:flex; justify-content:flex-end; gap:0.75rem; position:sticky; bottom:0; z-index:10;">
+              <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-blog')">Cancel</button>
+              <button type="submit" id="blog-submit-btn" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Publish Article</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Helper Modal: Insert Image with Resize & Wrap Controls into Editor -->
+      <div class="modal-overlay" id="modal-insert-editor-image" style="z-index: 100050;">
+        <div class="modal modal-md">
+          <div class="modal-header">
+            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Insert & Format Image</h3>
+            <button class="modal-close" onclick="closeAdminModal('modal-insert-editor-image')">✕</button>
+          </div>
+          <form onsubmit="handleInsertEditorImage(event)">
+            <div class="modal-body" style="display:flex; flex-direction:column; gap:1rem;">
+              <div class="form-group">
+                <label class="field-label">Image Source URL <span class="required" style="color:red;">*</span></label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="url" id="editor-img-url" class="field-input" placeholder="https://images.unsplash.com/..." style="flex:1;" required />
+                  <input type="file" id="editorImgFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'editor-img-url')">
+                  <button type="button" class="btn btn-secondary" onclick="document.getElementById('editorImgFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                    <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                  </button>
+                </div>
               </div>
               <div class="form-group">
-                <label class="field-label">Category</label>
-                <select id="new-blog-category" class="field-select">
-                  <option value="coaching">Coaching Tips</option>
-                  <option value="tactics">Match Tactics</option>
-                  <option value="fitness">Fitness & Biomechanics</option>
-                  <option value="news">Club News</option>
+                <label class="field-label">Image Width / Size</label>
+                <select id="editor-img-width" class="field-select">
+                  <option value="img-w-50">Medium (50% Width)</option>
+                  <option value="img-w-25">Small (25% Width)</option>
+                  <option value="img-w-75">Large (75% Width)</option>
+                  <option value="img-w-100">Full Width (100%)</option>
                 </select>
               </div>
               <div class="form-group">
-                <label class="field-label">Article Excerpt</label>
-                <textarea id="new-blog-excerpt" class="field-textarea" placeholder="Brief summary of the article..."
-                  required></textarea>
+                <label class="field-label">Alignment / Text Wrapping</label>
+                <select id="editor-img-align" class="field-select">
+                  <option value="float-left">Float Left (Text wraps around Right)</option>
+                  <option value="float-right">Float Right (Text wraps around Left)</option>
+                  <option value="align-center">Center Block (Text appears Below)</option>
+                </select>
               </div>
               <div class="form-group">
-                <label class="field-label">Author Name</label>
-                <input type="text" id="new-blog-author" class="field-input" value="Coach Rahul Sharma" required />
-              </div>
-              <div class="form-group">
-                <label class="field-label">Thumbnail Image URL</label>
-                <input type="url" id="new-blog-image" class="field-input"
-                  value="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?crop=entropy&cs=srgb&fm=jpg&q=85&w=800"
-                  required />
+                <label class="field-label">Optional Image Caption</label>
+                <input type="text" id="editor-img-caption" class="field-input" placeholder="e.g. Figure 1. Proper stance position" />
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-blog')">Cancel</button>
-              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Publish
-                Article</button>
+              <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-insert-editor-image')">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Insert Image</button>
             </div>
           </form>
         </div>
       </div>
+
 
       <!-- Modal 4: Add Upcoming Match -->
       <div class="modal-overlay" id="modal-add-upcoming">
@@ -1113,47 +2097,120 @@
 
       <!-- Modal: Add Gallery Media -->
       <div class="modal-overlay" id="modal-add-gallery" style="display:none;">
-        <div class="modal modal-md">
-          <div class="modal-header">
-            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add Gallery Media</h3>
+        <div class="modal modal-md" style="max-width: 580px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+          <div class="modal-header" style="flex-shrink: 0; padding: 1.25rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #ffffff;">
+            <h3 style="font-family:var(--font-heading); font-size:1.1rem; font-weight:800;">Add Media to Gallery</h3>
             <button class="modal-close" onclick="closeAdminModal('modal-add-gallery')">✕</button>
           </div>
-          <form onsubmit="handleCreateGallery(event)">
-            <div class="modal-body">
+          <form onsubmit="handleCreateGallery(event)" style="display: flex; flex-direction: column; flex: 1; overflow: hidden; margin: 0;">
+            <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.1rem;">
               <div class="form-group">
-                <label class="field-label">Media Title / Description</label>
-                <input type="text" id="new-gallery-title" class="field-input" placeholder="e.g. Winning Moment 2025"
-                  required />
+                <label class="field-label">Media Title / Description <span class="required" style="color:red;">*</span></label>
+                <input type="text" id="new-gallery-title" class="field-input" placeholder="e.g. Championship Finals 2025" required />
+              </div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                <div class="form-group">
+                  <label class="field-label">Media Type</label>
+                  <select id="new-gallery-type" class="field-select">
+                    <option value="photo" selected>Photo / Image</option>
+                    <option value="video">Video</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="field-label">Category (Type Custom or Select) <span class="required" style="color:red;">*</span></label>
+                  <input type="text" id="new-gallery-category" class="field-input" placeholder="e.g. Matches, Training, Biometrics, Events..." list="galleryCategoryList" required />
+                  <datalist id="galleryCategoryList">
+                    <option value="Matches"></option>
+                    <option value="Training"></option>
+                    <option value="Events"></option>
+                    <option value="Biometrics"></option>
+                    <option value="Awards"></option>
+                  </datalist>
+                  <span style="font-size:0.75rem; color:#64748b; margin-top:2px;">Type any custom category name freely!</span>
+                </div>
               </div>
               <div class="form-group">
-                <label class="field-label">Media Type</label>
-                <select id="new-gallery-type" class="field-select">
-                  <option value="photo">Photo</option>
-                  <option value="video">Video</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="field-label">Category</label>
-                <input type="text" id="new-gallery-category" class="field-input"
-                  placeholder="e.g. Matches, Net Practices, Awards" required />
-              </div>
-              <div class="form-group">
-                <label class="field-label">Media URL</label>
-                <input type="url" id="new-gallery-url" class="field-input" placeholder="https://..." required />
+                <label class="field-label">Media Image / File URL <span class="required" style="color:red;">*</span></label>
+                <div style="display:flex; gap:0.5rem;">
+                  <input type="url" id="new-gallery-url" class="field-input" placeholder="https://..." style="flex:1;" required />
+                  <input type="file" id="galleryUrlFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'new-gallery-url')">
+                  <button type="button" class="btn btn-secondary" onclick="document.getElementById('galleryUrlFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                    <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="flex-shrink:0; background:#ffffff; border-top:1px solid #e2e8f0; padding:1rem 1.5rem; display:flex; justify-content:flex-end; gap:0.75rem; position:sticky; bottom:0; z-index:10;">
               <button type="button" class="btn btn-ghost" onclick="closeAdminModal('modal-add-gallery')">Cancel</button>
-              <button type="submit" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save
-                Media</button>
+              <button type="submit" id="gallery-submit-btn" class="btn btn-primary" style="width:auto; padding:0.55rem 1.5rem;">Save Media to Gallery</button>
             </div>
           </form>
         </div>
       </div>
 
+      <!-- Modal: View & Manage Contact Submission / Lead -->
+      <div class="modal-overlay" id="modal-lead" style="display: none; z-index: 100080;">
+        <div class="modal modal-md" style="max-width: 580px; border-radius: 14px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+          <div class="modal-header" style="background: linear-gradient(135deg, #0f172a, #1e293b); color: #ffffff; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(99, 102, 241, 0.2); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(99, 102, 241, 0.3);">
+                <span class="material-symbols-outlined" style="color: #818cf8; font-size: 20px;">mark_as_unread</span>
+              </div>
+              <div>
+                <h3 id="modal-lead-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: #ffffff; margin: 0;">Inquiry Details</h3>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 2px;">Customer Lead & Submission Details</div>
+              </div>
+            </div>
+            <button class="modal-close" onclick="closeAdminModal('modal-lead')" style="color: #cbd5e1;">✕</button>
+          </div>
+
+          <div class="modal-body" id="modal-lead-body" style="padding: 1.5rem; font-size: 0.92rem; color: #334155; display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Loaded dynamically by viewLeadModal() -->
+          </div>
+
+          <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+            <button type="button" class="btn btn-delete-red btn-sm" id="modal-lead-delete-btn" style="display: inline-flex; align-items: center; gap: 6px;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+              <span>Delete</span>
+            </button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="closeAdminModal('modal-lead')">Close</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="modal-lead-toggle-read-btn" style="display: inline-flex; align-items: center; gap: 6px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;" id="modal-lead-toggle-icon">mark_as_unread</span>
+                <span id="modal-lead-toggle-text">Mark as Unread</span>
+              </button>
+              <a href="#" id="modal-lead-reply-btn" target="_blank" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">reply</span>
+                <span>Reply Email</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom In-App Confirmation Modal (Replaces browser confirm) -->
+      <div class="modal-overlay" id="modal-custom-confirm" style="z-index: 100100; display: none;">
+        <div class="modal modal-sm" style="max-width: 420px; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+          <div class="modal-header" style="background: #fef2f2; border-bottom: 1px solid #fee2e2; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="material-symbols-outlined" style="color: #dc2626; font-size: 24px;">warning</span>
+              <h3 id="confirm-modal-title" style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: #991b1b; margin: 0;">Confirm Action</h3>
+            </div>
+            <button class="modal-close" onclick="closeConfirmModal(false)" style="color: #991b1b;">✕</button>
+          </div>
+          <div class="modal-body" style="padding: 1.25rem; font-size: 0.92rem; color: #334155; line-height: 1.5;" id="confirm-modal-message">
+            Are you sure you want to perform this action?
+          </div>
+          <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 0.85rem 1.25rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
+            <button type="button" class="btn btn-ghost" onclick="closeConfirmModal(false)">Cancel</button>
+            <button type="button" class="btn btn-delete-red" id="confirm-modal-action-btn" onclick="executeConfirmAction()" style="padding: 0.5rem 1.25rem;">Confirm Delete</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Scripts -->
-      <script src="../../js/data.js"></script>
-      <script src="../../js/admin.js?v=18"></script>
+      <script src="/js/data.js"></script>
+      <script src="/js/admin.js?v=99999"></script>
 </body>
 
 </html>

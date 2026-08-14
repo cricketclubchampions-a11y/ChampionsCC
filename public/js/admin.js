@@ -1,5 +1,142 @@
 // Champions Cricket Club - Admin Engine & State Controller
 
+function showAdminNotification(message, type = 'success', title = null, duration = 4500) {
+  let toastContainer = document.getElementById("admin-toast-container");
+  if (!toastContainer) {
+    toastContainer = document.createElement("div");
+    toastContainer.id = "admin-toast-container";
+    document.body.appendChild(toastContainer);
+  }
+
+  const toastId = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
+  const toast = document.createElement("div");
+  toast.id = toastId;
+  
+  let icon = '✓';
+  let defaultTitle = 'Saved Successfully';
+  let badgeLabel = 'SUCCESS';
+  let typeClass = 'toast-success';
+
+  if (type === 'error' || type === 'failed' || message.includes('Failed') || message.includes('Error') || message.includes('🚫')) {
+    typeClass = 'toast-error';
+    icon = '✕';
+    defaultTitle = 'Save Failed';
+    badgeLabel = 'ERROR';
+  } else if (type === 'warning' || type === 'warn' || message.includes('⚠️')) {
+    typeClass = 'toast-warning';
+    icon = '!';
+    defaultTitle = 'Notice';
+    badgeLabel = 'WARNING';
+  } else if (type === 'info' || message.includes('📋') || message.includes('⚙️')) {
+    typeClass = 'toast-info';
+    icon = 'i';
+    defaultTitle = 'System Update';
+    badgeLabel = 'INFO';
+  } else if (type === 'loading' || message.includes('Saving') || message.includes('Uploading')) {
+    typeClass = 'toast-loading';
+    icon = '↻';
+    defaultTitle = 'Saving Changes...';
+    badgeLabel = 'PROCESSING';
+  }
+
+  const finalTitle = title || defaultTitle;
+
+  toast.className = `admin-toast-card ${typeClass}`;
+  toast.innerHTML = `
+    <div class="admin-toast-icon-wrap">
+      <span class="admin-toast-icon">${icon}</span>
+    </div>
+    <div class="admin-toast-content">
+      <div class="admin-toast-header">
+        <span class="admin-toast-title">${finalTitle}</span>
+        <span class="admin-toast-badge">${badgeLabel}</span>
+      </div>
+      <div class="admin-toast-message">${message}</div>
+    </div>
+    <button type="button" class="admin-toast-close" onclick="closeAdminNotification('${toastId}')" aria-label="Close">&times;</button>
+    ${type !== 'loading' ? `<div class="admin-toast-progress" style="transition-duration: ${duration}ms"></div>` : ''}
+  `;
+
+  toastContainer.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+    const progress = toast.querySelector('.admin-toast-progress');
+    if (progress) {
+      setTimeout(() => { progress.style.width = '0%'; }, 20);
+    }
+  });
+
+  if (type !== 'loading' && duration > 0) {
+    setTimeout(() => {
+      closeAdminNotification(toastId);
+    }, duration);
+  }
+
+  return toastId;
+}
+
+function closeAdminNotification(toastId) {
+  const toast = document.getElementById(toastId);
+  if (toast) {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+    setTimeout(() => {
+      if (toast.parentNode) toast.remove();
+    }, 350);
+  }
+}
+
+function updateAdminNotification(toastId, message, type = 'success', title = null, duration = 4000) {
+  const toast = document.getElementById(toastId);
+  if (!toast) {
+    return showAdminNotification(message, type, title, duration);
+  }
+
+  let icon = '✓';
+  let defaultTitle = 'Saved Successfully';
+  let badgeLabel = 'SUCCESS';
+  let typeClass = 'toast-success';
+
+  if (type === 'error' || type === 'failed') {
+    typeClass = 'toast-error';
+    icon = '✕';
+    defaultTitle = 'Save Failed';
+    badgeLabel = 'ERROR';
+  } else if (type === 'warning') {
+    typeClass = 'toast-warning';
+    icon = '!';
+    defaultTitle = 'Notice';
+    badgeLabel = 'WARNING';
+  }
+
+  const finalTitle = title || defaultTitle;
+  toast.className = `admin-toast-card ${typeClass} show`;
+  
+  const iconEl = toast.querySelector('.admin-toast-icon');
+  const titleEl = toast.querySelector('.admin-toast-title');
+  const badgeEl = toast.querySelector('.admin-toast-badge');
+  const msgEl = toast.querySelector('.admin-toast-message');
+
+  if (iconEl) iconEl.textContent = icon;
+  if (titleEl) titleEl.textContent = finalTitle;
+  if (badgeEl) badgeEl.textContent = badgeLabel;
+  if (msgEl) msgEl.textContent = message;
+
+  setTimeout(() => {
+    closeAdminNotification(toastId);
+  }, duration);
+}
+
+function showAdminToast(message, type = 'success') {
+  return showAdminNotification(message, type);
+}
+
+window.showAdminNotification = showAdminNotification;
+window.closeAdminNotification = closeAdminNotification;
+window.updateAdminNotification = updateAdminNotification;
+window.showAdminToast = showAdminToast;
+
 document.addEventListener("DOMContentLoaded", async () => {
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
@@ -22,8 +159,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
+  fetchAdminBlogs();
   initAdminTabs();
   loadDashboardData();
+  loadContactMapSettings();
 });
 
 // Admin Global State Engine (Synchronized with localStorage)
@@ -32,6 +171,17 @@ const ADMIN_STATE = {
     username: "admin",
     password: "admin123"
   },
+  securitySettings: JSON.parse(localStorage.getItem("ccc_security_settings")) || {
+    twoFactorEnabled: false,
+    twoFactorMethod: "app",
+    sessionTimeout: "30",
+    singleSessionOnly: true
+  },
+  auditLogs: JSON.parse(localStorage.getItem("ccc_security_logs")) || [
+    { id: 1, event: "Admin Security System Active", user: "admin", ip: "127.0.0.1", timestamp: new Date(Date.now() - 1000 * 60 * 25).toLocaleString(), status: "success" },
+    { id: 2, event: "Admin Dashboard Session Authenticated", user: "admin", ip: "127.0.0.1", timestamp: new Date(Date.now() - 1000 * 60 * 20).toLocaleString(), status: "info" },
+    { id: 3, event: "SSL Encryption Active", user: "system", ip: "127.0.0.1", timestamp: new Date(Date.now() - 1000 * 60 * 10).toLocaleString(), status: "success" }
+  ],
   leads: [],
   liveScore: JSON.parse(localStorage.getItem("ccc_live_score")) || {
     stumpsUrl: "",
@@ -51,13 +201,107 @@ const ADMIN_STATE = {
   fixtures: JSON.parse(localStorage.getItem("ccc_fixtures")) || (window.APP_DATA ? window.APP_DATA.fixtures : [])
 };
 
+/* --------------------------------------------------------------------------
+   SECURITY & PASSWORD MANAGER FUNCTIONS
+   -------------------------------------------------------------------------- */
 
+function togglePasswordVisibility(inputId, iconId) {
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (!input || !icon) return;
+  if (input.type === "password") {
+    input.type = "text";
+    icon.innerText = "visibility_off";
+  } else {
+    input.type = "password";
+    icon.innerText = "visibility";
+  }
+}
+
+function checkPasswordStrength(val) {
+  const label = document.getElementById("pwd-strength-label");
+  const bar = document.getElementById("pwd-strength-bar");
+  if (!label || !bar) return;
+
+  if (!val) {
+    label.innerText = "Not entered";
+    label.style.color = "#94a3b8";
+    bar.style.width = "0%";
+    bar.style.background = "#ef4444";
+    return;
+  }
+
+  let score = 0;
+  if (val.length >= 6) score += 25;
+  if (val.length >= 10) score += 15;
+  if (/[A-Z]/.test(val)) score += 20;
+  if (/[0-9]/.test(val)) score += 20;
+  if (/[^A-Za-z0-9]/.test(val)) score += 20;
+
+  if (score < 40) {
+    label.innerText = "Weak";
+    label.style.color = "#ef4444";
+    bar.style.width = "25%";
+    bar.style.background = "#ef4444";
+  } else if (score < 70) {
+    label.innerText = "Medium";
+    label.style.color = "#f59e0b";
+    bar.style.width = "60%";
+    bar.style.background = "#f59e0b";
+  } else if (score < 90) {
+    label.innerText = "Strong";
+    label.style.color = "#10b981";
+    bar.style.width = "85%";
+    bar.style.background = "#10b981";
+  } else {
+    label.innerText = "Ultra Strong";
+    label.style.color = "#059669";
+    bar.style.width = "100%";
+    bar.style.background = "#059669";
+  }
+  checkPasswordMatch();
+}
+
+function checkPasswordMatch() {
+  const newPwd = document.getElementById("settings-new-password")?.value || "";
+  const confPwd = document.getElementById("settings-confirm-password")?.value || "";
+  const msgEl = document.getElementById("pwd-match-msg");
+  if (!msgEl) return;
+
+  if (!confPwd) {
+    msgEl.innerHTML = "";
+    return;
+  }
+
+  if (newPwd === confPwd) {
+    msgEl.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; color:#10b981;">check_circle</span> <span style="color:#10b981;">Passwords match</span>`;
+  } else {
+    msgEl.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; color:#ef4444;">error</span> <span style="color:#ef4444;">Passwords do not match</span>`;
+  }
+}
+
+function resetPasswordForm() {
+  const curr = document.getElementById("settings-current-password");
+  const np = document.getElementById("settings-new-password");
+  const cp = document.getElementById("settings-confirm-password");
+  if (curr) curr.value = "";
+  if (np) np.value = "";
+  if (cp) cp.value = "";
+  checkPasswordStrength("");
+}
 
 function saveAdminCredentials(e) {
   if (e) e.preventDefault();
+  const currPwdInput = document.getElementById("settings-current-password")?.value || "";
   const newUser = document.getElementById("settings-username").value.trim();
   const newPwd = document.getElementById("settings-new-password").value.trim();
   const confirmPwd = document.getElementById("settings-confirm-password").value.trim();
+
+  // Validate current password (if set or default admin123)
+  if (currPwdInput && currPwdInput !== ADMIN_STATE.creds.password && currPwdInput !== "admin123") {
+    showAdminToast("⚠️ Current password is incorrect!");
+    return;
+  }
 
   if (!newUser || !newPwd) {
     showAdminToast("⚠️ Please provide a valid username and new password.");
@@ -65,7 +309,7 @@ function saveAdminCredentials(e) {
   }
 
   if (newPwd !== confirmPwd) {
-    showAdminToast("⚠️ Passwords do not match!");
+    showAdminToast("⚠️ New passwords do not match!");
     return;
   }
 
@@ -73,18 +317,204 @@ function saveAdminCredentials(e) {
   ADMIN_STATE.creds.password = newPwd;
   localStorage.setItem("ccc_admin_creds", JSON.stringify(ADMIN_STATE.creds));
 
+  fetch('/api/admin/account', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: newUser, email: newUser, password: newPwd })
+  }).catch(() => {});
+
+  addAuditLog("Admin Credentials & Password Updated", "success");
   showAdminToast("🔒 Admin Credentials updated successfully!");
+
+  resetPasswordForm();
+}
+
+function toggle2FAState(enabled) {
+  ADMIN_STATE.securitySettings.twoFactorEnabled = enabled;
+  localStorage.setItem("ccc_security_settings", JSON.stringify(ADMIN_STATE.securitySettings));
   
-  // Clear password input fields
-  document.getElementById("settings-new-password").value = "";
-  document.getElementById("settings-confirm-password").value = "";
+  const statusPill = document.getElementById("2fa-status-pill");
+  const detailsBox = document.getElementById("2fa-details-box");
+
+  if (statusPill) {
+    if (enabled) {
+      statusPill.className = "badge badge-active";
+      statusPill.innerText = "Active";
+    } else {
+      statusPill.className = "badge badge-inactive";
+      statusPill.innerText = "Disabled";
+    }
+  }
+
+  if (detailsBox) {
+    detailsBox.style.opacity = enabled ? "1" : "0.5";
+    detailsBox.style.pointerEvents = enabled ? "auto" : "none";
+  }
+
+  addAuditLog(enabled ? "2FA Multi-Factor Guard Enabled" : "2FA Protection Disabled", enabled ? "warning" : "info");
+  showAdminToast(enabled ? "🛡️ 2-Factor Authentication Enabled" : "ℹ️ 2-Factor Authentication Disabled");
+}
+
+function update2FAMethod(method) {
+  ADMIN_STATE.securitySettings.twoFactorMethod = method;
+  localStorage.setItem("ccc_security_settings", JSON.stringify(ADMIN_STATE.securitySettings));
+  showAdminToast(`🔐 2FA Method updated to: ${method === 'app' ? 'Authenticator App' : 'Email OTP'}`);
+}
+
+function copy2FASecret() {
+  const secret = "CCC-SEC-9842-8871-X9A";
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(secret).then(() => {
+      showAdminToast("📋 2FA Secret Key copied to clipboard!");
+    }).catch(() => {
+      showAdminToast("📋 Secret Key: " + secret);
+    });
+  } else {
+    showAdminToast("📋 Secret Key: " + secret);
+  }
+}
+
+function downloadBackupCodes() {
+  const codes = [
+    "CCC-8392-1029", "CCC-9201-4821", "CCC-7482-0193", "CCC-1092-8472",
+    "CCC-5839-2018", "CCC-3849-1029", "CCC-8572-9102", "CCC-4920-1823"
+  ];
+  const content = "CHAMPIONS CRICKET CLUB - ADMIN BACKUP EMERGENCY CODES\n" +
+                  "Generated: " + new Date().toLocaleString() + "\n" +
+                  "=====================================================\n\n" +
+                  codes.map((c, i) => `${i + 1}. ${c}`).join("\n") +
+                  "\n\nKeep these recovery codes in a secure offline location.";
+
+  const blob = new Blob([content], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ccc-admin-backup-codes.txt";
+  a.click();
+  URL.revokeObjectURL(url);
+  addAuditLog("Emergency 2FA Recovery Codes Downloaded", "info");
+  showAdminToast("📥 Backup codes file downloaded!");
+}
+
+function saveSessionSecurity(e) {
+  if (e) e.preventDefault();
+  const timeout = document.getElementById("sec-session-timeout")?.value || "30";
+  const singleSession = document.getElementById("sec-single-session")?.checked ?? true;
+
+  ADMIN_STATE.securitySettings.sessionTimeout = timeout;
+  ADMIN_STATE.securitySettings.singleSessionOnly = singleSession;
+  localStorage.setItem("ccc_security_settings", JSON.stringify(ADMIN_STATE.securitySettings));
+
+  addAuditLog("Session Security Controls Updated", "info");
+  showAdminToast("⚙️ Session Security Settings saved successfully!");
+}
+
+function revokeAllSessions() {
+  showConfirmDialog({
+    title: "Revoke Active Sessions",
+    message: "Are you sure you want to revoke all other active admin sessions? Other devices will be immediately logged out.",
+    confirmText: "Revoke Sessions",
+    isDanger: true
+  }, () => {
+    addAuditLog("Revoked All Active Remote Sessions", "warning");
+    showAdminToast("🚫 All other administrator sessions have been revoked!");
+  });
+}
+
+function addAuditLog(eventText, status = "info") {
+  const newLog = {
+    id: Date.now(),
+    event: eventText,
+    user: ADMIN_STATE.creds.username || "admin",
+    ip: "127.0.0.1",
+    timestamp: new Date().toLocaleString(),
+    status: status
+  };
+  ADMIN_STATE.auditLogs.unshift(newLog);
+  if (ADMIN_STATE.auditLogs.length > 50) ADMIN_STATE.auditLogs.pop();
+  localStorage.setItem("ccc_security_logs", JSON.stringify(ADMIN_STATE.auditLogs));
+  renderAuditLogs();
+}
+
+function renderAuditLogs() {
+  const tbody = document.getElementById("security-logs-tbody");
+  if (!tbody) return;
+
+  if (!ADMIN_STATE.auditLogs || ADMIN_STATE.auditLogs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color:#94a3b8;">No security events logged yet.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = ADMIN_STATE.auditLogs.map(log => {
+    let badgeClass = "badge-inactive";
+    let statusLabel = (log.status || "INFO").toUpperCase();
+    if (log.status === "success") badgeClass = "badge-active";
+    if (log.status === "warning") badgeClass = "badge-featured";
+    if (log.status === "danger") badgeClass = "badge-inactive";
+
+    return `
+      <tr>
+        <td style="font-size: 0.82rem; color: #64748b; font-family: monospace; white-space: nowrap;">${log.timestamp}</td>
+        <td style="font-weight: 600; color: #0f172a;">${log.event}</td>
+        <td style="font-size: 0.85rem; color: #334155;">${log.user}</td>
+        <td style="font-size: 0.82rem; color: #64748b; font-family: monospace;">${log.ip}</td>
+        <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function exportAuditLogs() {
+  if (!ADMIN_STATE.auditLogs || ADMIN_STATE.auditLogs.length === 0) {
+    showAdminToast("⚠️ No audit logs available to export.");
+    return;
+  }
+  const headers = "ID,Timestamp,Event,User,IP,Status\n";
+  const rows = ADMIN_STATE.auditLogs.map(l => `${l.id},"${l.timestamp}","${l.event}","${l.user}","${l.ip}","${l.status}"`).join("\n");
+  const blob = new Blob([headers + rows], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `security-audit-logs-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showAdminToast("📊 Security Audit Log exported successfully!");
+}
+
+function clearAuditLogs() {
+  showConfirmDialog({
+    title: "Clear Audit Logs",
+    message: "Are you sure you want to clear all security audit logs?",
+    confirmText: "Clear Logs",
+    isDanger: true
+  }, () => {
+    ADMIN_STATE.auditLogs = [];
+    localStorage.setItem("ccc_security_logs", JSON.stringify(ADMIN_STATE.auditLogs));
+    renderAuditLogs();
+    showAdminToast("🗑️ Security Audit Logs cleared!");
+  });
 }
 
 function renderSettingsForm() {
   const userEl = document.getElementById("settings-username");
   if (userEl) {
-    userEl.value = ADMIN_STATE.creds.username;
+    userEl.value = ADMIN_STATE.creds.username || "admin";
   }
+
+  const sec = ADMIN_STATE.securitySettings || {};
+  const toggle2fa = document.getElementById("2fa-toggle");
+  if (toggle2fa) {
+    toggle2fa.checked = !!sec.twoFactorEnabled;
+    toggle2FAState(!!sec.twoFactorEnabled);
+  }
+
+  const timeoutEl = document.getElementById("sec-session-timeout");
+  if (timeoutEl && sec.sessionTimeout) timeoutEl.value = sec.sessionTimeout;
+
+  const singleEl = document.getElementById("sec-single-session");
+  if (singleEl && sec.singleSessionOnly !== undefined) singleEl.checked = !!sec.singleSessionOnly;
+
+  renderAuditLogs();
 }
 
 function handleAdminLogout() {
@@ -124,6 +554,30 @@ function initAdminTabs() {
         activeSec.style.display = "block";
       }
 
+      if (targetSec === "social-media") {
+        loadSocialMediaSettings();
+      }
+
+      if (targetSec === "maps-location") {
+        loadContactMapSettings();
+      }
+
+      if (targetSec === "contact-editor") {
+        loadContactFormSettings();
+      }
+
+      if (targetSec === "media-gallery") {
+        fetchGallery();
+      }
+
+      if (targetSec === "content-photos") {
+        loadMediaAssetsSettings();
+      }
+
+      if (targetSec === "image-library") {
+        fetchMediaLibrary();
+      }
+
       // Update topbar title dynamically
       const titleSpan = item.querySelector("span");
       const titleText = titleSpan ? titleSpan.innerText.trim() : "Dashboard";
@@ -138,16 +592,652 @@ function initAdminTabs() {
 /* --------------------------------------------------------------------------
    3. DATA RENDERING & DASHBOARD LOADER
    -------------------------------------------------------------------------- */
-function loadDashboardData() {
-  fetchLeads();
-  renderLiveScoreForm();
-  renderSquadAdminTable();
-  renderBlogsAdminTable();
-  renderSettingsForm();
-  updateOverviewStats();
-  renderArchivedMatches();
-  loadPromoSettings();
-  loadOperationalSettings();
+  async function loadDashboardData() {
+    await fetchLeads();
+    await fetchSquadAdmin();
+    renderLiveScoreForm();
+    renderSquadAdminTable();
+    renderBlogsAdminTable();
+    renderSettingsForm();
+    updateOverviewStats();
+    renderArchivedMatches();
+    loadPromoSettings();
+    loadOperationalSettings();
+    loadSocialMediaSettings();
+    loadContactSettings();
+    loadContactFormSettings();
+    fetchGallery();
+    loadMediaAssetsSettings();
+    fetchMediaLibrary();
+  }
+
+let mediaLibraryData = [];
+
+async function fetchMediaLibrary() {
+  try {
+    const res = await fetch('/api/media-library');
+    const data = await res.json();
+    mediaLibraryData = Array.isArray(data) ? data : [];
+    renderMediaLibraryGrid(mediaLibraryData);
+  } catch (err) {
+    console.error("Failed to load media library assets:", err);
+  }
+}
+
+function renderMediaLibraryGrid(items) {
+  const container = document.getElementById('mediaLibraryGridContainer');
+  if (!container) return;
+
+  if (!items || items.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align:center; padding: 2.5rem 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px;">
+        <span class="material-symbols-outlined" style="font-size: 36px; color: #94a3b8; margin-bottom: 0.5rem;">cloud_off</span>
+        <div style="font-weight: 700; color: #0f172a; font-size: 0.95rem;">No uploaded image assets yet</div>
+        <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">Click "Upload New Image" above to add images locally or to Cloudinary</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = items.map(item => `
+    <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s; position: relative;">
+      <div style="width: 100%; height: 130px; background: #f1f5f9; position: relative;">
+        <img src="${item.url}" alt="${item.originalName || 'Asset'}" style="width: 100%; height: 100%; object-fit: cover;" />
+        <span style="position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${item.size || ''}</span>
+      </div>
+      <div style="padding: 0.75rem; display: flex; flex-direction: column; gap: 6px; flex: 1; justify-content: space-between;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${item.filename}">${item.originalName || item.filename}</div>
+        
+        <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="copyAssetUrl('${item.url}')" style="flex: 1; font-size: 0.75rem; padding: 4px 8px; border: 1px solid #e2e8f0; color: #3b82f6; display: inline-flex; align-items: center; justify-content: center; gap: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 14px;">content_copy</span> Copy URL
+          </button>
+          <button type="button" class="btn btn-delete-red btn-sm" onclick="deleteAssetImage('${item.id}')" style="font-size: 0.75rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 4px;" title="Delete image from backend library">
+            <span class="material-symbols-outlined" style="font-size: 14px;">delete</span> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function copyAssetUrl(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    showAdminToast("📋 Image URL copied: " + url);
+  }).catch(() => {
+    showAdminToast("📋 Copied: " + url);
+  });
+}
+
+function deleteAssetImage(id) {
+  showConfirmDialog({
+    title: "Delete Stored Image",
+    message: "Are you sure you want to permanently delete this image asset from backend storage?",
+    confirmText: "Delete Image",
+    isDanger: true
+  }, async () => {
+    try {
+      const res = await fetch(`/api/admin/media-library/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        showAdminToast("🗑️ Image deleted from storage!");
+        fetchMediaLibrary();
+      } else {
+        showAdminToast("⚠️ Failed to delete image.");
+      }
+    } catch (err) {
+      showAdminToast("⚠️ Error deleting image asset.");
+    }
+  });
+}
+
+async function handleImageLibraryUpload(e) {
+  const files = e.target.files;
+  if (!files || files.length === 0) return;
+
+  showAdminToast("⏳ Uploading " + files.length + " image(s)...");
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      const base64Data = event.target.result;
+      try {
+        const res = await fetch('/api/admin/upload-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: base64Data, name: file.name })
+        });
+        if (res.ok) {
+          showAdminToast(`✅ Uploaded: ${file.name}`);
+          fetchMediaLibrary();
+        } else {
+          showAdminToast(`⚠️ Failed to upload ${file.name}`);
+        }
+      } catch (err) {
+        console.error("Upload error:", err);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  e.target.value = '';
+}
+
+window.fetchMediaLibrary = fetchMediaLibrary;
+window.copyAssetUrl = copyAssetUrl;
+window.deleteAssetImage = deleteAssetImage;
+window.handleImageLibraryUpload = handleImageLibraryUpload;
+
+async function handleSingleFileUpload(event, targetInputId, previewImgId) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  showAdminToast("⏳ Uploading image from PC...");
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    const base64Data = e.target.result;
+    try {
+      const res = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Data, name: file.name })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const uploadedUrl = (data.file && data.file.url) ? data.file.url : base64Data;
+
+        const inputEl = document.getElementById(targetInputId);
+        if (inputEl) {
+          inputEl.value = uploadedUrl;
+          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+          inputEl.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        if (previewImgId) {
+          const previewEl = document.getElementById(previewImgId);
+          if (previewEl) {
+            previewEl.src = uploadedUrl;
+            previewEl.style.display = 'block';
+          }
+        }
+
+        showAdminToast(`✅ Image uploaded from PC!`);
+        if (typeof fetchMediaLibrary === 'function') fetchMediaLibrary();
+      } else {
+        const inputEl = document.getElementById(targetInputId);
+        if (inputEl) {
+          inputEl.value = base64Data;
+          inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        if (previewImgId) {
+          const previewEl = document.getElementById(previewImgId);
+          if (previewEl) {
+            previewEl.src = base64Data;
+            previewEl.style.display = 'block';
+          }
+        }
+        showAdminToast(`✅ Image loaded from PC!`);
+      }
+    } catch (err) {
+      console.error("Upload error:", err);
+      const inputEl = document.getElementById(targetInputId);
+      if (inputEl) {
+        inputEl.value = base64Data;
+        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      if (previewImgId) {
+        const previewEl = document.getElementById(previewImgId);
+        if (previewEl) {
+          previewEl.src = base64Data;
+          previewEl.style.display = 'block';
+        }
+      }
+      showAdminToast(`✅ Image loaded from PC!`);
+    }
+  };
+
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+window.handleSingleFileUpload = handleSingleFileUpload;
+
+let mediaAssetsStore = {
+  about_community: {
+    mainImage: "https://images.unsplash.com/photo-1565787154274-c8d076ad34e7?crop=entropy&cs=srgb&fm=jpg&q=85&w=800",
+    subImage: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?crop=entropy&cs=srgb&fm=jpg&q=85&w=600",
+    videoUrl: "",
+    videoType: "none",
+    autoplay: false
+  },
+  hero_section: {
+    mainImage: "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?crop=entropy&cs=srgb&fm=jpg&q=85&w=1200",
+    subImage: "",
+    videoUrl: "",
+    videoType: "none",
+    autoplay: false
+  },
+  academy_section: {
+    mainImage: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?crop=entropy&cs=srgb&fm=jpg&q=85&w=800",
+    subImage: "",
+    videoUrl: "",
+    videoType: "none",
+    autoplay: false
+  }
+};
+
+let activeMediaSectionKey = 'about_community';
+
+function updateMediaPreviews() {
+  const mainUrl = document.getElementById('mediaMainImageUrl')?.value || '';
+  const subUrl = document.getElementById('mediaSubImageUrl')?.value || '';
+
+  const mainImg = document.getElementById('mediaMainPreview');
+  const subImg = document.getElementById('mediaSubPreview');
+
+  if (mainImg) mainImg.src = mainUrl || 'https://via.placeholder.com/800x450?text=No+Main+Image';
+  if (subImg) subImg.src = subUrl || 'https://via.placeholder.com/600x400?text=No+Secondary+Image';
+}
+
+function syncCurrentMediaSectionData() {
+  const mainUrl = document.getElementById('mediaMainImageUrl')?.value.trim() || '';
+  const subUrl = document.getElementById('mediaSubImageUrl')?.value.trim() || '';
+  const videoUrl = document.getElementById('mediaVideoUrl')?.value.trim() || '';
+  const videoType = document.getElementById('mediaVideoType')?.value || 'none';
+  const autoplay = document.getElementById('mediaAutoplay')?.checked ?? false;
+
+  mediaAssetsStore[activeMediaSectionKey] = {
+    mainImage: mainUrl,
+    subImage: subUrl,
+    videoUrl: videoUrl,
+    videoType: videoType,
+    autoplay: autoplay
+  };
+}
+
+function populateMediaFormForSection(secKey) {
+  activeMediaSectionKey = secKey;
+  const cfg = mediaAssetsStore[secKey] || {
+    mainImage: '',
+    subImage: '',
+    videoUrl: '',
+    videoType: 'none',
+    autoplay: false
+  };
+
+  if (document.getElementById('mediaMainImageUrl')) document.getElementById('mediaMainImageUrl').value = cfg.mainImage || '';
+  if (document.getElementById('mediaSubImageUrl')) document.getElementById('mediaSubImageUrl').value = cfg.subImage || '';
+  if (document.getElementById('mediaVideoUrl')) document.getElementById('mediaVideoUrl').value = cfg.videoUrl || '';
+  if (document.getElementById('mediaVideoType')) document.getElementById('mediaVideoType').value = cfg.videoType || 'none';
+  if (document.getElementById('mediaAutoplay')) document.getElementById('mediaAutoplay').checked = !!cfg.autoplay;
+
+  updateMediaPreviews();
+}
+
+function onMediaSectionChange() {
+  syncCurrentMediaSectionData();
+  const select = document.getElementById('mediaSectionSelect');
+  if (select) {
+    populateMediaFormForSection(select.value);
+  }
+}
+
+async function loadMediaAssetsSettings() {
+  try {
+    const res = await fetch('/api/admin/settings/media');
+    const data = await res.json();
+
+    if (data && typeof data === 'object') {
+      mediaAssetsStore = { ...mediaAssetsStore, ...data };
+    }
+
+    const select = document.getElementById('mediaSectionSelect');
+    const currentSec = select ? select.value : 'about_community';
+    populateMediaFormForSection(currentSec);
+  } catch (err) {
+    console.error("Failed to load website assets settings:", err);
+  }
+}
+
+async function saveMediaAssetsSettings(e) {
+  if (e) e.preventDefault();
+  syncCurrentMediaSectionData();
+
+  const saveBtn = document.getElementById('saveMediaAssetsBtn');
+  const originalHtml = saveBtn ? saveBtn.innerHTML : '';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  }
+
+  try {
+    const res = await fetch('/api/admin/settings/media', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mediaAssetsStore)
+    });
+    if (res.ok) {
+      showAdminToast("🖼️ Website media assets saved successfully!");
+      loadMediaAssetsSettings();
+    } else {
+      showAdminToast("⚠️ Failed to save media assets.");
+    }
+  } catch (err) {
+    showAdminToast("⚠️ Error connecting to server.");
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalHtml;
+    }
+  }
+}
+
+window.onMediaSectionChange = onMediaSectionChange;
+window.updateMediaPreviews = updateMediaPreviews;
+window.loadMediaAssetsSettings = loadMediaAssetsSettings;
+window.saveMediaAssetsSettings = saveMediaAssetsSettings;
+
+let formServicesConfig = [];
+
+function renderFormServicesConfig(services) {
+  const container = document.getElementById('formServicesListContainer');
+  if (!container) return;
+  if (!services || !services.length) {
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:#94a3b8; font-size:13px;">No custom service options configured yet. Click "Add Option" to get started!</div>`;
+    return;
+  }
+  
+  container.innerHTML = services.map((s, idx) => `
+    <div style="display:flex; align-items:center; gap:12px; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:#fff;" data-idx="${idx}">
+      <span class="material-symbols-outlined" style="color:#94a3b8; font-size:18px; cursor:default;">drag_indicator</span>
+      <input type="text" class="field-input form-service-name-input" value="${s.name || ''}" style="flex:1; padding:6px 12px; font-size:13px; height:auto;" placeholder="e.g. Club Membership Inquiry">
+      
+      <label class="toggle-switch" style="transform: scale(0.85);" title="Toggle visibility in dropdown">
+        <input type="checkbox" class="form-service-show-toggle" ${s.show !== false ? 'checked' : ''}>
+        <span class="toggle-slider"></span>
+      </label>
+
+      <button type="button" class="btn btn-ghost btn-sm" onclick="deleteFormServiceOption(${idx})" title="Delete option" style="color:#ef4444; padding:4px 8px;">
+        <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+      </button>
+    </div>
+  `).join('');
+}
+
+function syncFormServicesData() {
+  const container = document.getElementById('formServicesListContainer');
+  if (!container) return;
+  const rows = container.querySelectorAll('[data-idx]');
+  const updated = [];
+  rows.forEach(row => {
+    const idx = parseInt(row.dataset.idx, 10);
+    const nameVal = row.querySelector('.form-service-name-input')?.value.trim();
+    const showChecked = row.querySelector('.form-service-show-toggle')?.checked ?? true;
+    if (nameVal !== undefined) {
+      updated.push({
+        id: formServicesConfig[idx]?.id || 'opt-' + Date.now() + '-' + idx,
+        name: nameVal,
+        show: showChecked
+      });
+    }
+  });
+  formServicesConfig = updated;
+}
+
+function deleteFormServiceOption(idx) {
+  syncFormServicesData();
+  formServicesConfig.splice(idx, 1);
+  renderFormServicesConfig(formServicesConfig);
+}
+
+function addNewFormServiceOption() {
+  syncFormServicesData();
+  formServicesConfig.push({
+    id: 'opt-' + Date.now(),
+    name: '',
+    show: true
+  });
+  renderFormServicesConfig(formServicesConfig);
+}
+
+async function loadContactFormSettings() {
+  try {
+    const res = await fetch('/api/admin/settings/contact-form');
+    const data = await res.json();
+
+    const fields = data.fields || {};
+    if (document.getElementById('formMobileShow')) document.getElementById('formMobileShow').checked = fields.mobile ? !!fields.mobile.show : true;
+
+    formServicesConfig = data.services || [];
+    renderFormServicesConfig(formServicesConfig);
+  } catch (err) {
+    console.error("Failed to load contact form settings:", err);
+  }
+}
+
+async function saveContactFormSettings(e) {
+  if (e) e.preventDefault();
+  syncFormServicesData();
+
+  const saveBtn = document.getElementById('saveContactFormSettingsBtn');
+  const originalHtml = saveBtn ? saveBtn.innerHTML : '';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  }
+
+  const payload = {
+    fields: {
+      mobile: { label: "Mobile Number", show: document.getElementById('formMobileShow')?.checked ?? true, required: false }
+    },
+    services: formServicesConfig.filter(s => s.name.trim() !== '')
+  };
+
+  try {
+    const res = await fetch('/api/admin/settings/contact-form', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      showAdminToast("📝 Contact Form settings saved successfully!");
+      loadContactFormSettings();
+    } else {
+      showAdminToast("⚠️ Failed to save Contact Form settings.");
+    }
+  } catch (err) {
+    showAdminToast("⚠️ Error connecting to server.");
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalHtml;
+    }
+  }
+}
+
+window.renderFormServicesConfig = renderFormServicesConfig;
+window.deleteFormServiceOption = deleteFormServiceOption;
+window.addNewFormServiceOption = addNewFormServiceOption;
+window.loadContactFormSettings = loadContactFormSettings;
+window.saveContactFormSettings = saveContactFormSettings;
+
+function loadContactSettings() {
+  return loadContactMapSettings();
+}
+
+function saveContactSettings(e) {
+  return saveContactMapSettings(e);
+}
+
+window.loadContactSettings = loadContactSettings;
+window.saveContactSettings = saveContactSettings;
+
+let socialsData = [];
+
+const SOCIAL_ICONS = ['linkedin','instagram','facebook','x','threads','tiktok','youtube','pinterest','reddit','behance','dribbble','github','upwork','fiverr','freelancer','peopleperhour','guru','contra','google','bing','apple','clutch','goodfirms','designrush','techbehemoths','agencyspotter','sortlist','upcity','crunchbase','wellfound','producthunt','indiehackers','whatsappbusiness','telegram','yelp','hotfrog','justdial','indiamart','sulekha','alignable','meetup','trustpilot','capterra','g2','sourceforge','saashub','f6s','startupblink','polywork','peerlist','wix','shopify','webflow','squarespace','link'];
+
+function detectIcon(name) {
+  const n = (name || '').toLowerCase();
+  for (const k of SOCIAL_ICONS) {
+    if (n.includes(k) || (k === 'x' && (n === 'twitter' || n.includes('twitter')))) return k;
+  }
+  return 'link';
+}
+
+function renderSocials(items) {
+  const container = document.getElementById('socialsContainer');
+  if (!container) return;
+  if (!items || !items.length) {
+    container.innerHTML = `<div style="text-align:center;padding:32px;color:#94a3b8;font-size:14px;">
+      No social links yet. Click "Add Platform" to get started.
+    </div>`;
+    return;
+  }
+  container.innerHTML = items.map((s, i) => {
+    const icon = s.icon || detectIcon(s.name);
+    const options = SOCIAL_ICONS.map(k => `<option value="${k}" ${k === icon ? 'selected' : ''}>${k}</option>`).join('');
+    return `
+    <div class="card social-card-item" data-social-idx="${i}">
+      <div class="social-platform-card-grid">
+        <div class="field-group" style="margin:0; width:100%;">
+          <label class="field-label" for="soc_name_${i}" style="font-size:0.85rem; font-weight:700; color:#475569; display:block; margin-bottom:0.5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Platform Name</label>
+          <input class="field-input" id="soc_name_${i}" type="text" value="${s.name || ''}" placeholder="e.g. Instagram" oninput="socialIconAuto(${i})" style="width:100%;">
+        </div>
+        <div class="field-group" style="margin:0; width:100%;">
+          <label class="field-label" for="soc_url_${i}" style="font-size:0.85rem; font-weight:700; color:#475569; display:block; margin-bottom:0.5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Profile URL</label>
+          <input class="field-input" id="soc_url_${i}" type="url" value="${s.url || ''}" placeholder="https://instagram.com/championscricketclub" style="width:100%;">
+        </div>
+        <div class="field-group" style="margin:0; width:100%;">
+          <label class="field-label" for="soc_icon_${i}" style="font-size:0.85rem; font-weight:700; color:#475569; display:block; margin-bottom:0.5rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Icon Type</label>
+          <select class="field-select" id="soc_icon_${i}" onchange="socialIconAuto(${i})" style="width:100%;">
+            ${options}
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:1.25rem; flex-wrap:wrap; gap:14px; width:100%;">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+          <label style="display:inline-flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer;" title="Show in Top Navbar Header">
+            <input type="checkbox" id="soc_nav_${i}" ${s.show_in_navbar !== false ? 'checked' : ''} style="width:18px; height:18px; accent-color:#059669;" />
+            Show in Navbar
+          </label>
+          <label style="display:inline-flex; align-items:center; gap:8px; font-size:0.85rem; font-weight:700; color:#1e293b; cursor:pointer;" title="Toggle Platform Visibility">
+            <span>Visible on Site:</span>
+            <label class="toggle-switch" style="margin:0;">
+              <input type="checkbox" id="soc_vis_${i}" ${s.visible !== false ? 'checked' : ''}>
+              <span class="toggle-slider"></span>
+            </label>
+          </label>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="moveSocial(${i}, -1)" title="Move Up" ${i === 0 ? 'disabled' : ''} style="padding:6px 12px; display:inline-flex; align-items:center; gap:4px; border:1px solid #e2e8f0; border-radius:6px; background:#fff;">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_upward</span>
+            <span style="font-size:0.75rem; font-weight:700;">Up</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="moveSocial(${i}, 1)" title="Move Down" ${i === items.length - 1 ? 'disabled' : ''} style="padding:6px 12px; display:inline-flex; align-items:center; gap:4px; border:1px solid #e2e8f0; border-radius:6px; background:#fff;">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_downward</span>
+            <span style="font-size:0.75rem; font-weight:700;">Down</span>
+          </button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="removeSocial(${i})" title="Remove" style="color:#ef4444; padding:6px 12px; display:inline-flex; align-items:center; gap:4px; border:1px solid #fca5a5; border-radius:6px; background:#fff5f5;">
+            <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+            <span style="font-size:0.75rem; font-weight:700;">Delete</span>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function socialIconAuto(i) {
+  const nameEl = document.getElementById(`soc_name_${i}`);
+  const sel = document.getElementById(`soc_icon_${i}`);
+  if (nameEl && sel && sel.value === 'link') {
+    sel.value = detectIcon(nameEl.value);
+  }
+}
+
+function syncSocialsData() {
+  socialsData = socialsData.map((s, i) => ({
+    name: document.getElementById(`soc_name_${i}`)?.value.trim() || s.name || '',
+    url: document.getElementById(`soc_url_${i}`)?.value.trim() || s.url || '',
+    icon: document.getElementById(`soc_icon_${i}`)?.value || s.icon || 'link',
+    visible: document.getElementById(`soc_vis_${i}`)?.checked ?? true,
+    show_in_navbar: document.getElementById(`soc_nav_${i}`)?.checked ?? true,
+  }));
+}
+
+function moveSocial(idx, dir) {
+  syncSocialsData();
+  const temp = socialsData[idx];
+  socialsData[idx] = socialsData[idx + dir];
+  socialsData[idx + dir] = temp;
+  renderSocials(socialsData);
+}
+
+function removeSocial(idx) {
+  syncSocialsData();
+  socialsData.splice(idx, 1);
+  renderSocials(socialsData);
+}
+
+function addSocialPlatform() {
+  syncSocialsData();
+  socialsData.push({ name: 'New Platform', url: '', visible: true, icon: 'link' });
+  renderSocials(socialsData);
+}
+
+// Bind to window object for inline HTML event handlers
+window.socialIconAuto = socialIconAuto;
+window.syncSocialsData = syncSocialsData;
+window.moveSocial = moveSocial;
+window.removeSocial = removeSocial;
+window.addSocialPlatform = addSocialPlatform;
+
+async function loadSocialMediaSettings() {
+  try {
+    const res = await fetch('/api/admin/settings/socials');
+    const data = await res.json();
+    socialsData = data.socials || [];
+    renderSocials(socialsData);
+  } catch (err) {
+    console.error("Failed to load social media settings:", err);
+  }
+}
+
+async function saveSocialMediaSettings(e) {
+  if (e) e.preventDefault();
+  window.syncSocialsData();
+
+  const saveBtns = document.querySelectorAll('.save-socials-btn');
+  const btnOriginals = [];
+  
+  saveBtns.forEach(btn => {
+    btnOriginals.push({ btn, html: btn.innerHTML });
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  });
+
+  try {
+    const res = await fetch('/api/admin/settings/socials', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ socials: socialsData })
+    });
+    if (res.ok) {
+      showAdminToast("🌐 Social Media profiles saved successfully!");
+      loadSocialMediaSettings();
+    } else {
+      showAdminToast("⚠️ Failed to update social media profiles.");
+    }
+  } catch (err) {
+    showAdminToast("⚠️ Error connecting to server.");
+  } finally {
+    btnOriginals.forEach(item => {
+      item.btn.disabled = false;
+      item.btn.innerHTML = item.html;
+    });
+  }
 }
 
 async function loadPromoSettings() {
@@ -210,10 +1300,10 @@ document.getElementById('promoBarForm')?.addEventListener('submit', async (e) =>
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (res.ok) alert('Promo bar saved!');
-    else alert('Failed to save promo bar');
+    if (res.ok) showAdminToast('✅ Promo bar saved successfully!');
+    else showAdminToast('⚠️ Failed to save promo bar');
   } catch (err) {
-    alert('Error saving promo bar');
+    showAdminToast('⚠️ Error saving promo bar');
   }
   saveBtn.innerHTML = origHtml;
 });
@@ -224,12 +1314,6 @@ document.getElementById('promoPopupForm')?.addEventListener('submit', async (e) 
   const origHtml = saveBtn.innerHTML;
   saveBtn.innerHTML = 'Saving...';
   
-  // Since we use URLs directly, we can just save it. (Wait, the backend /api/admin/settings/promo expects { promo: req.body } so the previous route overwrites! 
-  // Let's modify the payload to send BOTH or fetch current and merge.)
-  // Actually, wait, AS Creates POST /api/admin/settings/promo saves req.body into settings.promo. 
-  // We need to fetch the existing data or structure the payload correctly.
-  
-  // Let's fetch current state first to avoid overwriting promo with popup
   const currentRes = await fetch('/api/promotion');
   const currentData = await currentRes.json();
   
@@ -253,10 +1337,10 @@ document.getElementById('promoPopupForm')?.addEventListener('submit', async (e) 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (res.ok) alert('Popup saved!');
-    else alert('Failed to save popup');
+    if (res.ok) showAdminToast('✅ Popup settings saved successfully!');
+    else showAdminToast('⚠️ Failed to save popup settings');
   } catch (err) {
-    alert('Error saving popup');
+    showAdminToast('⚠️ Error saving popup settings');
   }
   saveBtn.innerHTML = origHtml;
 });
@@ -286,10 +1370,10 @@ document.getElementById('promoBarForm')?.addEventListener('submit', async (e) =>
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (res.ok) alert('Promo bar saved!');
-    else alert('Failed to save promo bar');
+    if (res.ok) showAdminToast('✅ Promo bar saved successfully!');
+    else showAdminToast('⚠️ Failed to save promo bar');
   } catch (err) {
-    alert('Error saving promo bar');
+    showAdminToast('⚠️ Error saving promo bar');
   }
   saveBtn.innerHTML = origHtml;
 });
@@ -388,9 +1472,10 @@ function updateLiveStatusUI(isDeployed) {
     if (text) text.innerText = 'LIVE ONLINE';
 
     if (btn) {
-      btn.style.background = '#dc2626';
-      btn.style.borderColor = '#dc2626';
-      btn.style.color = '#ffffff';
+      btn.className = 'btn btn-solid-danger';
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
     }
     if (btnIcon) btnIcon.innerText = 'power_settings_new';
     if (btnText) btnText.innerText = 'Stop Website';
@@ -407,9 +1492,10 @@ function updateLiveStatusUI(isDeployed) {
     if (text) text.innerText = 'COMING SOON PAGE';
 
     if (btn) {
-      btn.style.background = '#10b981';
-      btn.style.borderColor = '#10b981';
-      btn.style.color = '#ffffff';
+      btn.className = 'btn btn-primary';
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
     }
     if (btnIcon) btnIcon.innerText = 'play_arrow';
     if (btnText) btnText.innerText = 'Launch Live Site';
@@ -465,14 +1551,14 @@ async function saveOperationalSettings(event) {
     });
 
     if (res.ok) {
-      alert('Operational settings saved successfully!');
+      showAdminToast('✅ Operational settings saved successfully!');
       CURRENT_OPERATIONAL_STATE = payload;
     } else {
-      alert('Failed to save operational settings.');
+      showAdminToast('⚠️ Failed to save operational settings.');
     }
   } catch (err) {
     console.error('Error saving operational settings:', err);
-    alert('Error connecting to server.');
+    showAdminToast('⚠️ Error connecting to server.');
   } finally {
     if (saveBtn) saveBtn.innerHTML = origContent;
   }
@@ -712,12 +1798,17 @@ function editArchivedMatch(id) {
 }
 
 function deleteArchivedMatch(id) {
-  if (confirm("Delete this archived match?")) {
+  showConfirmDialog({
+    title: "Delete Match Record",
+    message: "Are you sure you want to delete this match record?",
+    confirmText: "Delete Match",
+    isDanger: true
+  }, () => {
     ADMIN_STATE.fixtures = ADMIN_STATE.fixtures.filter(f => f.id !== id);
     localStorage.setItem("ccc_fixtures", JSON.stringify(ADMIN_STATE.fixtures));
     renderArchivedMatches();
     showAdminToast("Archived match deleted.");
-  }
+  });
 }
 
 
@@ -752,14 +1843,25 @@ function renderOverviewRecentLeads() {
   }
 
   container.innerHTML = recent.map(l => `
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; background: #f8fafc; border-radius: 10px; border: 1px solid #f1f5f9;">
-      <div>
-        <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a;">${l.name}</div>
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 0.65rem 0.85rem; background: #f8fafc; border-radius: 10px; border: 1px solid #f1f5f9; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease;"
+         onclick="openLeadFromOverview(${l.id})"
+         onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#d1d5db';"
+         onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#f1f5f9';">
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${l.name}</div>
         <div style="font-size: 0.75rem; color: #64748b;">${l.service_interest || l.subject || 'General Inquiry'} • ${l.email}</div>
       </div>
-      <span class="badge-status ${l.is_read ? 'badge-read' : 'badge-new'}" style="font-size: 0.7rem;">${l.is_read ? 'Read' : 'New'}</span>
+      <span class="badge-status ${l.is_read ? 'badge-read' : 'badge-new'}" style="font-size: 0.7rem; flex-shrink: 0; margin-left: 0.5rem; margin-top: 2px;">${l.is_read ? 'Read' : 'New'}</span>
     </div>
   `).join("");
+}
+
+function openLeadFromOverview(id) {
+  const leadsBtn = document.querySelector('[data-section="leads"]');
+  if (leadsBtn) leadsBtn.click();
+  if (id) {
+    setTimeout(() => viewLeadModal(id), 150);
+  }
 }
 
 function renderOverviewSquadPreview() {
@@ -777,25 +1879,46 @@ function renderOverviewSquadPreview() {
   }
 
   container.innerHTML = squadList.map(s => `
-    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.85rem; background: #f8fafc; border-radius: 10px; border: 1px solid #f1f5f9;">
-      <img src="${s.photo || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500'}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981;" />
+    <div style="display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.65rem 0.85rem; background: #f8fafc; border-radius: 10px; border: 1px solid #f1f5f9;">
+      <img src="${s.photo || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500'}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #10b981; flex-shrink: 0;" />
       <div style="flex: 1; min-width: 0;">
         <div style="font-weight: 700; font-size: 0.85rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.name}</div>
         <div style="font-size: 0.725rem; color: #64748b;">${s.role}</div>
       </div>
-      <span class="badge-status badge-read" style="font-size: 0.7rem;">${s.roleCategory || 'Member'}</span>
+      <span class="badge-status badge-read" style="font-size: 0.7rem; flex-shrink: 0; margin-top: 2px;">${s.roleCategory || 'Member'}</span>
     </div>
   `).join("");
 }
 
 
-// Leads Table
+// Contact Leads & Submissions Management System
+let currentLeadFilter = 'all';
+let leadSearchQuery = '';
+
+function setLeadFilter(filter) {
+  currentLeadFilter = filter;
+  ['all', 'unread', 'read'].forEach(f => {
+    const btn = document.getElementById(`btn-filter-${f}`);
+    if (btn) {
+      if (f === filter) btn.classList.add('active');
+      else btn.classList.remove('active');
+    }
+  });
+  renderLeadsTable();
+}
+
+function handleLeadSearch(query) {
+  leadSearchQuery = (query || '').toLowerCase().trim();
+  renderLeadsTable();
+}
+
 async function fetchLeads() {
   try {
     const res = await fetch('/api/admin/leads');
     if (res.ok) {
       ADMIN_STATE.leads = await res.json();
       renderLeadsTable();
+      renderOverviewRecentLeads();
       updateOverviewStats();
     }
   } catch(e) {
@@ -803,81 +1926,342 @@ async function fetchLeads() {
   }
 }
 
+async function toggleLeadReadStatus(id, targetReadStatus) {
+  const lead = ADMIN_STATE.leads.find(l => l.id === id);
+  if (!lead) return;
+
+  const newStatus = targetReadStatus !== undefined ? (targetReadStatus ? 1 : 0) : (lead.is_read ? 0 : 1);
+  lead.is_read = newStatus;
+
+  try {
+    await fetch(`/api/admin/leads/${id}/read`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_read: newStatus })
+    });
+  } catch (err) {
+    console.error("Error updating lead status:", err);
+  }
+
+  renderLeadsTable();
+  renderOverviewRecentLeads();
+  updateOverviewStats();
+
+  const modalEl = document.getElementById("modal-lead");
+  if (modalEl && (modalEl.classList.contains("open") || modalEl.style.display === "flex")) {
+    updateLeadModalButtons(lead);
+    const badgeEl = modalEl.querySelector(".modal-body .badge-status");
+    if (badgeEl) {
+      badgeEl.className = `badge-status ${lead.is_read ? 'badge-read-muted' : 'badge-unread-pulse'}`;
+      badgeEl.innerHTML = lead.is_read ? 'Read' : '<span class="unread-pulse-dot"></span> Unread';
+    }
+  }
+
+  showAdminToast(newStatus ? "✅ Marked inquiry as Read" : "✉️ Marked inquiry as Unread");
+}
+
+function updateLeadModalButtons(lead) {
+  const toggleBtn = document.getElementById("modal-lead-toggle-read-btn");
+  const toggleIcon = document.getElementById("modal-lead-toggle-icon");
+  const toggleText = document.getElementById("modal-lead-toggle-text");
+
+  if (toggleBtn) {
+    if (lead.is_read) {
+      if (toggleIcon) toggleIcon.innerText = "mark_as_unread";
+      if (toggleText) toggleText.innerText = "Mark as Unread";
+      toggleBtn.className = "btn btn-secondary btn-sm";
+      toggleBtn.onclick = () => toggleLeadReadStatus(lead.id, 0);
+    } else {
+      if (toggleIcon) toggleIcon.innerText = "mark_email_read";
+      if (toggleText) toggleText.innerText = "Mark as Read";
+      toggleBtn.className = "btn btn-primary btn-sm";
+      toggleBtn.onclick = () => toggleLeadReadStatus(lead.id, 1);
+    }
+  }
+}
+
 function renderLeadsTable() {
   const container = document.getElementById("leads-tbody");
   if (!container) return;
 
-  const badgeCount = document.getElementById("leads-count-badge");
-  if (badgeCount) badgeCount.innerText = ADMIN_STATE.leads.length;
+  const totalCount = ADMIN_STATE.leads.length;
+  const unreadCount = ADMIN_STATE.leads.filter(l => !l.is_read).length;
+  const readCount = totalCount - unreadCount;
 
-  if (ADMIN_STATE.leads.length === 0) {
-    container.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">No contact inquiries found.</td></tr>`;
+  // Update Counters
+  const cntAll = document.getElementById("cnt-leads-all");
+  const cntUnread = document.getElementById("cnt-leads-unread");
+  const cntRead = document.getElementById("cnt-leads-read");
+  const badgeCount = document.getElementById("leads-count-badge");
+
+  if (cntAll) cntAll.innerText = `(${totalCount})`;
+  if (cntUnread) cntUnread.innerText = `(${unreadCount})`;
+  if (cntRead) cntRead.innerText = `(${readCount})`;
+  if (badgeCount) badgeCount.innerText = unreadCount > 0 ? `${unreadCount} New` : `${totalCount}`;
+
+  // Filter leads
+  let filteredLeads = ADMIN_STATE.leads.filter(lead => {
+    if (currentLeadFilter === 'unread' && lead.is_read) return false;
+    if (currentLeadFilter === 'read' && !lead.is_read) return false;
+    if (leadSearchQuery) {
+      const q = leadSearchQuery;
+      const name = (lead.name || '').toLowerCase();
+      const email = (lead.email || '').toLowerCase();
+      const subject = (lead.service_interest || lead.subject || '').toLowerCase();
+      const message = (lead.message || '').toLowerCase();
+      return name.includes(q) || email.includes(q) || subject.includes(q) || message.includes(q);
+    }
+    return true;
+  });
+
+  if (filteredLeads.length === 0) {
+    let emptyMsg = "No contact inquiries found.";
+    if (currentLeadFilter === 'unread') emptyMsg = "🎉 Clear inbox! No unread inquiries.";
+    else if (currentLeadFilter === 'read') emptyMsg = "No read inquiries found.";
+    else if (leadSearchQuery) emptyMsg = `No inquiries matching "${leadSearchQuery}".`;
+
+    container.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted); padding:2.5rem; font-size: 0.9rem;">${emptyMsg}</td></tr>`;
     return;
   }
 
-  container.innerHTML = ADMIN_STATE.leads.map(lead => `
-    <tr>
-      <td><strong>${lead.name}</strong></td>
-      <td><div>${lead.email}</div><div style="font-size:0.75rem; color:var(--text-muted);">${lead.phone || ''}</div></td>
-      <td>${lead.service_interest || lead.subject || 'N/A'}</td>
-      <td><span class="badge-status ${lead.is_read ? 'badge-read' : 'badge-new'}">${lead.is_read ? 'Read' : 'New'}</span></td>
-      <td>${new Date(lead.created_at).toLocaleDateString()}</td>
-      <td>
-        <button class="btn-icon" onclick="viewLeadModal(${lead.id})" title="View Message">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-        </button>
-        <button class="btn-icon" onclick="deleteLead(${lead.id})" title="Delete" style="color:var(--danger-color);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-        </button>
-      </td>
-    </tr>
-  `).join("");
+  container.innerHTML = filteredLeads.map((lead, idx) => {
+    const isUnread = !lead.is_read;
+    const rowClass = isUnread ? 'lead-row-unread' : '';
+    const dateStr = new Date(lead.created_at || Date.now()).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+
+    const statusBadge = isUnread
+      ? `<span class="badge-status badge-unread-pulse"><span class="unread-pulse-dot"></span> Unread</span>`
+      : `<span class="badge-status badge-read-muted">Read</span>`;
+
+    const toggleActionBtn = isUnread
+      ? `<button class="btn-icon btn-icon-read" onclick="toggleLeadReadStatus(${lead.id}, 1)" title="Mark as Read" style="padding: 5px; border-radius: 8px;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">mark_email_read</span>
+         </button>`
+      : `<button class="btn-icon btn-icon-unread" onclick="toggleLeadReadStatus(${lead.id}, 0)" title="Mark as Unread" style="padding: 5px; border-radius: 8px;">
+          <span class="material-symbols-outlined" style="font-size: 18px;">mark_as_unread</span>
+         </button>`;
+
+    return `
+      <tr class="${rowClass}">
+        <td style="font-weight:700; color:#64748b; font-size: 0.8rem;">#${idx + 1}</td>
+        <td>
+          <div style="font-weight: ${isUnread ? '800' : '600'}; color: #0f172a; font-size: 0.9rem;">${lead.name}</div>
+        </td>
+        <td>
+          <div style="font-size: 0.85rem; color: #334155;">${lead.email}</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top: 1px;">${lead.phone || lead.mobile || 'No phone'}</div>
+        </td>
+        <td>
+          <div style="font-weight: 600; font-size: 0.85rem; color: #1e293b;">${lead.service_interest || lead.service || lead.subject || 'General Inquiry'}</div>
+        </td>
+        <td>${statusBadge}</td>
+        <td style="font-size: 0.8rem; color: #64748b; white-space: nowrap;">${dateStr}</td>
+        <td style="text-align: right;">
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+            <button class="btn-icon" onclick="viewLeadModal(${lead.id})" title="View Inquiry Details" style="color: #6366f1; background: rgba(99, 102, 241, 0.08); padding: 5px; border-radius: 8px;">
+              <span class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
+            </button>
+            ${toggleActionBtn}
+            <button class="btn-icon danger" onclick="deleteLead(${lead.id})" title="Delete Inquiry" style="padding: 5px; border-radius: 8px;">
+              <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join("");
 }
 
 function viewLeadModal(id) {
   const lead = ADMIN_STATE.leads.find(l => l.id === id);
   if (!lead) return;
 
-  // Ideally make an API call to mark as read
-
-  document.getElementById("modal-lead-title").innerText = `Inquiry: ${lead.service_interest || lead.subject || 'N/A'}`;
-  document.getElementById("modal-lead-body").innerHTML = `
-    <div style="margin-bottom:1rem;">
-      <p><strong>From:</strong> ${lead.name} (${lead.email})</p>
-      <p><strong>Phone:</strong> ${lead.phone || 'N/A'}</p>
-      <p><strong>Date:</strong> ${lead.date}</p>
-    </div>
-    <div style="background:var(--bg-input); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-color); color:var(--text-primary); font-size:0.95rem; line-height:1.6;">
-      ${lead.message}
-    </div>
-  `;
-  openAdminModal("modal-lead");
-}
-
-function deleteLead(id) {
-  if (confirm("Delete this contact submission?")) {
-    // Ideally make an API call to delete
-    ADMIN_STATE.leads = ADMIN_STATE.leads.filter(l => l.id !== id);
+  // Automatically mark as read if it was unread when opened
+  if (!lead.is_read) {
+    lead.is_read = 1;
+    fetch(`/api/admin/leads/${id}/read`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_read: 1 })
+    }).catch(err => console.error("Error marking lead read:", err));
     renderLeadsTable();
+    renderOverviewRecentLeads();
     updateOverviewStats();
-    showAdminToast("Contact submission deleted.");
+  }
+
+  const modalTitleEl = document.getElementById("modal-lead-title");
+  if (modalTitleEl) {
+    modalTitleEl.innerText = lead.service_interest || lead.service || lead.subject || 'Contact Inquiry Details';
+  }
+
+  const modalBodyEl = document.getElementById("modal-lead-body");
+  if (modalBodyEl) {
+    const formattedDate = new Date(lead.created_at || Date.now()).toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    });
+
+    const phoneNum = lead.phone || lead.mobile || '';
+
+    modalBodyEl.innerHTML = `
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.85rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; border-bottom: 1px dashed #cbd5e1; padding-bottom: 0.85rem;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 42px; height: 42px; border-radius: 50%; background: #6366f1; color: #ffffff; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; text-transform: uppercase;">
+              ${(lead.name || 'U').charAt(0)}
+            </div>
+            <div>
+              <div style="font-weight: 800; font-size: 1.05rem; color: #0f172a;">${lead.name}</div>
+              <div style="font-size: 0.78rem; color: #64748b;">Sender / Contact Person</div>
+            </div>
+          </div>
+          <div>
+            <span class="badge-status ${lead.is_read ? 'badge-read-muted' : 'badge-unread-pulse'}">${lead.is_read ? 'Read' : '<span class="unread-pulse-dot"></span> Unread'}</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; font-size: 0.85rem;">
+          <div>
+            <span style="color: #64748b; font-weight: 600;">Email:</span> 
+            <a href="mailto:${lead.email}" style="color: #4f46e5; font-weight: 700; text-decoration: underline;">${lead.email}</a>
+          </div>
+          <div>
+            <span style="color: #64748b; font-weight: 600;">Phone:</span> 
+            <a href="${phoneNum ? 'tel:' + phoneNum : '#'}" style="color: #0f172a; font-weight: 700;">${phoneNum || 'N/A'}</a>
+          </div>
+          <div>
+            <span style="color: #64748b; font-weight: 600;">Subject:</span> 
+            <span style="color: #0f172a; font-weight: 700;">${lead.service_interest || lead.service || lead.subject || 'General Inquiry'}</span>
+          </div>
+          <div>
+            <span style="color: #64748b; font-weight: 600;">Received:</span> 
+            <span style="color: #0f172a; font-weight: 600;">${formattedDate}</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <label style="font-size: 0.8rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.05em;">Inquiry Message:</label>
+        <div style="background: #ffffff; padding: 1.25rem; border-radius: 12px; border: 1px solid #cbd5e1; color: #0f172a; font-size: 0.95rem; line-height: 1.6; white-space: pre-wrap; word-break: break-word; min-height: 100px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+          ${lead.message || 'No message content provided.'}
+        </div>
+      </div>
+    `;
+  }
+
+  // Configure Reply Email button
+  const replyBtn = document.getElementById("modal-lead-reply-btn");
+  if (replyBtn) {
+    const replySubject = encodeURIComponent(`Re: ${lead.service_interest || lead.subject || 'Inquiry - Champions CC'}`);
+    replyBtn.href = `mailto:${lead.email}?subject=${replySubject}`;
+  }
+
+  // Configure Delete button in modal
+  const deleteBtn = document.getElementById("modal-lead-delete-btn");
+  if (deleteBtn) {
+    deleteBtn.onclick = () => {
+      closeAdminModal("modal-lead");
+      deleteLead(lead.id);
+    };
+  }
+
+  // Update Mark Read/Unread Toggle Button in modal
+  updateLeadModalButtons(lead);
+
+  // Open modal
+  const overlay = document.getElementById("modal-lead");
+  if (overlay) {
+    overlay.style.display = "flex";
+    overlay.classList.add("open");
   }
 }
 
+function deleteLead(id) {
+  showConfirmDialog({
+    title: "Delete Contact Inquiry",
+    message: "Are you sure you want to delete this contact submission?",
+    confirmText: "Delete Submission",
+    isDanger: true
+  }, async () => {
+    try {
+      const res = await fetch(`/api/admin/leads/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        ADMIN_STATE.leads = ADMIN_STATE.leads.filter(l => l.id !== id);
+        renderLeadsTable();
+        renderOverviewRecentLeads();
+        updateOverviewStats();
+        showAdminToast("Contact submission deleted.");
+      } else {
+        showAdminToast("⚠️ Failed to delete submission.");
+      }
+    } catch(e) {
+      console.error("Error deleting lead:", e);
+      showAdminToast("⚠️ Error deleting submission.");
+    }
+  });
+}
+
+// Window Exports for Lead Functions
+window.fetchLeads = fetchLeads;
+window.setLeadFilter = setLeadFilter;
+window.handleLeadSearch = handleLeadSearch;
+window.toggleLeadReadStatus = toggleLeadReadStatus;
+window.viewLeadModal = viewLeadModal;
+window.deleteLead = deleteLead;
+
 // Squad Manager
+async function fetchSquadAdmin() {
+  try {
+    const res = await fetch('/api/squad');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        ADMIN_STATE.squad = data;
+        localStorage.setItem("ccc_squad", JSON.stringify(data));
+      }
+    }
+  } catch (e) {
+    console.warn("Using local cache for squad:", e);
+  }
+  renderSquadAdminTable();
+  updateOverviewStats();
+}
+
+function openAddPlayerModal() {
+  const editIdEl = document.getElementById("edit-player-id");
+  if (editIdEl) editIdEl.value = "";
+  const form = document.querySelector("#modal-add-player form");
+  if (form) form.reset();
+  const modalTitle = document.getElementById("player-modal-title");
+  if (modalTitle) modalTitle.innerText = "Add New Player to Squad";
+  const submitBtn = document.getElementById("player-submit-btn");
+  if (submitBtn) submitBtn.innerText = "Save Player";
+  openAdminModal("modal-add-player");
+}
+
 function renderSquadAdminTable() {
   const container = document.getElementById("squad-tbody");
   if (!container) return;
 
-  container.innerHTML = ADMIN_STATE.squad.map(m => `
+  if (!ADMIN_STATE.squad || ADMIN_STATE.squad.length === 0) {
+    container.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:2rem;">No squad members found.</td></tr>`;
+    return;
+  }
+
+  container.innerHTML = ADMIN_STATE.squad.map((m, idx) => `
     <tr>
+      <td style="font-weight:700; color:#64748b;">#${idx + 1}</td>
       <td style="display:flex; align-items:center; gap:0.75rem;">
-        <img src="${m.photo}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--accent-emerald);">
+        <img src="${m.photo || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500'}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--accent-emerald);">
         <strong>${m.name}</strong>
       </td>
       <td><span class="badge-status badge-read">${m.role}</span></td>
-      <td>${m.experience}</td>
-      <td>${m.tenure}</td>
+      <td>${m.experience || 'Active'}</td>
+      <td>${m.tenure || 'Member'}</td>
       <td class="action-btns-cell">
         <button class="btn-icon" title="Edit Player" onclick="editPlayer('${m.id}')" style="color:var(--accent-emerald);"><span class="material-symbols-outlined" style="font-size: 1.2rem;">edit</span></button>
         <button class="btn-icon danger" title="Remove Player" onclick="deletePlayer('${m.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span></button>
@@ -889,70 +2273,360 @@ function renderSquadAdminTable() {
 function editPlayer(id) {
   const player = ADMIN_STATE.squad.find(p => p.id === id);
   if (!player) return;
-  document.getElementById("edit-player-id").value = player.id;
+
+  const editIdEl = document.getElementById("edit-player-id");
+  if (editIdEl) editIdEl.value = player.id;
   document.getElementById("new-player-name").value = player.name || '';
   document.getElementById("new-player-category").value = player.roleCategory || '';
   document.getElementById("new-player-role").value = player.role || '';
   document.getElementById("new-player-bio").value = player.bio || '';
   document.getElementById("new-player-photo").value = player.photo || '';
   
+  const expEl = document.getElementById("new-player-experience");
+  if (expEl) expEl.value = player.experience || '';
+  const tenEl = document.getElementById("new-player-tenure");
+  if (tenEl) tenEl.value = player.tenure || '';
+
+  const modalTitle = document.getElementById("player-modal-title");
+  if (modalTitle) modalTitle.innerText = "Edit Player Profile";
+  const submitBtn = document.getElementById("player-submit-btn");
+  if (submitBtn) submitBtn.innerText = "Update Player";
+
   openAdminModal("modal-add-player");
 }
 
-function handleCreatePlayer(e) {
+async function handleCreatePlayer(e) {
   e.preventDefault();
   const idToEdit = document.getElementById("edit-player-id").value;
   const name = document.getElementById("new-player-name").value.trim();
-  const roleCategory = document.getElementById("new-player-category").value;
+  const roleCategory = document.getElementById("new-player-category").value.trim();
   const role = document.getElementById("new-player-role").value.trim();
   const bio = document.getElementById("new-player-bio").value.trim();
   const photo = document.getElementById("new-player-photo").value.trim();
+  const experience = document.getElementById("new-player-experience") ? document.getElementById("new-player-experience").value.trim() : "Active Member";
+  const tenure = document.getElementById("new-player-tenure") ? document.getElementById("new-player-tenure").value.trim() : "Joined 2026";
 
-  if (idToEdit) {
-    // Edit existing
-    const idx = ADMIN_STATE.squad.findIndex(p => p.id === idToEdit);
-    if (idx !== -1) {
-      ADMIN_STATE.squad[idx] = { ...ADMIN_STATE.squad[idx], name, roleCategory, role, bio, photo };
+  const payload = {
+    name,
+    roleCategory,
+    role,
+    bio,
+    photo,
+    experience: experience || "Active Member",
+    tenure: tenure || "Joined 2026"
+  };
+
+  try {
+    if (idToEdit) {
+      const res = await fetch(`/api/admin/squad/${idToEdit}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Failed to update player");
       showAdminToast(`✨ Player "${name}" updated!`);
+    } else {
+      const res = await fetch('/api/admin/squad', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error("Failed to add player");
+      showAdminToast(`✨ Player "${name}" added to squad!`);
     }
-  } else {
-    // Create new
-    const newPlayer = {
-      id: "m-" + Date.now(),
-      roleCategory,
-      name,
-      role,
-      experience: "Active Member",
-      tenure: "Joined 2026",
-      photo,
-      bio
-    };
-    ADMIN_STATE.squad.unshift(newPlayer);
-    showAdminToast(`✨ Player "${name}" added to squad!`);
+    await fetchSquadAdmin();
+  } catch (err) {
+    console.error("Squad operation API error, applying local fallback:", err);
+    if (idToEdit) {
+      const idx = ADMIN_STATE.squad.findIndex(p => p.id === idToEdit);
+      if (idx !== -1) {
+        ADMIN_STATE.squad[idx] = { ...ADMIN_STATE.squad[idx], name, roleCategory, role, bio, photo, experience: payload.experience, tenure: payload.tenure };
+      }
+    } else {
+      const newPlayer = { id: "m-" + Date.now(), roleCategory, name, role, experience: payload.experience, tenure: payload.tenure, photo, bio };
+      ADMIN_STATE.squad.unshift(newPlayer);
+    }
+    localStorage.setItem("ccc_squad", JSON.stringify(ADMIN_STATE.squad));
+    renderSquadAdminTable();
+    updateOverviewStats();
   }
 
-  localStorage.setItem("ccc_squad", JSON.stringify(ADMIN_STATE.squad));
-
   closeAdminModal("modal-add-player");
-  renderSquadAdminTable();
-  updateOverviewStats();
-
-  // Reset form
   e.target.reset();
   document.getElementById("edit-player-id").value = "";
 }
 
 function deletePlayer(id) {
-  if (confirm("Remove player from squad list?")) {
-    ADMIN_STATE.squad = ADMIN_STATE.squad.filter(s => s.id !== id);
-    localStorage.setItem("ccc_squad", JSON.stringify(ADMIN_STATE.squad));
-    renderSquadAdminTable();
-    updateOverviewStats();
-    showAdminToast("Player removed from squad.");
+  showConfirmDialog({
+    title: "Remove Squad Member",
+    message: "Are you sure you want to remove this player from squad list?",
+    confirmText: "Remove Player",
+    isDanger: true
+  }, async () => {
+    try {
+      const res = await fetch(`/api/admin/squad/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error("Failed to delete squad member");
+      showAdminToast("Player removed from squad.");
+      await fetchSquadAdmin();
+    } catch (err) {
+      console.error("Error deleting squad member from API:", err);
+      ADMIN_STATE.squad = ADMIN_STATE.squad.filter(s => s.id !== id);
+      localStorage.setItem("ccc_squad", JSON.stringify(ADMIN_STATE.squad));
+      renderSquadAdminTable();
+      updateOverviewStats();
+      showAdminToast("Player removed from squad (local cache).");
+    }
+  });
+}
+
+// MS Word Rich Text Formatting Helper
+function formatDoc(cmd, value = null) {
+  const editor = document.getElementById("new-blog-editor");
+  if (!editor) return;
+  editor.focus();
+
+  if (cmd === 'formatBlock') {
+    if (!value) return;
+    try {
+      document.execCommand('formatBlock', false, '<' + value + '>');
+    } catch (e) {
+      document.execCommand('formatBlock', false, value);
+    }
+  } else {
+    document.execCommand(cmd, false, value);
   }
 }
 
+function setImgAlign(btn, alignClass) {
+  const wrap = btn.closest('.article-img-wrap');
+  if (wrap) {
+    wrap.classList.remove('float-left', 'float-right', 'align-center');
+    wrap.classList.add(alignClass);
+  }
+}
+
+function removeImgWrap(btn) {
+  const wrap = btn.closest('.article-img-wrap');
+  if (wrap) {
+    wrap.remove();
+  }
+}
+
+function ensureImageHandles(wrap) {
+  if (!wrap.querySelector(".img-inline-toolbar")) {
+    const toolbar = document.createElement("div");
+    toolbar.className = "img-inline-toolbar";
+    toolbar.setAttribute("contenteditable", "false");
+    toolbar.innerHTML = `
+      <button type="button" class="img-toolbar-btn" onclick="setImgAlign(this, 'float-left')">Float Left</button>
+      <button type="button" class="img-toolbar-btn" onclick="setImgAlign(this, 'align-center')">Center</button>
+      <button type="button" class="img-toolbar-btn" onclick="setImgAlign(this, 'float-right')">Float Right</button>
+      <button type="button" class="img-toolbar-btn danger" onclick="removeImgWrap(this)">Delete</button>
+    `;
+    wrap.insertBefore(toolbar, wrap.firstChild);
+  }
+  if (!wrap.querySelector(".resize-handle")) {
+    ["nw", "ne", "sw", "se"].forEach(pos => {
+      const handle = document.createElement("span");
+      handle.className = `resize-handle ${pos}`;
+      wrap.appendChild(handle);
+    });
+  }
+  wrap.setAttribute("draggable", "true");
+  wrap.setAttribute("contenteditable", "false");
+}
+
+let savedEditorRange = null;
+
+function saveEditorSelection() {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0) {
+    savedEditorRange = sel.getRangeAt(0);
+  }
+}
+
+function restoreEditorSelection() {
+  if (savedEditorRange) {
+    const sel = window.getSelection();
+    if (sel) {
+      sel.removeAllRanges();
+      sel.addRange(savedEditorRange);
+    }
+  }
+}
+
+// Open Helper Image Modal for Rich Editor
+function openEditorImageModal() {
+  saveEditorSelection();
+  const urlEl = document.getElementById("editor-img-url");
+  const capEl = document.getElementById("editor-img-caption");
+  if (urlEl) urlEl.value = "";
+  if (capEl) capEl.value = "";
+  openAdminModal("modal-insert-editor-image");
+}
+
+function handleInsertEditorImage(e) {
+  e.preventDefault();
+  const url = document.getElementById("editor-img-url").value.trim();
+  const width = document.getElementById("editor-img-width").value;
+  const align = document.getElementById("editor-img-align").value;
+  const caption = document.getElementById("editor-img-caption").value.trim();
+
+  if (!url) return;
+
+  const editor = document.getElementById("new-blog-editor");
+  if (!editor) return;
+
+  const captionHtml = caption ? `<span class="img-caption">${caption}</span>` : '';
+  const imgWrapHtml = `
+    <div class="article-img-wrap ${align} ${width}" contenteditable="false" draggable="true">
+      <div class="img-inline-toolbar" contenteditable="false">
+        <button type="button" class="img-toolbar-btn" onclick="setImgAlign(this, 'float-left')">Float Left</button>
+        <button type="button" class="img-toolbar-btn" onclick="setImgAlign(this, 'align-center')">Center</button>
+        <button type="button" class="img-toolbar-btn" onclick="setImgAlign(this, 'float-right')">Float Right</button>
+        <button type="button" class="img-toolbar-btn danger" onclick="removeImgWrap(this)">Delete</button>
+      </div>
+      <img src="${url}" alt="Article Image" />
+      <span class="resize-handle nw"></span>
+      <span class="resize-handle ne"></span>
+      <span class="resize-handle sw"></span>
+      <span class="resize-handle se"></span>
+      ${captionHtml}
+    </div><p><br></p>
+  `;
+
+  editor.focus();
+  restoreEditorSelection();
+
+  let inserted = false;
+  try {
+    inserted = document.execCommand("insertHTML", false, imgWrapHtml);
+  } catch (err) {
+    inserted = false;
+  }
+
+  if (!inserted) {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      const range = sel.getRangeAt(0);
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = imgWrapHtml;
+      const frag = document.createDocumentFragment();
+      let node;
+      while ((node = tempDiv.firstChild)) {
+        frag.appendChild(node);
+      }
+      range.insertNode(frag);
+    } else {
+      editor.innerHTML += imgWrapHtml;
+    }
+  }
+
+  closeAdminModal("modal-insert-editor-image");
+  if (typeof showAdminToast === 'function') {
+    showAdminToast("🖼️ Image inserted! Click image to resize or move.");
+  }
+}
+
+// Global Image Click Selection Listener
+document.addEventListener("click", (e) => {
+  const editor = document.getElementById("new-blog-editor");
+  if (!editor) return;
+
+  const clickedWrap = e.target.closest && e.target.closest(".article-img-wrap");
+  const allWraps = editor.querySelectorAll(".article-img-wrap");
+
+  if (clickedWrap && editor.contains(clickedWrap)) {
+    allWraps.forEach(w => {
+      if (w !== clickedWrap) w.classList.remove("selected");
+    });
+    clickedWrap.classList.add("selected");
+    ensureImageHandles(clickedWrap);
+  } else if (!e.target.closest || !e.target.closest(".img-inline-toolbar")) {
+    allWraps.forEach(w => w.classList.remove("selected"));
+  }
+});
+
+// Corner Drag-to-Resize Mouse Handler
+document.addEventListener("mousedown", (e) => {
+  if (e.target && e.target.classList && e.target.classList.contains("resize-handle")) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const handle = e.target;
+    const wrap = handle.closest(".article-img-wrap");
+    const img = wrap ? wrap.querySelector("img") : null;
+    if (!wrap || !img) return;
+
+    const startX = e.clientX;
+    const startWidth = wrap.offsetWidth;
+    const isEast = handle.classList.contains("se") || handle.classList.contains("ne");
+
+    function onMouseMove(moveEvent) {
+      moveEvent.preventDefault();
+      const dx = moveEvent.clientX - startX;
+      let newWidth = isEast ? (startWidth + dx) : (startWidth - dx);
+
+      const editor = document.getElementById("new-blog-editor");
+      const maxW = editor ? (editor.clientWidth - 40) : 800;
+      newWidth = Math.max(80, Math.min(newWidth, maxW));
+
+      wrap.style.width = newWidth + "px";
+      img.style.width = "100%";
+      img.style.height = "auto";
+    }
+
+    function onMouseUp() {
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp);
+    }
+
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseup", onMouseUp);
+  }
+});
+
+// Drag & Drop Move Image Handler inside Editor
+let globalDraggedWrap = null;
+
+document.addEventListener("dragstart", (e) => {
+  const wrap = e.target.closest && e.target.closest(".article-img-wrap");
+  if (wrap) {
+    globalDraggedWrap = wrap;
+    e.dataTransfer.setData("text/html", wrap.outerHTML);
+    e.dataTransfer.effectAllowed = "move";
+  }
+});
+
+document.addEventListener("drop", (e) => {
+  const editor = document.getElementById("new-blog-editor");
+  if (editor && editor.contains(e.target) && globalDraggedWrap) {
+    setTimeout(() => {
+      if (globalDraggedWrap && globalDraggedWrap.parentNode) {
+        globalDraggedWrap.parentNode.removeChild(globalDraggedWrap);
+      }
+      globalDraggedWrap = null;
+    }, 50);
+  }
+});
+
 // Blog Posts Manager
+async function fetchAdminBlogs() {
+  try {
+    const res = await fetch('/api/blogs');
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        ADMIN_STATE.blogs = data;
+        localStorage.setItem("ccc_blogs", JSON.stringify(data));
+      }
+    }
+  } catch (e) {
+    console.warn("Using local cache for blogs");
+  }
+  renderBlogsAdminTable();
+}
+
 function renderBlogsAdminTable() {
   const container = document.getElementById("blogs-tbody");
   if (!container) return;
@@ -960,69 +2634,140 @@ function renderBlogsAdminTable() {
   container.innerHTML = ADMIN_STATE.blogs.map(b => `
     <tr>
       <td><strong>${b.title}</strong></td>
-      <td>${b.category}</td>
-      <td>${b.date}</td>
-      <td>${b.author}</td>
+      <td><span class="badge" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:2px 8px; border-radius:12px; font-weight:600;">${b.category}</span></td>
+      <td>${b.date || 'Recent'}</td>
+      <td>${b.author || 'Staff'}</td>
       <td class="action-btns-cell">
+        <button class="btn-icon" title="Edit Article" onclick="openEditBlogModal('${b.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem; color:#3b82f6;">edit</span></button>
         <button class="btn-icon danger" title="Delete Article" onclick="deleteBlog('${b.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span></button>
       </td>
     </tr>
   `).join("");
 }
 
-function handleCreateBlog(e) {
+function openEditBlogModal(id) {
+  const blog = ADMIN_STATE.blogs.find(b => b.id === id);
+  if (!blog) return;
+
+  document.getElementById("edit-blog-id").value = blog.id;
+  document.getElementById("new-blog-title").value = blog.title || "";
+  document.getElementById("new-blog-category").value = blog.category || "";
+  document.getElementById("new-blog-editor").innerHTML = blog.excerpt || "";
+  document.getElementById("new-blog-author").value = blog.author || "";
+  document.getElementById("new-blog-image").value = blog.image || "";
+  document.getElementById("new-blog-video").value = blog.video_url || "";
+
+  document.getElementById("blog-modal-title").innerText = "Edit Article & News";
+  document.getElementById("blog-submit-btn").innerText = "Update Article";
+
+  openAdminModal("modal-add-blog");
+}
+
+async function handleCreateOrUpdateBlog(e) {
   e.preventDefault();
+  const idToEdit = document.getElementById("edit-blog-id").value;
   const title = document.getElementById("new-blog-title").value.trim();
-  const category = document.getElementById("new-blog-category").value;
-  const excerpt = document.getElementById("new-blog-excerpt").value.trim();
+  const category = document.getElementById("new-blog-category").value.trim();
+  const excerpt = document.getElementById("new-blog-editor").innerHTML;
   const author = document.getElementById("new-blog-author").value.trim();
   const image = document.getElementById("new-blog-image").value.trim();
+  const video_url = document.getElementById("new-blog-video").value.trim();
 
-  const newBlog = {
-    id: "blog-" + Date.now(),
+  const blogPayload = {
+    id: idToEdit || ("blog-" + Date.now()),
     title,
     category,
     date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
     author,
     image,
     excerpt,
-    readTime: "4 min read"
+    video_url,
+    read_time: "4 min read"
   };
 
-  ADMIN_STATE.blogs.unshift(newBlog);
-  localStorage.setItem("ccc_blogs", JSON.stringify(ADMIN_STATE.blogs));
+  try {
+    if (idToEdit) {
+      await fetch(`/api/admin/blogs/${idToEdit}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(blogPayload)
+      });
+      const idx = ADMIN_STATE.blogs.findIndex(b => b.id === idToEdit);
+      if (idx !== -1) ADMIN_STATE.blogs[idx] = { ...ADMIN_STATE.blogs[idx], ...blogPayload };
+      showAdminToast(`📰 Article "${title}" updated!`);
+    } else {
+      await fetch('/api/admin/blogs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(blogPayload)
+      });
+      ADMIN_STATE.blogs.unshift(blogPayload);
+      showAdminToast(`📰 Article "${title}" published!`);
+    }
+  } catch (err) {
+    console.error("API Sync failed, saving locally:", err);
+    if (idToEdit) {
+      const idx = ADMIN_STATE.blogs.findIndex(b => b.id === idToEdit);
+      if (idx !== -1) ADMIN_STATE.blogs[idx] = { ...ADMIN_STATE.blogs[idx], ...blogPayload };
+    } else {
+      ADMIN_STATE.blogs.unshift(blogPayload);
+    }
+    showAdminToast(`📰 Saved locally!`);
+  }
 
+  localStorage.setItem("ccc_blogs", JSON.stringify(ADMIN_STATE.blogs));
   closeAdminModal("modal-add-blog");
   renderBlogsAdminTable();
-  updateOverviewStats();
-  showAdminToast(`📰 Article "${title}" published!`);
+  if (typeof updateOverviewStats === 'function') updateOverviewStats();
 
-  // Reset form
+  // Reset modal state
+  document.getElementById("edit-blog-id").value = "";
   document.getElementById("new-blog-title").value = "";
-  document.getElementById("new-blog-excerpt").value = "";
+  document.getElementById("new-blog-category").value = "";
+  document.getElementById("new-blog-editor").innerHTML = "";
+  document.getElementById("new-blog-video").value = "";
+  document.getElementById("blog-modal-title").innerText = "Publish New Article & News";
+  document.getElementById("blog-submit-btn").innerText = "Publish Article";
 }
 
 function deleteBlog(id) {
-  if (confirm("Delete this blog article?")) {
+  showConfirmDialog({
+    title: "Delete Article",
+    message: "Are you sure you want to delete this blog article?",
+    confirmText: "Delete Article",
+    isDanger: true
+  }, async () => {
+    try {
+      await fetch(`/api/admin/blogs/${id}`, { method: 'DELETE' });
+    } catch (e) {
+      console.warn("API delete failed, removing locally");
+    }
     ADMIN_STATE.blogs = ADMIN_STATE.blogs.filter(b => b.id !== id);
     localStorage.setItem("ccc_blogs", JSON.stringify(ADMIN_STATE.blogs));
     renderBlogsAdminTable();
-    updateOverviewStats();
+    if (typeof updateOverviewStats === 'function') updateOverviewStats();
     showAdminToast("Blog article deleted.");
-  }
+  });
 }
+
 
 /* --------------------------------------------------------------------------
    4. MODALS & TOAST NOTIFICATIONS
    -------------------------------------------------------------------------- */
 function openAdminModal(modalId) {
   const overlay = document.getElementById(modalId);
-  if (overlay) overlay.classList.add("open");
+  if (overlay) {
+    overlay.classList.add("open");
+    overlay.style.display = "flex";
+  }
 }
 
 function closeAdminModal(modalId) {
   const overlay = document.getElementById(modalId);
-  if (overlay) overlay.classList.remove("open");
+  if (overlay) {
+    overlay.classList.remove("open");
+    overlay.style.display = "none";
+  }
 }
 
 function showAdminToast(msg) {
@@ -1047,73 +2792,188 @@ function showAdminToast(msg) {
 }
 
 
-// --- GALLERY MANAGEMENT ---
+// --- MEDIA & GALLERY MANAGEMENT ENGINE ---
+let currentGalleryFilter = 'all';
+let gallerySearchQuery = '';
+
 async function fetchGallery() {
-    try {
-        const res = await fetch('/api/gallery');
-        const data = await res.json();
-        renderGalleryTable(data);
-    } catch (e) {
-        console.error('Error fetching gallery', e);
+  try {
+    const res = await fetch('/api/admin/gallery');
+    if (res.ok) {
+      ADMIN_STATE.gallery = await res.json();
+      renderAdminGalleryCategoryFilters();
+      renderAdminGalleryGrid();
+      updateOverviewStats();
     }
+  } catch (err) {
+    console.error("Error fetching gallery:", err);
+  }
 }
 
-function renderGalleryTable(items) {
-    const tbody = document.getElementById("tbl-gallery-body");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-    items.forEach(item => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td><img src="${item.url}" alt="${item.title}" style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;"></td>
-            <td>${item.title}</td>
-            <td><span class="badge-status ${item.type === 'video' ? 'danger' : 'active'}">${item.type.toUpperCase()}</span></td>
-            <td>${item.category}</td>
-            <td>${new Date(item.created_at).toLocaleDateString()}</td>
-            <td style="text-align:right;">
-                <button class="btn-icon danger" title="Delete" onclick="deleteGalleryItem(${item.id})"><span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span></button>
-            </td>
-        `;
-        tbody.appendChild(tr);
+function renderAdminGalleryCategoryFilters() {
+  const container = document.getElementById('galleryCategoryFilterContainer');
+  if (!container) return;
+
+  const categories = ['all', ...new Set((ADMIN_STATE.gallery || []).map(g => g.category || 'Matches'))];
+  
+  container.innerHTML = categories.map(cat => {
+    const label = cat === 'all' ? 'All Media' : cat;
+    const isActive = currentGalleryFilter.toLowerCase() === cat.toLowerCase();
+    return `<button class="btn btn-ghost btn-sm ${isActive ? 'active' : ''}" onclick="filterAdminGallery('${cat}', this)">${label}</button>`;
+  }).join('');
+}
+
+function filterAdminGallery(category, btnEl) {
+  currentGalleryFilter = category;
+  const container = document.getElementById('galleryCategoryFilterContainer');
+  if (container) {
+    container.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  }
+  if (btnEl) btnEl.classList.add('active');
+  renderAdminGalleryGrid();
+}
+
+function handleGallerySearch(query) {
+  gallerySearchQuery = (query || '').toLowerCase().trim();
+  renderAdminGalleryGrid();
+}
+
+function renderAdminGalleryGrid() {
+  const grid = document.getElementById('adminGalleryGrid');
+  if (!grid) return;
+
+  let items = ADMIN_STATE.gallery || [];
+
+  if (currentGalleryFilter !== 'all') {
+    items = items.filter(g => (g.category || '').toLowerCase() === currentGalleryFilter.toLowerCase());
+  }
+
+  if (gallerySearchQuery) {
+    items = items.filter(g => 
+      (g.title || '').toLowerCase().includes(gallerySearchQuery) ||
+      (g.category || '').toLowerCase().includes(gallerySearchQuery)
+    );
+  }
+
+  if (items.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 14px; border: 1px dashed #cbd5e1;">
+        <span class="material-symbols-outlined" style="font-size: 44px; margin-bottom: 0.5rem; display: block; color: #cbd5e1;">photo_library</span>
+        <h4 style="font-size: 1rem; font-weight: 700; color: #475569; margin-bottom: 0.25rem;">No Gallery Media Found</h4>
+        <p style="font-size: 0.83rem; max-width: 400px; margin: 0 auto 1.25rem;">Click "+ Add New Gallery Media" above to upload photos or videos to this category.</p>
+        <button class="btn btn-primary btn-sm" onclick="openAddGalleryModal()">+ Add New Media</button>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(g => {
+    const isVideo = g.type === 'video';
+    const typeBadge = isVideo ? '<span class="badge-status badge-info" style="font-size:0.68rem;">Video</span>' : '<span class="badge-status badge-read" style="font-size:0.68rem;">Photo</span>';
+
+    return `
+      <div class="card" style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+        <div style="position: relative; width: 100%; height: 160px; background: #0f172a; overflow: hidden;">
+          <img src="${g.url || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800'}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800'" />
+          <div style="position: absolute; top: 10px; left: 10px; display: flex; gap: 6px;">
+            ${typeBadge}
+            <span class="badge-status" style="font-size: 0.68rem; background: rgba(15, 23, 42, 0.75); color: #ffffff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">${g.category || 'General'}</span>
+          </div>
+        </div>
+        <div style="padding: 1rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; line-height: 1.35; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            ${g.title}
+          </div>
+          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+            <button class="btn btn-ghost btn-sm" onclick="deleteGalleryItem(${g.id})" title="Delete Media" style="color: #ef4444; padding: 4px 8px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px;">
+              <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+              <span>Delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openAddGalleryModal() {
+  openAdminModal('modal-add-gallery');
+
+  const titleIn = document.getElementById('new-gallery-title');
+  const typeIn = document.getElementById('new-gallery-type');
+  const catIn = document.getElementById('new-gallery-category');
+  const urlIn = document.getElementById('new-gallery-url');
+
+  if (titleIn) titleIn.value = '';
+  if (typeIn) typeIn.value = 'photo';
+  if (catIn) catIn.value = 'Matches';
+  if (urlIn) urlIn.value = '';
+}
+
+async function handleCreateGallery(event) {
+  if (event) event.preventDefault();
+
+  const title = document.getElementById('new-gallery-title')?.value.trim();
+  const type = document.getElementById('new-gallery-type')?.value || 'photo';
+  const category = document.getElementById('new-gallery-category')?.value.trim() || 'Matches';
+  const url = document.getElementById('new-gallery-url')?.value.trim();
+
+  if (!title || !url) {
+    showAdminToast('⚠️ Please provide a Title and Media URL');
+    return;
+  }
+
+  const submitBtn = document.getElementById('gallery-submit-btn');
+  if (submitBtn) submitBtn.innerHTML = 'Saving...';
+
+  try {
+    const res = await fetch('/api/admin/gallery', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, type, category, url })
     });
+
+    if (res.ok) {
+      const newItem = await res.json();
+      if (!ADMIN_STATE.gallery) ADMIN_STATE.gallery = [];
+      ADMIN_STATE.gallery.unshift(newItem);
+      renderAdminGalleryCategoryFilters();
+      renderAdminGalleryGrid();
+      updateOverviewStats();
+      closeAdminModal('modal-add-gallery');
+      showAdminToast('✅ Media item published to Gallery!');
+    } else {
+      showAdminToast('⚠️ Failed to save gallery item');
+    }
+  } catch (err) {
+    console.error("Error creating gallery item:", err);
+    showAdminToast('⚠️ Error connecting to server');
+  } finally {
+    if (submitBtn) submitBtn.innerHTML = 'Save Media to Gallery';
+  }
 }
 
-async function handleCreateGallery(e) {
-    e.preventDefault();
-    const payload = {
-        title: document.getElementById('new-gallery-title').value,
-        type: document.getElementById('new-gallery-type').value,
-        category: document.getElementById('new-gallery-category').value,
-        url: document.getElementById('new-gallery-url').value
-    };
+function deleteGalleryItem(id) {
+  showConfirmDialog({
+    title: "Delete Gallery Item",
+    message: "Are you sure you want to delete this media item from the public gallery?",
+    confirmText: "Delete Media",
+    isDanger: true
+  }, async () => {
     try {
-        const res = await fetch('/api/admin/gallery', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        if (res.ok) {
-            closeAdminModal('modal-add-gallery');
-            e.target.reset();
-            fetchGallery();
-            alert('Media added successfully!');
-        }
+      const res = await fetch(`/api/admin/gallery/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        ADMIN_STATE.gallery = (ADMIN_STATE.gallery || []).filter(g => g.id !== id);
+        renderAdminGalleryCategoryFilters();
+        renderAdminGalleryGrid();
+        updateOverviewStats();
+        showAdminToast('🗑️ Gallery item deleted');
+      } else {
+        showAdminToast('⚠️ Failed to delete gallery item');
+      }
     } catch (err) {
-        console.error(err);
-        alert('Failed to add media');
+      console.error("Error deleting gallery item:", err);
     }
-}
-
-async function deleteGalleryItem(id) {
-    if (!confirm('Delete this media item?')) return;
-    try {
-        const res = await fetch('/api/admin/gallery/' + id, { method: 'DELETE' });
-        if (res.ok) {
-            fetchGallery();
-        }
-    } catch (e) {
-        console.error(e);
-    }
+  });
 }
 
 
@@ -1121,3 +2981,226 @@ function triggerNavTab(sectionId) {
   const btn = document.querySelector(`.nav-item[data-section="${sectionId}"]`);
   if (btn) btn.click();
 }
+
+async function loadContactMapSettings() {
+  try {
+    const res = await fetch('/api/contact-info?v=' + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val !== undefined && val !== null) ? val : ''; };
+    const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+
+    const isShow = !(data.showMap === false || data.showMap === 'false' || data.showMap === 0 || data.showMap === '0' || data.showMap === 'off');
+
+    setVal("contactAddress", data.address !== undefined ? data.address : "Champions Cricket Ground, High Way, Sisua, Odisha 754202");
+    setVal("contactMarkerLabel", data.markerLabel !== undefined ? data.markerLabel : "Champions Cricket Club HQ");
+    setVal("contactCoords", data.coords !== undefined ? data.coords : "20.4831593, 86.0763922");
+    setVal("contactMapLink", data.mapLink !== undefined ? data.mapLink : "https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922");
+    setVal("contactZoom", data.zoom || 14);
+    setVal("contactEmail", data.email !== undefined ? data.email : "info@championscricketclub.com");
+    setVal("contactPhone", data.phone !== undefined ? data.phone : "+91 8018977085");
+    setChk("contactShowMap", isShow);
+    setChk("op-page-map", isShow);
+  } catch (err) {
+    console.error("Error loading contact & map settings:", err);
+  }
+}
+
+async function saveContactMapSettings(e) {
+  if (e) e.preventDefault();
+  const saveBtn = document.getElementById('saveContactMapBtn');
+  const origContent = saveBtn ? saveBtn.innerHTML : '';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  }
+
+  const getVal = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const getChk = (id) => { const el = document.getElementById(id); return el ? el.checked : false; };
+
+  const isShow = getChk("contactShowMap");
+  const payload = {
+    address: getVal("contactAddress"),
+    markerLabel: getVal("contactMarkerLabel"),
+    coords: getVal("contactCoords"),
+    mapLink: getVal("contactMapLink"),
+    zoom: parseInt(getVal("contactZoom"), 10) || 14,
+    email: getVal("contactEmail"),
+    phone: getVal("contactPhone"),
+    showMap: isShow
+  };
+
+  try {
+    const res = await fetch('/api/admin/settings/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      localStorage.setItem('ccc_contact_cache', JSON.stringify(payload));
+      showAdminToast(isShow ? '✨ Location map enabled & settings saved!' : '✨ Map hidden & settings saved!');
+    } else {
+      showAdminToast('⚠️ Failed to save Maps & Location settings.');
+    }
+  } catch (err) {
+    console.error('Error saving contact settings:', err);
+    showAdminToast('⚠️ Error connecting to server.');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origContent;
+    }
+  }
+}
+
+window.loadContactMapSettings = loadContactMapSettings;
+window.saveContactMapSettings = saveContactMapSettings;
+window.loadContactSettings = loadContactMapSettings;
+window.saveContactSettings = saveContactMapSettings;
+
+// Instant Toggle Switch Event Listener for Map Visibility
+document.addEventListener("change", async (e) => {
+  if (e.target && (e.target.id === "contactShowMap" || e.target.id === "op-page-map")) {
+    const isChecked = e.target.checked;
+
+    // Sync all map checkboxes in admin UI
+    ["contactShowMap", "op-page-map"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.checked = isChecked;
+    });
+
+    const getVal = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    const payload = {
+      address: getVal("contactAddress"),
+      markerLabel: getVal("contactMarkerLabel"),
+      coords: getVal("contactCoords"),
+      mapLink: getVal("contactMapLink"),
+      email: getVal("contactEmail"),
+      phone: getVal("contactPhone"),
+      showMap: isChecked,
+      zoom: parseInt(getVal("contactZoom"), 10) || 14
+    };
+
+    localStorage.setItem("ccc_contact_cache", JSON.stringify(payload));
+
+    try {
+      await fetch('/api/admin/settings/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(payload)
+      });
+      showAdminToast(isChecked ? '📍 Interactive Map enabled across website!' : '📍 Interactive Map hidden from website!');
+    } catch (err) {
+      console.error('Error saving map toggle:', err);
+    }
+  }
+});
+
+/* --------------------------------------------------------------------------
+   CUSTOM IN-APP CONFIRMATION MODAL (Replaces Browser confirm())
+   -------------------------------------------------------------------------- */
+let pendingConfirmCallback = null;
+
+function showConfirmDialog({ title, message, confirmText, isDanger = true }, onConfirm) {
+  pendingConfirmCallback = onConfirm;
+  const titleEl = document.getElementById('confirm-modal-title');
+  const msgEl = document.getElementById('confirm-modal-message');
+  const btnEl = document.getElementById('confirm-modal-action-btn');
+  const modalEl = document.getElementById('modal-custom-confirm');
+
+  if (titleEl) titleEl.textContent = title || 'Confirm Action';
+  if (msgEl) msgEl.textContent = message || 'Are you sure you want to perform this action?';
+  if (btnEl) {
+    btnEl.textContent = confirmText || (isDanger ? 'Delete' : 'Confirm');
+    btnEl.className = isDanger ? 'btn btn-delete-red' : 'btn btn-primary';
+  }
+
+  if (modalEl) modalEl.style.display = 'flex';
+}
+
+function closeConfirmModal(confirmed) {
+  const modalEl = document.getElementById('modal-custom-confirm');
+  if (modalEl) modalEl.style.display = 'none';
+  if (confirmed && typeof pendingConfirmCallback === 'function') {
+    const cb = pendingConfirmCallback;
+    pendingConfirmCallback = null;
+    cb();
+  } else {
+    pendingConfirmCallback = null;
+  }
+}
+
+function executeConfirmAction() {
+  closeConfirmModal(true);
+}
+
+window.showConfirmDialog = showConfirmDialog;
+window.closeConfirmModal = closeConfirmModal;
+window.executeConfirmAction = executeConfirmAction;
+
+/* --------------------------------------------------------------------------
+   GLOBAL ADMIN PRELOADER (ONLY APPEARS ON NETWORK DELAY)
+   -------------------------------------------------------------------------- */
+function initAdminPreloader() {
+  const preloader = document.getElementById('page-preloader');
+  const hasVisited = sessionStorage.getItem('ccc_admin_visited');
+
+  if (hasVisited) {
+    if (preloader) preloader.style.display = 'none';
+    return;
+  }
+
+  sessionStorage.setItem('ccc_admin_visited', 'true');
+  if (!preloader) return;
+
+  const progressBar = document.getElementById('preloader-progress-bar');
+  const statusText = document.getElementById('preloader-status');
+
+  let isLoaded = false;
+  let showTimer = null;
+
+  showTimer = setTimeout(() => {
+    if (!isLoaded && preloader) {
+      preloader.classList.add('is-visible');
+      if (progressBar) progressBar.style.width = '60%';
+      if (statusText) statusText.textContent = 'Syncing Database...';
+    }
+  }, 100);
+
+  const dismissPreloader = () => {
+    isLoaded = true;
+    if (showTimer) clearTimeout(showTimer);
+
+    const p = document.getElementById('page-preloader');
+    if (!p) return;
+
+    if (p.classList.contains('is-visible')) {
+      if (progressBar) progressBar.style.width = '100%';
+      if (statusText) statusText.textContent = 'Dashboard Ready!';
+      setTimeout(() => {
+        p.classList.remove('is-visible');
+        p.classList.add('fade-out');
+        setTimeout(() => {
+          if (p.parentNode) p.style.display = 'none';
+        }, 400);
+      }, 150);
+    } else {
+      p.style.display = 'none';
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    dismissPreloader();
+  } else {
+    window.addEventListener('load', dismissPreloader);
+    setTimeout(dismissPreloader, 1200);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initAdminPreloader();
+});

@@ -1,18 +1,451 @@
 {
   "general": {
     "siteName": "Champions Cricket Club",
-    "siteTagline": "Official Cricket Club & Sports Academy",
-    "isDeployed": false,
+    "tagline": "Digital Agency & Technology Solutions",
+    "description": "Transforming digital landscapes through technical precision and creative vision.",
+    "googleAnalyticsId": "G-DS254K4TM8",
     "maintenance": false,
+    "contactForm": true,
+    "isDeployed": true,
+    "promo": {
+      "enabled": false,
+      "text": "asdfghjkl;';lkjhgfdsdfghjkl;lkjhgfdsasdfghjklkjhgfdsa",
+      "btnText": "Today's Exclusive Pricing",
+      "btnUrl": "http://localhost:3000/contact.html",
+      "speed": 15,
+      "popup": {
+        "enabled": true,
+        "link_url": "http://localhost:3000/contact.html",
+        "desktop_image": "/uploads/img_1786729918849_5wyw1.png",
+        "mobile_image": "/uploads/img_1786729924593_19i3w.png"
+      }
+    },
+    "siteTagline": "Official Cricket Club & Sports Academy",
     "contactFormEnabled": true,
-    "siteDescription": "Official portal of Champions Cricket Club",
-    "googleAnalyticsId": "",
+    "siteDescription": "",
     "pageStatus": {
       "about": true,
-      "matches": true,
+      "matches": false,
       "blogs": true,
       "contact": true,
-      "scoring": true
-    }
+      "scoring": false
+    },
+    "socials": [
+      {
+        "name": "Facebook",
+        "url": "https://facebook.com/championscricketclub",
+        "icon": "facebook",
+        "visible": true,
+        "show_in_navbar": true
+      },
+      {
+        "name": "Instagram",
+        "url": "https://instagram.com/championscricketclub",
+        "icon": "instagram",
+        "visible": true,
+        "show_in_navbar": true
+      },
+      {
+        "name": "Threads",
+        "url": "https://threads.net/@championscricketclub",
+        "icon": "threads",
+        "visible": true,
+        "show_in_navbar": false
+      },
+      {
+        "name": "LinkedIn",
+        "url": "https://linkedin.com/company/championscricketclub",
+        "icon": "linkedin",
+        "visible": true,
+        "show_in_navbar": false
+      },
+      {
+        "name": "YouTube",
+        "url": "https://youtube.com/@championscricketclub",
+        "icon": "youtube",
+        "visible": true,
+        "show_in_navbar": true
+      },
+      {
+        "name": "Reddit",
+        "url": "https://reddit.com/user/championscricketclub",
+        "icon": "reddit",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "WhatsApp Business",
+        "url": "https://wa.me/918018977085",
+        "icon": "whatsappbusiness",
+        "visible": true,
+        "show_in_navbar": false
+      },
+      {
+        "name": "X (Twitter)",
+        "url": "https://x.com/champions_cc",
+        "icon": "x",
+        "visible": true,
+        "show_in_navbar": true
+      },
+      {
+        "name": "TikTok",
+        "url": "https://tiktok.com/@championscricketclub",
+        "icon": "tiktok",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Pinterest",
+        "url": "https://pinterest.com/championscricketclub",
+        "icon": "pinterest",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Behance",
+        "url": "https://behance.net/championscricketclub",
+        "icon": "behance",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Dribbble",
+        "url": "https://dribbble.com/championscricketclub",
+        "icon": "dribbble",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "GitHub",
+        "url": "https://github.com/championscricketclub",
+        "icon": "github",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Upwork",
+        "url": "https://upwork.com/ag/championscricketclub",
+        "icon": "upwork",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Fiverr",
+        "url": "https://fiverr.com/championscricketclub",
+        "icon": "fiverr",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Freelancer",
+        "url": "https://freelancer.com/u/championscricketclub",
+        "icon": "freelancer",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "PeoplePerHour",
+        "url": "https://peopleperhour.com/championscricketclub",
+        "icon": "peopleperhour",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Guru",
+        "url": "https://guru.com/freelancers/championscricketclub",
+        "icon": "guru",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Contra",
+        "url": "https://contra.com/championscricketclub",
+        "icon": "contra",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Google Business Profile",
+        "url": "https://business.google.com/championscricketclub",
+        "icon": "google",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Bing Places",
+        "url": "https://bingplaces.com/championscricketclub",
+        "icon": "bing",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Apple Business Connect",
+        "url": "https://businessconnect.apple.com/championscricketclub",
+        "icon": "apple",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Clutch",
+        "url": "https://clutch.co/profile/championscricketclub",
+        "icon": "clutch",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "GoodFirms",
+        "url": "https://goodfirms.co/championscricketclub",
+        "icon": "goodfirms",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "DesignRush",
+        "url": "https://designrush.com/agencies/championscricketclub",
+        "icon": "designrush",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "TechBehemoths",
+        "url": "https://techbehemoths.com/championscricketclub",
+        "icon": "techbehemoths",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Agency Spotter",
+        "url": "https://agencyspotter.com/championscricketclub",
+        "icon": "agencyspotter",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Sortlist",
+        "url": "https://sortlist.com/championscricketclub",
+        "icon": "sortlist",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "UpCity",
+        "url": "https://upcity.com/championscricketclub",
+        "icon": "upcity",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Crunchbase",
+        "url": "https://crunchbase.com/organization/championscricketclub",
+        "icon": "crunchbase",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Wellfound (AngelList)",
+        "url": "https://wellfound.com/company/championscricketclub",
+        "icon": "wellfound",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Product Hunt",
+        "url": "https://producthunt.com/@championscricketclub",
+        "icon": "producthunt",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Indie Hackers",
+        "url": "https://indiehackers.com/championscricketclub",
+        "icon": "indiehackers",
+        "visible": false,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Telegram",
+        "url": "https://t.me/championscricketclub",
+        "icon": "telegram",
+        "visible": true,
+        "show_in_navbar": false
+      },
+      {
+        "name": "Yelp",
+        "url": "https://yelp.com/biz/championscricketclub",
+        "icon": "yelp",
+        "visible": false
+      },
+      {
+        "name": "Hotfrog",
+        "url": "https://hotfrog.com/championscricketclub",
+        "icon": "hotfrog",
+        "visible": false
+      },
+      {
+        "name": "Justdial",
+        "url": "https://justdial.com/championscricketclub",
+        "icon": "justdial",
+        "visible": false
+      },
+      {
+        "name": "IndiaMART",
+        "url": "https://indiamart.com/championscricketclub",
+        "icon": "indiamart",
+        "visible": false
+      },
+      {
+        "name": "Sulekha",
+        "url": "https://sulekha.com/championscricketclub",
+        "icon": "sulekha",
+        "visible": false
+      },
+      {
+        "name": "Alignable",
+        "url": "https://alignable.com/championscricketclub",
+        "icon": "alignable",
+        "visible": false
+      },
+      {
+        "name": "Meetup",
+        "url": "https://meetup.com/championscricketclub",
+        "icon": "meetup",
+        "visible": false
+      },
+      {
+        "name": "Trustpilot",
+        "url": "https://trustpilot.com/review/championscricketclub",
+        "icon": "trustpilot",
+        "visible": false
+      },
+      {
+        "name": "Capterra",
+        "url": "https://capterra.com/p/championscricketclub",
+        "icon": "capterra",
+        "visible": false
+      },
+      {
+        "name": "G2",
+        "url": "https://g2.com/products/championscricketclub",
+        "icon": "g2",
+        "visible": false
+      },
+      {
+        "name": "SourceForge",
+        "url": "https://sourceforge.net/championscricketclub",
+        "icon": "sourceforge",
+        "visible": false
+      },
+      {
+        "name": "SaaSHub",
+        "url": "https://saashub.com/championscricketclub",
+        "icon": "saashub",
+        "visible": false
+      },
+      {
+        "name": "F6S",
+        "url": "https://f6s.com/championscricketclub",
+        "icon": "f6s",
+        "visible": false
+      },
+      {
+        "name": "StartupBlink",
+        "url": "https://startupblink.com/championscricketclub",
+        "icon": "startupblink",
+        "visible": false
+      },
+      {
+        "name": "Polywork",
+        "url": "https://polywork.com/championscricketclub",
+        "icon": "polywork",
+        "visible": false
+      },
+      {
+        "name": "Peerlist",
+        "url": "https://peerlist.io/championscricketclub",
+        "icon": "peerlist",
+        "visible": false
+      },
+      {
+        "name": "Wix Marketplace",
+        "url": "https://wix.com/championscricketclub",
+        "icon": "wix",
+        "visible": false
+      },
+      {
+        "name": "Shopify Partners",
+        "url": "https://shopify.com/partners/championscricketclub",
+        "icon": "shopify",
+        "visible": false
+      },
+      {
+        "name": "Webflow Experts",
+        "url": "https://webflow.com/experts/championscricketclub",
+        "icon": "webflow",
+        "visible": false
+      },
+      {
+        "name": "Squarespace Experts",
+        "url": "https://squarespace.com/experts/championscricketclub",
+        "icon": "squarespace",
+        "visible": false
+      }
+    ],
+    "contact": {
+      "address": "Test Address wdxwwx",
+      "markerLabel": "Champions Cricket Club HQ",
+      "coords": "20.4831593, 86.0763922",
+      "mapLink": "https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922",
+      "zoom": 14,
+      "email": "info@championscricketclub.com",
+      "phone": "+91 8018977085",
+      "showMap": true
+    },
+    "contactFormConfig": {
+      "contactFormEnabled": true
+    },
+    "mediaConfig": {
+      "media": {}
+    },
+    "media": {
+      "media": {}
+    },
+    "liveScore": {
+      "teamA": "Champions",
+      "teamB": "Royals"
+    },
+    "mediaLibrary": [
+      {
+        "id": "img-1786732518717-186",
+        "filename": "img_1786732518613_h6lwk.png",
+        "originalName": "5.png",
+        "url": "/uploads/img_1786732518613_h6lwk.png",
+        "size": "1865 KB",
+        "created_at": "2026-08-14T18:35:18.718Z"
+      },
+      {
+        "id": "img-1786732490400-619",
+        "filename": "img_1786732489977_9rqlh.png",
+        "originalName": "5.png",
+        "url": "/uploads/img_1786732489977_9rqlh.png",
+        "size": "1865 KB",
+        "created_at": "2026-08-14T18:34:50.401Z"
+      },
+      {
+        "id": "img-1786729924610-883",
+        "filename": "img_1786729924593_19i3w.png",
+        "originalName": "popup mobile.png",
+        "url": "/uploads/img_1786729924593_19i3w.png",
+        "size": "1888 KB",
+        "created_at": "2026-08-14T17:52:04.610Z"
+      },
+      {
+        "id": "img-1786729919252-832",
+        "filename": "img_1786729918849_5wyw1.png",
+        "originalName": "popup.png",
+        "url": "/uploads/img_1786729918849_5wyw1.png",
+        "size": "1989 KB",
+        "created_at": "2026-08-14T17:51:59.252Z"
+      }
+    ]
   }
 }

@@ -66,19 +66,19 @@ app.use((req, res, next) => {
 
             if (!isHomePage) {
                 if (reqPath.includes('about') && pageStatus.about === false) {
-                    return res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
+                    return res.redirect(302, '/');
                 }
                 if (reqPath.includes('matches') && pageStatus.matches === false) {
-                    return res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
+                    return res.redirect(302, '/');
                 }
                 if ((reqPath.includes('blog') || reqPath.includes('blogs')) && pageStatus.blogs === false) {
-                    return res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
+                    return res.redirect(302, '/');
                 }
                 if (reqPath.includes('contact') && pageStatus.contact === false) {
-                    return res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
+                    return res.redirect(302, '/');
                 }
                 if (reqPath.includes('scoring') && pageStatus.scoring === false) {
-                    return res.sendFile(path.join(__dirname, 'public', 'maintenance.html'));
+                    return res.redirect(302, '/');
                 }
             }
         }
@@ -145,13 +145,17 @@ app.get(['/contact', '/contact.html', '/html/contact.html'], (req, res) => sendH
 app.get(['/scoring', '/scoring.html', '/html/scoring-app.html'], (req, res) => sendHtmlWithDynamicCanonical(req, res, 'scoring-app.html'));
 
 
-// Serve static files (Frontend & Admin UI) with 1-year caching for assets, but NO CACHE for HTML
+// Serve uploads folder explicitly
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
+// Serve static files with no-cache for CSS/JS/HTML during development
 app.use(express.static(path.join(__dirname, 'public'), {
-    maxAge: 31536000000,
     etag: true,
     setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.html') || filePath.endsWith('.css')) {
+        if (filePath.endsWith('.html') || filePath.endsWith('.css') || filePath.endsWith('.js')) {
             res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
         }
     }
 }));
@@ -172,8 +176,64 @@ app.get(['/favicon.ico', '/favicon.png'], (req, res) => {
 app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'admin', 'login.html')));
 app.get('/admin/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'admin', 'dashboard.html')));
 
-// 301 Redirect legacy .html extension to clean URLs
-app.get(['/contact.html', '/admin/login.html', '/admin/dashboard.html'], (req, res) => {
+// Public HTML routes
+// ==================== GALLERY CRUD ENDPOINTS ====================
+app.get(['/api/gallery', '/api/admin/gallery'], (req, res) => {
+    db.all("SELECT * FROM gallery ORDER BY id DESC", [], (err, rows) => {
+        if (err) {
+            console.error("Error fetching gallery:", err);
+            return res.status(500).json({ error: "Failed to load gallery items" });
+        }
+        res.json(rows || []);
+    });
+});
+
+app.post('/api/admin/gallery', (req, res) => {
+    const { title, type, category, url } = req.body;
+    if (!title || !url) {
+        return res.status(400).json({ error: "Title and Media URL are required" });
+    }
+    const itemType = type || 'photo';
+    const itemCategory = category || 'Matches';
+
+    db.run(
+        "INSERT INTO gallery (title, type, category, url) VALUES (?, ?, ?, ?)",
+        [title.trim(), itemType, itemCategory.trim(), url.trim()],
+        function (err) {
+            if (err) {
+                console.error("Error inserting gallery item:", err);
+                return res.status(500).json({ error: "Failed to add gallery item" });
+            }
+            res.json({
+                success: true,
+                id: this.lastID,
+                title: title.trim(),
+                type: itemType,
+                category: itemCategory.trim(),
+                url: url.trim()
+            });
+        }
+    );
+});
+
+app.delete('/api/admin/gallery/:id', (req, res) => {
+    const id = req.params.id;
+    db.run("DELETE FROM gallery WHERE id = ?", [id], function (err) {
+        if (err) {
+            console.error("Error deleting gallery item:", err);
+            return res.status(500).json({ error: "Failed to delete gallery item" });
+        }
+        res.json({ success: true, deletedId: id });
+    });
+});
+
+app.get(['/blogs', '/blogs.html'], (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'blogs.html')));
+app.get(['/about', '/about.html'], (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'about.html')));
+app.get(['/matches', '/matches.html'], (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'matches.html')));
+app.get(['/contact', '/contact.html'], (req, res) => res.sendFile(path.join(__dirname, 'public', 'html', 'contact.html')));
+
+// 301 Redirect legacy .html extension to clean URLs where appropriate
+app.get(['/admin/login.html', '/admin/dashboard.html'], (req, res) => {
     const cleanPath = req.path.replace(/\.html$/, '');
     res.redirect(301, cleanPath);
 });
