@@ -1,6 +1,6 @@
 // Champions Cricket Club - Admin Engine & State Controller
 
-function showAdminNotification(message, type = 'success', title = null, duration = 4500) {
+function showAdminNotification(message, type = 'success', title = null, duration = 4000) {
   let toastContainer = document.getElementById("admin-toast-container");
   if (!toastContainer) {
     toastContainer = document.createElement("div");
@@ -8,63 +8,41 @@ function showAdminNotification(message, type = 'success', title = null, duration
     document.body.appendChild(toastContainer);
   }
 
+  // Clean leading emojis for clean text matching design
+  let cleanMessage = (message || '').replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F1E6}-\u{1F1FF}\u{26A0}-\u{2705}]\s*/u, '').trim();
+  if (!cleanMessage) cleanMessage = message;
+
   const toastId = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
   const toast = document.createElement("div");
   toast.id = toastId;
   
-  let iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
-  let defaultTitle = 'Saved Successfully';
-  let badgeLabel = 'SUCCESS';
   let typeClass = 'toast-success';
+  let iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
 
   if (type === 'error' || type === 'failed' || message.includes('Failed') || message.includes('Error') || message.includes('🚫')) {
     typeClass = 'toast-error';
-    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-    defaultTitle = 'Save Failed';
-    badgeLabel = 'ERROR';
+    iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
   } else if (type === 'warning' || type === 'warn' || message.includes('⚠️')) {
     typeClass = 'toast-warning';
-    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
-    defaultTitle = 'Notice';
-    badgeLabel = 'WARNING';
-  } else if (type === 'info' || message.includes('📋') || message.includes('⚙️')) {
-    typeClass = 'toast-info';
-    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-    defaultTitle = 'System Update';
-    badgeLabel = 'INFO';
+    iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
   } else if (type === 'loading' || message.includes('Saving') || message.includes('Uploading')) {
     typeClass = 'toast-loading';
-    iconSvg = `<svg class="admin-toast-spin-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`;
-    defaultTitle = 'Saving Changes...';
-    badgeLabel = 'SAVING';
+    iconSvg = `<svg class="admin-toast-spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`;
   }
-
-  const finalTitle = title || defaultTitle;
 
   toast.className = `admin-toast-card ${typeClass}`;
   toast.innerHTML = `
     <div class="admin-toast-icon-wrap">
-      <span class="admin-toast-icon">${iconSvg}</span>
+      ${iconSvg}
     </div>
-    <div class="admin-toast-content">
-      <div class="admin-toast-header">
-        <span class="admin-toast-title">${finalTitle}</span>
-        <span class="admin-toast-badge"><span class="admin-toast-dot"></span>${badgeLabel}</span>
-      </div>
-      <div class="admin-toast-message">${message}</div>
-    </div>
+    <div class="admin-toast-message">${cleanMessage}</div>
     <button type="button" class="admin-toast-close" onclick="closeAdminNotification('${toastId}')" aria-label="Close">&times;</button>
-    ${type !== 'loading' ? `<div class="admin-toast-progress" style="transition-duration: ${duration}ms"></div>` : ''}
   `;
 
   toastContainer.appendChild(toast);
 
   requestAnimationFrame(() => {
     toast.classList.add('show');
-    const progress = toast.querySelector('.admin-toast-progress');
-    if (progress) {
-      setTimeout(() => { progress.style.width = '0%'; }, 20);
-    }
   });
 
   if (type !== 'loading' && duration > 0) {
