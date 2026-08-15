@@ -168,6 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initAdminTabs();
   loadDashboardData();
   loadContactMapSettings();
+  fetchGallery();
 });
 
 // Admin Global State Engine (Synchronized with localStorage)
@@ -2838,10 +2839,27 @@ function handleGallerySearch(query) {
   renderAdminGalleryGrid();
 }
 
-function renderAdminGalleryGrid() {
-  const grid = document.getElementById('adminGalleryGrid');
-  if (!grid) return;
+function onGalleryTypeChange() {
+  const typeVal = document.getElementById('new-gallery-type')?.value;
+  const labelEl = document.getElementById('gallery-url-label');
+  const inputEl = document.getElementById('new-gallery-url');
+  const uploadBtn = document.getElementById('galleryUploadPcBtn');
+  const hintEl = document.getElementById('gallery-url-hint');
 
+  if (typeVal === 'video') {
+    if (labelEl) labelEl.innerHTML = `YouTube Video Link / URL <span class="required" style="color:red;">*</span>`;
+    if (inputEl) inputEl.placeholder = `e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ or https://youtu.be/...`;
+    if (uploadBtn) uploadBtn.style.display = 'none';
+    if (hintEl) hintEl.style.display = 'block';
+  } else {
+    if (labelEl) labelEl.innerHTML = `Media Image / File URL <span class="required" style="color:red;">*</span>`;
+    if (inputEl) inputEl.placeholder = `https://...`;
+    if (uploadBtn) uploadBtn.style.display = 'inline-flex';
+    if (hintEl) hintEl.style.display = 'none';
+  }
+}
+
+function renderAdminGalleryGrid() {
   let items = ADMIN_STATE.gallery || [];
 
   if (currentGalleryFilter !== 'all') {
@@ -2855,44 +2873,107 @@ function renderAdminGalleryGrid() {
     );
   }
 
-  if (items.length === 0) {
-    grid.innerHTML = `
-      <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 14px; border: 1px dashed #cbd5e1;">
-        <span class="material-symbols-outlined" style="font-size: 44px; margin-bottom: 0.5rem; display: block; color: #cbd5e1;">photo_library</span>
-        <h4 style="font-size: 1rem; font-weight: 700; color: #475569; margin-bottom: 0.25rem;">No Gallery Media Found</h4>
-        <p style="font-size: 0.83rem; max-width: 400px; margin: 0 auto 1.25rem;">Click "+ Add New Gallery Media" above to upload photos or videos to this category.</p>
-        <button class="btn btn-primary btn-sm" onclick="openAddGalleryModal()">+ Add New Media</button>
-      </div>`;
-    return;
+  // 1. Render Table Rows for #tbl-gallery-body
+  const tbody = document.getElementById('tbl-gallery-body');
+  if (tbody) {
+    if (items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 2.5rem 1rem; color: #94a3b8;">
+            <span class="material-symbols-outlined" style="font-size: 36px; display: block; margin-bottom: 0.5rem; color: #cbd5e1;">photo_library</span>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #475569;">No Gallery Media Assets Found</div>
+            <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">Click "+ Add New Media" above to upload photos or YouTube videos.</div>
+          </td>
+        </tr>`;
+    } else {
+      tbody.innerHTML = items.map(g => {
+        const isVideo = g.type === 'video';
+        const typeBadge = isVideo 
+          ? '<span class="badge" style="background:#dbeafe; color:#1e40af; border:1px solid #bfdbfe; padding:3px 8px; border-radius:12px; font-size:0.72rem; font-weight:700;">VIDEO</span>' 
+          : '<span class="badge" style="background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; padding:3px 8px; border-radius:12px; font-size:0.72rem; font-weight:700;">PHOTO</span>';
+        
+        let thumbUrl = g.url || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800';
+        if (isVideo && g.url) {
+          const ytMatch = g.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+          if (ytMatch && ytMatch[1]) {
+            thumbUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+          }
+        }
+
+        return `
+          <tr>
+            <td style="width: 80px;">
+              <div style="width: 56px; height: 38px; border-radius: 6px; overflow: hidden; background: #0f172a; border: 1px solid #e2e8f0; position: relative;">
+                <img src="${thumbUrl}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800'" />
+                ${isVideo ? '<span class="material-symbols-outlined" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#ffffff; font-size:18px; text-shadow:0 1px 3px rgba(0,0,0,0.8);">play_circle</span>' : ''}
+              </div>
+            </td>
+            <td style="font-weight: 700; color: #0f172a; font-size: 0.9rem;">${g.title || 'Untitled Media'}</td>
+            <td>${typeBadge}</td>
+            <td><span style="background: #f1f5f9; color: #475569; padding: 2px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600;">${g.category || 'General'}</span></td>
+            <td style="font-size: 0.82rem; color: #64748b;">${g.created_at ? new Date(g.created_at).toLocaleDateString() : 'Recent'}</td>
+            <td style="text-align: right;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="deleteGalleryItem(${g.id})" title="Delete Media" style="color: #ef4444; font-weight: 700; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                <span>Delete</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
   }
 
-  grid.innerHTML = items.map(g => {
-    const isVideo = g.type === 'video';
-    const typeBadge = isVideo ? '<span class="badge-status badge-info" style="font-size:0.68rem;">Video</span>' : '<span class="badge-status badge-read" style="font-size:0.68rem;">Photo</span>';
+  // 2. Render Card Grid for #adminGalleryGrid (if exists)
+  const grid = document.getElementById('adminGalleryGrid');
+  if (grid) {
+    if (items.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 3rem 1.5rem; text-align: center; color: #94a3b8; background: #f8fafc; border-radius: 14px; border: 1px dashed #cbd5e1;">
+          <span class="material-symbols-outlined" style="font-size: 44px; margin-bottom: 0.5rem; display: block; color: #cbd5e1;">photo_library</span>
+          <h4 style="font-size: 1rem; font-weight: 700; color: #475569; margin-bottom: 0.25rem;">No Gallery Media Found</h4>
+          <p style="font-size: 0.83rem; max-width: 400px; margin: 0 auto 1.25rem;">Click "+ Add New Media" above to upload photos or videos.</p>
+          <button class="btn btn-primary btn-sm" onclick="openAddGalleryModal()">+ Add New Media</button>
+        </div>`;
+      return;
+    }
 
-    return `
-      <div class="card" style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-        <div style="position: relative; width: 100%; height: 160px; background: #0f172a; overflow: hidden;">
-          <img src="${g.url || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800'}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800'" />
-          <div style="position: absolute; top: 10px; left: 10px; display: flex; gap: 6px;">
-            ${typeBadge}
-            <span class="badge-status" style="font-size: 0.68rem; background: rgba(15, 23, 42, 0.75); color: #ffffff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">${g.category || 'General'}</span>
+    grid.innerHTML = items.map(g => {
+      const isVideo = g.type === 'video';
+      const typeBadge = isVideo ? '<span class="badge-status badge-info" style="font-size:0.68rem;">Video</span>' : '<span class="badge-status badge-read" style="font-size:0.68rem;">Photo</span>';
+
+      let thumbUrl = g.url || 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800';
+      if (isVideo && g.url) {
+        const ytMatch = g.url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+        if (ytMatch && ytMatch[1]) {
+          thumbUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+        }
+      }
+
+      return `
+        <div class="card" style="border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <div style="position: relative; width: 100%; height: 160px; background: #0f172a; overflow: hidden;">
+            <img src="${thumbUrl}" alt="${g.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800'" />
+            <div style="position: absolute; top: 10px; left: 10px; display: flex; gap: 6px;">
+              ${typeBadge}
+              <span class="badge-status" style="font-size: 0.68rem; background: rgba(15, 23, 42, 0.75); color: #ffffff; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.2);">${g.category || 'General'}</span>
+            </div>
+          </div>
+          <div style="padding: 1rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; line-height: 1.35; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+              ${g.title}
+            </div>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+              <button class="btn btn-ghost btn-sm" onclick="deleteGalleryItem(${g.id})" title="Delete Media" style="color: #ef4444; padding: 4px 8px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                <span>Delete</span>
+              </button>
+            </div>
           </div>
         </div>
-        <div style="padding: 1rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; line-height: 1.35; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-            ${g.title}
-          </div>
-          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
-            <button class="btn btn-ghost btn-sm" onclick="deleteGalleryItem(${g.id})" title="Delete Media" style="color: #ef4444; padding: 4px 8px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px;">
-              <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
-              <span>Delete</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
+      `;
+    }).join('');
+  }
 }
 
 function openAddGalleryModal() {
@@ -2907,7 +2988,11 @@ function openAddGalleryModal() {
   if (typeIn) typeIn.value = 'photo';
   if (catIn) catIn.value = 'Matches';
   if (urlIn) urlIn.value = '';
+
+  onGalleryTypeChange();
 }
+
+window.onGalleryTypeChange = onGalleryTypeChange;
 
 async function handleCreateGallery(event) {
   if (event) event.preventDefault();
@@ -2933,12 +3018,7 @@ async function handleCreateGallery(event) {
     });
 
     if (res.ok) {
-      const newItem = await res.json();
-      if (!ADMIN_STATE.gallery) ADMIN_STATE.gallery = [];
-      ADMIN_STATE.gallery.unshift(newItem);
-      renderAdminGalleryCategoryFilters();
-      renderAdminGalleryGrid();
-      updateOverviewStats();
+      fetchGallery();
       closeAdminModal('modal-add-gallery');
       showAdminToast('✅ Media item published to Gallery!');
     } else {

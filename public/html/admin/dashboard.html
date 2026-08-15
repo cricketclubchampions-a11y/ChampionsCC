@@ -2111,9 +2111,9 @@
               <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
                 <div class="form-group">
                   <label class="field-label">Media Type</label>
-                  <select id="new-gallery-type" class="field-select">
+                  <select id="new-gallery-type" class="field-select" onchange="onGalleryTypeChange()">
                     <option value="photo" selected>Photo / Image</option>
-                    <option value="video">Video</option>
+                    <option value="video">Video (YouTube)</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -2130,14 +2130,15 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="field-label">Media Image / File URL <span class="required" style="color:red;">*</span></label>
+                <label class="field-label" id="gallery-url-label">Media Image / File URL <span class="required" style="color:red;">*</span></label>
                 <div style="display:flex; gap:0.5rem;">
-                  <input type="url" id="new-gallery-url" class="field-input" placeholder="https://..." style="flex:1;" required />
+                  <input type="text" id="new-gallery-url" class="field-input" placeholder="https://..." style="flex:1;" required />
                   <input type="file" id="galleryUrlFileInput" accept="image/*" style="display:none;" onchange="handleSingleFileUpload(event, 'new-gallery-url')">
-                  <button type="button" class="btn btn-secondary" onclick="document.getElementById('galleryUrlFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
+                  <button type="button" id="galleryUploadPcBtn" class="btn btn-secondary" onclick="document.getElementById('galleryUrlFileInput').click()" style="padding:0.5rem 0.75rem; white-space:nowrap; font-size:0.82rem; display:inline-flex; align-items:center; gap:4px;" title="Upload image from computer">
                     <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span> Upload PC
                   </button>
                 </div>
+                <span id="gallery-url-hint" style="font-size:0.78rem; color:#059669; font-weight:600; margin-top:6px; display:none;">📹 Paste YouTube Video link (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...)</span>
               </div>
             </div>
             <div class="modal-footer" style="flex-shrink:0; background:#ffffff; border-top:1px solid #e2e8f0; padding:1rem 1.5rem; display:flex; justify-content:flex-end; gap:0.75rem; position:sticky; bottom:0; z-index:10;">
