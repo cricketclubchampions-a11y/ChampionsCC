@@ -1415,7 +1415,7 @@ function getDirectionsUrl(data) {
 function renderContactAndMapUI(data) {
   if (!data) return;
 
-  const address = data.address || "Champions Cricket Ground, High Way, Sisua, Odisha 754202";
+  const address = data.address || "Baragae Balijatra Ground, Sisua, Salipur, Cuttack, Odisha";
   const markerLabel = data.markerLabel || "Champions Cricket Club HQ";
   const mapLink = getDirectionsUrl(data);
   const embedUrl = getMapEmbedUrl(data);

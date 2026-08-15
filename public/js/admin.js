@@ -12,31 +12,31 @@ function showAdminNotification(message, type = 'success', title = null, duration
   const toast = document.createElement("div");
   toast.id = toastId;
   
-  let icon = '✓';
+  let iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
   let defaultTitle = 'Saved Successfully';
   let badgeLabel = 'SUCCESS';
   let typeClass = 'toast-success';
 
   if (type === 'error' || type === 'failed' || message.includes('Failed') || message.includes('Error') || message.includes('🚫')) {
     typeClass = 'toast-error';
-    icon = '✕';
+    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
     defaultTitle = 'Save Failed';
     badgeLabel = 'ERROR';
   } else if (type === 'warning' || type === 'warn' || message.includes('⚠️')) {
     typeClass = 'toast-warning';
-    icon = '!';
+    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
     defaultTitle = 'Notice';
     badgeLabel = 'WARNING';
   } else if (type === 'info' || message.includes('📋') || message.includes('⚙️')) {
     typeClass = 'toast-info';
-    icon = 'i';
+    iconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
     defaultTitle = 'System Update';
     badgeLabel = 'INFO';
   } else if (type === 'loading' || message.includes('Saving') || message.includes('Uploading')) {
     typeClass = 'toast-loading';
-    icon = '↻';
+    iconSvg = `<svg class="admin-toast-spin-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`;
     defaultTitle = 'Saving Changes...';
-    badgeLabel = 'PROCESSING';
+    badgeLabel = 'SAVING';
   }
 
   const finalTitle = title || defaultTitle;
@@ -44,12 +44,12 @@ function showAdminNotification(message, type = 'success', title = null, duration
   toast.className = `admin-toast-card ${typeClass}`;
   toast.innerHTML = `
     <div class="admin-toast-icon-wrap">
-      <span class="admin-toast-icon">${icon}</span>
+      <span class="admin-toast-icon">${iconSvg}</span>
     </div>
     <div class="admin-toast-content">
       <div class="admin-toast-header">
         <span class="admin-toast-title">${finalTitle}</span>
-        <span class="admin-toast-badge">${badgeLabel}</span>
+        <span class="admin-toast-badge"><span class="admin-toast-dot"></span>${badgeLabel}</span>
       </div>
       <div class="admin-toast-message">${message}</div>
     </div>
@@ -2993,13 +2993,13 @@ async function loadContactMapSettings() {
 
     const isShow = !(data.showMap === false || data.showMap === 'false' || data.showMap === 0 || data.showMap === '0' || data.showMap === 'off');
 
-    setVal("contactAddress", data.address !== undefined ? data.address : "Champions Cricket Ground, High Way, Sisua, Odisha 754202");
+    setVal("contactAddress", data.address !== undefined ? data.address : "Baragae Balijatra Ground, Sisua, Salipur, Cuttack, Odisha");
     setVal("contactMarkerLabel", data.markerLabel !== undefined ? data.markerLabel : "Champions Cricket Club HQ");
     setVal("contactCoords", data.coords !== undefined ? data.coords : "20.4831593, 86.0763922");
     setVal("contactMapLink", data.mapLink !== undefined ? data.mapLink : "https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922");
     setVal("contactZoom", data.zoom || 14);
-    setVal("contactEmail", data.email !== undefined ? data.email : "info@championscricketclub.com");
-    setVal("contactPhone", data.phone !== undefined ? data.phone : "+91 8018977085");
+    setVal("contactEmail", data.email !== undefined ? data.email : "cricketclubchampions@gmail.com");
+    setVal("contactPhone", data.phone !== undefined ? data.phone : "+91 9938648742");
     setChk("contactShowMap", isShow);
     setChk("op-page-map", isShow);
   } catch (err) {

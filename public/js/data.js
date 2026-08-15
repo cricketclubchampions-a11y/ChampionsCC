@@ -142,13 +142,13 @@ const APP_DATA = {
   ],
 
   contact: {
-    address: "Champions Cricket Ground, High Way, Sisua, Odisha 754202",
+    address: "Baragae Balijatra Ground, Sisua, Salipur, Cuttack, Odisha",
     markerLabel: "Champions Cricket Club HQ",
     coords: "20.4831593, 86.0763922",
     mapLink: "https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922",
     zoom: 14,
-    email: "info@championscricketclub.com",
-    phone: "+91 8018977085",
+    email: "cricketclubchampions@gmail.com",
+    phone: "+91 9938648742",
     showMap: true
   }
 };

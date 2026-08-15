@@ -12,7 +12,7 @@ const DEFAULT_SOCIALS_LIST = [
     { name: "LinkedIn", url: "https://linkedin.com/company/championscricketclub", icon: "linkedin", visible: true, show_in_navbar: false },
     { name: "YouTube", url: "https://youtube.com/@championscricketclub", icon: "youtube", visible: true, show_in_navbar: true },
     { name: "Reddit", url: "https://reddit.com/user/championscricketclub", icon: "reddit", visible: false, show_in_navbar: false },
-    { name: "WhatsApp Business", url: "https://wa.me/918018977085", icon: "whatsappbusiness", visible: true, show_in_navbar: false },
+    { name: "WhatsApp Business", url: "https://wa.me/919938648742", icon: "whatsappbusiness", visible: true, show_in_navbar: false },
     { name: "X (Twitter)", url: "https://x.com/champions_cc", icon: "x", visible: true, show_in_navbar: true },
     { name: "TikTok", url: "https://tiktok.com/@championscricketclub", icon: "tiktok", visible: false, show_in_navbar: false },
     { name: "Pinterest", url: "https://pinterest.com/championscricketclub", icon: "pinterest", visible: false, show_in_navbar: false },
@@ -268,14 +268,14 @@ router.get(['/contact-info', '/admin/settings/contact', '/settings/contact'], as
     try {
         const settings = await getSettings();
         const contact = settings.contact || {
-            address: "Champions Cricket Ground, High Way, Sisua, Odisha 754202",
+            address: "Baragae Balijatra Ground, Sisua, Salipur, Cuttack, Odisha",
             coords: "20.4831593, 86.0763922",
             mapLink: "https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922",
             showMap: true,
             zoom: 14,
             markerLabel: "Champions Cricket Club HQ",
-            email: "championscc@outlook.com",
-            phone: "+91 8018977085"
+            email: "cricketclubchampions@gmail.com",
+            phone: "+91 9938648742"
         };
         contact.showMap = !(contact.showMap === false || contact.showMap === 'false' || contact.showMap === 0 || contact.showMap === '0' || contact.showMap === 'off');
         res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
