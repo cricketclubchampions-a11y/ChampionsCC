@@ -450,10 +450,8 @@ img {
 
 .hero-bg-overlay {
   position: absolute;
-  inset: 0;
+  inset: -10px;
   z-index: 1;
-  width: 100%;
-  height: 100%;
   overflow: hidden;
   background-image: url('/images/hero-bg-desktop.png');
   background-size: cover;
@@ -489,7 +487,7 @@ img {
   height: 100%;
 }
 
-/* Homepage Hero Background Image - Natural color with subtle depth blur */
+/* Homepage Hero Background Image - Natural color with silky depth blur */
 .hero .hero-bg-img {
   width: 100%;
   height: 100%;
@@ -497,8 +495,8 @@ img {
   object-position: center;
   display: block;
   opacity: 1 !important;
-  filter: blur(4px) !important;
-  transform: scale(1.03);
+  filter: blur(5px) brightness(0.95) !important;
+  transform: scale(1.05);
 }
 
 /* Subpage Hero Background Image */
@@ -3552,11 +3550,39 @@ img {
   .grid-2col,
   .grid-3col,
   .grid-4col,
-  .squad-grid,
   .blogs-grid,
   .gallery-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
+  }
+
+  /* Squad Cards Mobile Touch-Smooth Horizontal Scroll Carousel */
+  #squad-grid,
+  .squad-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 1.15rem !important;
+    padding: 0.5rem 0.5rem 1.25rem 0.5rem !important;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    scrollbar-width: none !important;
+  }
+
+  #squad-grid::-webkit-scrollbar,
+  .squad-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  #squad-grid > *,
+  .squad-grid > *,
+  .squad-card {
+    flex: 0 0 270px !important;
+    min-width: 270px !important;
+    max-width: 270px !important;
+    scroll-snap-align: center !important;
+    scroll-snap-stop: always !important;
   }
 
   .stats-grid {
