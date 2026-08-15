@@ -439,20 +439,35 @@ img {
   background: var(--gradient-turf);
 }
 
-.hero-bg-overlay {
+.hero-bg-overlay,
+.page-hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
-.hero-bg-img {
+.hero-bg-overlay picture,
+.page-hero-bg picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-bg-img,
+.page-hero-bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
+  display: block;
   opacity: 1;
 }
 
-.hero-gradient-overlay {
+.hero-gradient-overlay,
+.page-hero-bg-overlay {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -3291,16 +3306,6 @@ img {
   object-fit: cover;
   object-position: center;
   display: block;
-}
-
-@media (max-width: 768px) {
-  .hero-bg-img {
-    content: url("/images/hero background mobile.png");
-  }
-
-  .page-hero-bg-img {
-    content: url("/images/other section hero background movile.png");
-  }
 }
 
 /* 2. Responsive Layout & Mobile Breakpoints */
