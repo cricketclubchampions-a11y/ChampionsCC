@@ -305,20 +305,28 @@ router.post(['/contact-info', '/admin/settings/contact', '/settings/contact'], a
 router.get(['/contact-form-config', '/admin/settings/contact-form', '/settings/contact-form'], async (req, res) => {
     try {
         const settings = await getSettings();
-        const contactFormConfig = settings.contactFormConfig || settings.contactForm || {
-            fields: {
-                mobile: { label: "Mobile Number", show: true, required: false }
-            },
-            services: [
-                { id: "membership", name: "Club Membership Inquiry", show: true },
-                { id: "academy", name: "Cricket Academy Training", show: true },
-                { id: "match-booking", name: "Match & Tournament Booking", show: true },
-                { id: "sponsorship", name: "Sponsorship & Partnership", show: true },
-                { id: "facility-rental", name: "Ground & Net Rental", show: true },
-                { id: "other", name: "General / Other Inquiry", show: true }
-            ]
-        };
-        res.json(contactFormConfig);
+        const defaultServices = [
+            { id: "membership", name: "Club Membership Inquiry", show: true },
+            { id: "academy", name: "Cricket Academy Training", show: true },
+            { id: "match-booking", name: "Match & Tournament Booking", show: true },
+            { id: "sponsorship", name: "Sponsorship & Partnership", show: true },
+            { id: "facility-rental", name: "Ground & Net Rental", show: true },
+            { id: "other", name: "General / Other Inquiry", show: true }
+        ];
+
+        let config = (settings.contactFormConfig && typeof settings.contactFormConfig === 'object') ? settings.contactFormConfig : {};
+        
+        if (!config.fields || typeof config.fields !== 'object') {
+            config.fields = { mobile: { label: "Mobile Number", show: true, required: false } };
+        } else if (!config.fields.mobile) {
+            config.fields.mobile = { label: "Mobile Number", show: true, required: false };
+        }
+
+        if (!Array.isArray(config.services) || config.services.length === 0) {
+            config.services = defaultServices;
+        }
+
+        res.json(config);
     } catch (error) {
         console.error("Error fetching contact form config:", error);
         res.status(500).json({ error: "Failed to load contact form configuration" });

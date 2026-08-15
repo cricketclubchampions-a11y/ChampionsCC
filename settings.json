@@ -401,7 +401,22 @@
       "showMap": true
     },
     "contactFormConfig": {
-      "contactFormEnabled": true
+      "contactFormEnabled": true,
+      "fields": {
+        "mobile": {
+          "label": "Mobile Number",
+          "show": true,
+          "required": false
+        }
+      },
+      "services": [
+        { "id": "membership", "name": "Club Membership Inquiry", "show": true },
+        { "id": "academy", "name": "Cricket Academy Training", "show": true },
+        { "id": "match-booking", "name": "Match & Tournament Booking", "show": true },
+        { "id": "sponsorship", "name": "Sponsorship & Partnership", "show": true },
+        { "id": "facility-rental", "name": "Ground & Net Rental", "show": true },
+        { "id": "other", "name": "General / Other Inquiry", "show": true }
+      ]
     },
     "mediaConfig": {
       "media": {}
