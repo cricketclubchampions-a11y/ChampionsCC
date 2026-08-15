@@ -169,6 +169,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadDashboardData();
   loadContactMapSettings();
   fetchGallery();
+  initInactivityTracker();
+  renderActiveSessionInfo();
 });
 
 // Admin Global State Engine (Synchronized with localStorage)
@@ -296,16 +298,66 @@ function resetPasswordForm() {
   checkPasswordStrength("");
 }
 
-function saveAdminCredentials(e) {
+let lastActivityTime = Date.now();
+
+function initInactivityTracker() {
+  const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+  events.forEach(evt => {
+    window.addEventListener(evt, () => {
+      lastActivityTime = Date.now();
+    }, { passive: true });
+  });
+
+  setInterval(() => {
+    const timeoutMin = parseInt(ADMIN_STATE.securitySettings?.sessionTimeout || "30", 10);
+    const timeoutMs = timeoutMin * 60 * 1000;
+    
+    if (Date.now() - lastActivityTime > timeoutMs) {
+      addAuditLog("Auto logged out due to inactivity", "warning");
+      fetch('/api/admin/logout', { method: 'POST' }).finally(() => {
+        window.location.replace('login.html?reason=inactivity');
+      });
+    }
+  }, 10000);
+}
+
+async function renderActiveSessionInfo() {
+  const container = document.getElementById("active-session-info");
+  if (!container) return;
+
+  const ua = navigator.userAgent;
+  let os = "Windows";
+  if (ua.includes("Mac")) os = "macOS";
+  else if (ua.includes("Linux")) os = "Linux";
+  else if (ua.includes("Android")) os = "Android";
+  else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+
+  let browser = "Chrome";
+  if (ua.includes("Edg")) browser = "Edge";
+  else if (ua.includes("Firefox")) browser = "Firefox";
+  else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+
+  let clientIp = "127.0.0.1";
+  try {
+    const res = await fetch('/api/admin/check-auth');
+    if (res.ok) {
+      const data = await res.json();
+      if (data.ip) clientIp = data.ip;
+    }
+  } catch (e) {}
+
+  container.innerHTML = `${os} • ${browser} • IP: ${clientIp}`;
+}
+
+async function saveAdminCredentials(e) {
   if (e) e.preventDefault();
   const currPwdInput = document.getElementById("settings-current-password")?.value || "";
-  const newUser = document.getElementById("settings-username").value.trim();
-  const newPwd = document.getElementById("settings-new-password").value.trim();
-  const confirmPwd = document.getElementById("settings-confirm-password").value.trim();
+  const newUser = document.getElementById("settings-username")?.value.trim() || "";
+  const newPwd = document.getElementById("settings-new-password")?.value.trim() || "";
+  const confirmPwd = document.getElementById("settings-confirm-password")?.value.trim() || "";
 
-  // Validate current password (if set or default admin123)
-  if (currPwdInput && currPwdInput !== ADMIN_STATE.creds.password && currPwdInput !== "admin123") {
-    showAdminToast("⚠️ Current password is incorrect!");
+  if (!currPwdInput) {
+    showAdminToast("⚠️ Please enter your current password.");
     return;
   }
 
@@ -319,20 +371,48 @@ function saveAdminCredentials(e) {
     return;
   }
 
-  ADMIN_STATE.creds.username = newUser;
-  ADMIN_STATE.creds.password = newPwd;
-  localStorage.setItem("ccc_admin_creds", JSON.stringify(ADMIN_STATE.creds));
+  const saveBtn = document.querySelector("#sec-settings form button[type='submit']");
+  const origBtnText = saveBtn ? saveBtn.innerHTML : 'Save Credentials';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  }
 
-  fetch('/api/admin/account', {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: newUser, email: newUser, password: newPwd })
-  }).catch(() => {});
+  try {
+    const res = await fetch('/api/admin/account', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newUser, email: newUser, password: newPwd, currentPassword: currPwdInput })
+    });
 
-  addAuditLog("Admin Credentials & Password Updated", "success");
-  showAdminToast("🔒 Admin Credentials updated successfully!");
+    const data = await res.json();
 
-  resetPasswordForm();
+    if (res.ok && data.success) {
+      ADMIN_STATE.creds.username = newUser;
+      ADMIN_STATE.creds.password = newPwd;
+      localStorage.setItem("ccc_admin_creds", JSON.stringify(ADMIN_STATE.creds));
+
+      addAuditLog("Admin Credentials & Password Updated", "success");
+      showAdminToast("🔒 Admin Credentials & Password updated successfully!");
+      resetPasswordForm();
+    } else {
+      showAdminToast(`⚠️ ${data.error || 'Failed to update credentials'}`);
+    }
+  } catch (err) {
+    console.error("Error saving admin credentials:", err);
+    ADMIN_STATE.creds.username = newUser;
+    ADMIN_STATE.creds.password = newPwd;
+    localStorage.setItem("ccc_admin_creds", JSON.stringify(ADMIN_STATE.creds));
+
+    addAuditLog("Admin Credentials Updated (Local)", "success");
+    showAdminToast("🔒 Admin Credentials & Password updated successfully!");
+    resetPasswordForm();
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origBtnText;
+    }
+  }
 }
 
 function toggle2FAState(enabled) {

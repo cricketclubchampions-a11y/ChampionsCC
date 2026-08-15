@@ -895,7 +895,7 @@
                       </div>
                       <div>
                         <div style="font-size: 0.9rem; font-weight: 700; color: #0f172a;">Active Session (This Device)</div>
-                        <div style="font-size: 0.78rem; color: #64748b;">Windows • Chrome • IP: 127.0.0.1</div>
+                        <div style="font-size: 0.78rem; color: #64748b;" id="active-session-info">Windows • Chrome • IP: 127.0.0.1</div>
                       </div>
                     </div>
                     <button type="button" class="btn btn-ghost" onclick="revokeAllSessions()" style="color: #dc2626; border: 1px solid #fca5a5; font-weight: 700; font-size: 0.82rem; padding: 6px 14px;">
@@ -1661,39 +1661,6 @@
                       </div>
                     </div>
 
-                  </div>
-
-                  <!-- Video Embed & Controls -->
-                  <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem;">
-                    <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.5rem;">Optional Video Embed Settings</div>
-                    <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 1rem;">Replace or combine static images with YouTube videos or direct MP4 clips</div>
-
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1rem;" class="responsive-2col-grid">
-                      <div class="form-group">
-                        <label class="field-label" for="mediaVideoUrl">YouTube / Video URL</label>
-                        <input class="field-input" type="url" id="mediaVideoUrl" placeholder="https://www.youtube.com/watch?v=..." />
-                      </div>
-
-                      <div class="form-group">
-                        <label class="field-label" for="mediaVideoType">Video Player Type</label>
-                        <select class="field-select" id="mediaVideoType">
-                          <option value="none">None (Images Only)</option>
-                          <option value="youtube">YouTube Embed</option>
-                          <option value="video">Direct MP4 Video Link</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px;">
-                      <div>
-                        <div style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">Autoplay Video</div>
-                        <div style="font-size: 0.75rem; color: #64748b;">Automatically play video on page scroll</div>
-                      </div>
-                      <label class="toggle-switch" style="transform: scale(0.85);">
-                        <input type="checkbox" id="mediaAutoplay">
-                        <span class="toggle-slider"></span>
-                      </label>
-                    </div>
                   </div>
 
                   <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; border-top: 1px solid #f1f5f9; padding-top: 1rem; margin-top: 1.5rem;">

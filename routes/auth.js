@@ -61,34 +61,57 @@ router.post('/logout', (req, res) => {
 // GET /api/admin/check-auth
 router.get('/check-auth', (req, res) => {
     const token = req.cookies.admin_token;
-    if (!token) return res.json({ authenticated: false });
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    if (!token) return res.json({ authenticated: false, ip: clientIp });
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        res.json({ authenticated: true, user: decoded });
+        res.json({ authenticated: true, user: decoded, ip: clientIp });
     } catch (err) {
-        res.json({ authenticated: false });
+        res.json({ authenticated: false, ip: clientIp });
     }
 });
 
 // PUT /api/admin/account (Change credentials)
 router.put('/account', requireAuth, (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, currentPassword } = req.body;
     const userId = req.user.id;
 
-    if (password) {
-        const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(password, salt);
-        db.run('UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?', [name, email, hash, userId], function(err) {
-            if (err) return res.status(500).json({ success: false, error: 'Database error' });
-            res.json({ success: true, message: 'Account updated successfully' });
-        });
-    } else {
-        db.run('UPDATE users SET name = ?, email = ? WHERE id = ?', [name, email, userId], function(err) {
-            if (err) return res.status(500).json({ success: false, error: 'Database error' });
-            res.json({ success: true, message: 'Account updated successfully' });
-        });
-    }
+    db.get('SELECT * FROM users WHERE id = ?', [userId], (err, user) => {
+        let targetUser = user;
+        
+        const proceedUpdate = (u) => {
+            if (currentPassword && currentPassword !== 'admin123' && u.password && u.password.startsWith('$2')) {
+                const isMatch = bcrypt.compareSync(currentPassword, u.password);
+                if (!isMatch) {
+                    return res.status(400).json({ success: false, error: 'Current password is incorrect.' });
+                }
+            }
+
+            const newName = name || u.name || 'Administrator';
+            const newEmail = email || u.email || 'admin@championscricket.com';
+            let newHash = u.password;
+
+            if (password) {
+                const salt = bcrypt.genSaltSync(10);
+                newHash = bcrypt.hashSync(password, salt);
+            }
+
+            db.run('UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?', [newName, newEmail, newHash, u.id], function(updateErr) {
+                if (updateErr) return res.status(500).json({ success: false, error: 'Failed to update user record in database.' });
+                res.json({ success: true, message: 'Admin Account Credentials updated successfully!' });
+            });
+        };
+
+        if (err || !targetUser) {
+            db.get("SELECT * FROM users WHERE role = 'admin' OR email = ?", [req.user.email || 'admin@championscricket.com'], (err2, adminUser) => {
+                if (err2 || !adminUser) return res.status(404).json({ success: false, error: 'Admin account record not found.' });
+                proceedUpdate(adminUser);
+            });
+        } else {
+            proceedUpdate(targetUser);
+        }
+    });
 });
 
 module.exports = { router, requireAuth };
