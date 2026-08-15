@@ -4459,7 +4459,9 @@ table.data-table,
 }
 
 table.data-table th,
-.table-wrap th {
+.table-wrap th,
+.data-table thead th,
+.table-wrap thead th {
   padding: 14px 18px;
   background: #f8fafc;
   color: #475569;
@@ -4469,7 +4471,7 @@ table.data-table th,
   letter-spacing: 0.05em;
   border-bottom: 1px solid #e2e8f0;
   vertical-align: middle;
-  text-align: left;
+  text-align: center !important;
   white-space: nowrap;
 }
 
@@ -4489,15 +4491,15 @@ table.data-table tbody tr:hover,
   background-color: #f8fafc;
 }
 
-/* First Column (Sl No / Thumbnail) Alignment */
-table.data-table th:first-child,
-table.data-table td:first-child {
+/* First Column (Sl No / Thumbnail) Body Cell Alignment */
+table.data-table td:first-child,
+.table-wrap td:first-child {
   text-align: center;
 }
 
-/* Last Column (Actions Column) Right Alignment */
-table.data-table th:last-child,
-table.data-table td:last-child {
+/* Last Column (Actions Column) Body Cell Right Alignment */
+table.data-table td:last-child,
+.table-wrap td:last-child {
   text-align: right !important;
   padding-right: 1.5rem !important;
 }
