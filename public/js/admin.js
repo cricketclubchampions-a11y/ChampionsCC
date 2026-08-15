@@ -720,6 +720,29 @@ function initAdminTabs() {
   });
 }
 
+/* --- PREMIUM DELAY ENGINE --- */
+const premiumDelay = (promise, minDuration = 450) => {
+  if (!promise) {
+    return new Promise(r => setTimeout(r, minDuration));
+  }
+  const start = Date.now();
+  const handleDelay = () => {
+    const elapsed = Date.now() - start;
+    return elapsed < minDuration
+      ? new Promise(r => setTimeout(r, minDuration - elapsed))
+      : Promise.resolve();
+  };
+  return Promise.resolve(promise)
+    .then(async (res) => {
+      await handleDelay();
+      return res;
+    })
+    .catch(async (err) => {
+      await handleDelay();
+      throw err;
+    });
+};
+
 /* --------------------------------------------------------------------------
    SECTION LOADING & SKELETON ENGINE
    -------------------------------------------------------------------------- */
@@ -2209,8 +2232,14 @@ function handleLeadSearch(query) {
 }
 
 async function fetchLeads() {
+  const tableBody = document.getElementById('tbl-leads-body');
+  if (tableBody && (!ADMIN_STATE.leads || ADMIN_STATE.leads.length === 0)) {
+    tableBody.innerHTML = getTableSkeletonHtml(5, 3);
+  }
+  setSectionLoadingBadge('sec-leads', true);
+
   try {
-    const res = await fetch('/api/admin/leads');
+    const res = await premiumDelay(fetch('/api/admin/leads'), 450);
     if (res.ok) {
       ADMIN_STATE.leads = await res.json();
       localStorage.setItem("ccc_admin_leads_cache", JSON.stringify(ADMIN_STATE.leads));
@@ -2220,6 +2249,8 @@ async function fetchLeads() {
     }
   } catch(e) {
     console.error("Error fetching leads", e);
+  } finally {
+    setSectionLoadingBadge('sec-leads', false);
   }
 }
 
@@ -2909,19 +2940,28 @@ document.addEventListener("drop", (e) => {
 
 // Blog Posts Manager
 async function fetchAdminBlogs() {
+  const tableBody = document.getElementById('blogs-tbody');
+  if (tableBody && (!ADMIN_STATE.blogs || ADMIN_STATE.blogs.length === 0)) {
+    tableBody.innerHTML = getTableSkeletonHtml(4, 3);
+  }
+  setSectionLoadingBadge('sec-blogs', true);
+
   try {
-    const res = await fetch('/api/blogs');
+    const res = await premiumDelay(fetch('/api/blogs'), 450);
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         ADMIN_STATE.blogs = data;
         localStorage.setItem("ccc_blogs", JSON.stringify(data));
+        localStorage.setItem("ccc_admin_blogs_cache", JSON.stringify(data));
       }
     }
   } catch (e) {
     console.warn("Using local cache for blogs");
+  } finally {
+    renderBlogsAdminTable();
+    setSectionLoadingBadge('sec-blogs', false);
   }
-  renderBlogsAdminTable();
 }
 
 function renderBlogsAdminTable() {
@@ -3077,8 +3117,14 @@ let currentGalleryFilter = 'all';
 let gallerySearchQuery = '';
 
 async function fetchGallery() {
+  const tableBody = document.getElementById('tbl-gallery-body');
+  if (tableBody && (!ADMIN_STATE.gallery || ADMIN_STATE.gallery.length === 0)) {
+    tableBody.innerHTML = getTableSkeletonHtml(5, 3);
+  }
+  setSectionLoadingBadge('sec-content-photos', true);
+
   try {
-    const res = await fetch('/api/admin/gallery');
+    const res = await premiumDelay(fetch('/api/admin/gallery'), 450);
     if (res.ok) {
       ADMIN_STATE.gallery = await res.json();
       localStorage.setItem("ccc_admin_gallery_cache", JSON.stringify(ADMIN_STATE.gallery));
@@ -3088,6 +3134,8 @@ async function fetchGallery() {
     }
   } catch (err) {
     console.error("Error fetching gallery:", err);
+  } finally {
+    setSectionLoadingBadge('sec-content-photos', false);
   }
 }
 
