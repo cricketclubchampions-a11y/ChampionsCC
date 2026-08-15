@@ -615,63 +615,82 @@ function handleAdminLogout() {
 }
 
 /* --------------------------------------------------------------------------
-   2. TAB NAVIGATION SYSTEM
+   2. TAB NAVIGATION SYSTEM (PERSISTENT ACTIVE TAB ACROSS REFRESH)
    -------------------------------------------------------------------------- */
-function initAdminTabs() {
+function switchAdminTab(targetSec, updateHash = true) {
+  if (!targetSec) return;
+  const targetEl = document.getElementById(`sec-${targetSec}`);
+  if (!targetEl) return;
+
   const navItems = document.querySelectorAll(".nav-item");
   const sections = document.querySelectorAll(".admin-section");
+
+  navItems.forEach(n => n.classList.remove("active"));
+  sections.forEach(s => { 
+    s.classList.remove("active"); 
+    s.style.display = "none"; 
+  });
+
+  const activeNavItem = document.querySelector(`.nav-item[data-section="${targetSec}"]`);
+  if (activeNavItem) activeNavItem.classList.add("active");
+
+  targetEl.classList.add("active"); 
+  targetEl.style.display = "block";
+
+  if (targetSec === "social-media") loadSocialMediaSettings();
+  if (targetSec === "maps-location") loadContactMapSettings();
+  if (targetSec === "contact-editor") loadContactFormSettings();
+  if (targetSec === "media-gallery") fetchGallery();
+  if (targetSec === "content-photos") loadMediaAssetsSettings();
+  if (targetSec === "image-library") fetchMediaLibrary();
+  if (targetSec === "settings") renderSettingsForm();
+
+  // Update topbar title dynamically
+  if (activeNavItem) {
+    const titleSpan = activeNavItem.querySelector("span");
+    const titleText = titleSpan ? titleSpan.innerText.trim() : "Dashboard";
+    const topTitleEl = document.getElementById("topbar-page-title");
+    const breadcrumbEl = document.getElementById("topbar-breadcrumb");
+    if (topTitleEl) topTitleEl.innerText = titleText;
+    if (breadcrumbEl) breadcrumbEl.innerText = `Champions CC / Admin / ${titleText}`;
+  }
+
+  // Persist active tab state across browser refresh
+  localStorage.setItem("ccc_admin_active_tab", targetSec);
+  if (updateHash && window.location.hash !== `#${targetSec}`) {
+    history.replaceState(null, '', `#${targetSec}`);
+  }
+}
+
+function initAdminTabs() {
+  const navItems = document.querySelectorAll(".nav-item");
 
   navItems.forEach(item => {
     item.addEventListener("click", (e) => {
       e.preventDefault();
       const targetSec = item.getAttribute("data-section");
-      if (!targetSec) return;
-
-      navItems.forEach(n => n.classList.remove("active"));
-      sections.forEach(s => { 
-        s.classList.remove("active"); 
-        s.style.display = "none"; 
-      });
-
-      item.classList.add("active");
-      const activeSec = document.getElementById(`sec-${targetSec}`);
-      if (activeSec) {
-        activeSec.classList.add("active"); 
-        activeSec.style.display = "block";
-      }
-
-      if (targetSec === "social-media") {
-        loadSocialMediaSettings();
-      }
-
-      if (targetSec === "maps-location") {
-        loadContactMapSettings();
-      }
-
-      if (targetSec === "contact-editor") {
-        loadContactFormSettings();
-      }
-
-      if (targetSec === "media-gallery") {
-        fetchGallery();
-      }
-
-      if (targetSec === "content-photos") {
-        loadMediaAssetsSettings();
-      }
-
-      if (targetSec === "image-library") {
-        fetchMediaLibrary();
-      }
-
-      // Update topbar title dynamically
-      const titleSpan = item.querySelector("span");
-      const titleText = titleSpan ? titleSpan.innerText.trim() : "Dashboard";
-      const topTitleEl = document.getElementById("topbar-page-title");
-      const breadcrumbEl = document.getElementById("topbar-breadcrumb");
-      if (topTitleEl) topTitleEl.innerText = titleText;
-      if (breadcrumbEl) breadcrumbEl.innerText = `Champions CC / Admin / ${titleText}`;
+      switchAdminTab(targetSec, true);
     });
+  });
+
+  // Restore active tab on page refresh / load
+  let initialTab = "overview";
+  const hash = window.location.hash.replace("#", "").trim();
+  const savedTab = localStorage.getItem("ccc_admin_active_tab");
+
+  if (hash && document.getElementById(`sec-${hash}`)) {
+    initialTab = hash;
+  } else if (savedTab && document.getElementById(`sec-${savedTab}`)) {
+    initialTab = savedTab;
+  }
+
+  switchAdminTab(initialTab, false);
+
+  window.addEventListener("hashchange", () => {
+    const newHash = window.location.hash.replace("#", "").trim();
+    if (newHash && document.getElementById(`sec-${newHash}`)) {
+      switchAdminTab(newHash, false);
+    }
   });
 }
 
