@@ -2974,9 +2974,11 @@ function renderBlogsAdminTable() {
       <td><span class="badge" style="background:#ecfdf5; color:#047857; border:1px solid #a7f3d0; padding:2px 8px; border-radius:12px; font-weight:600;">${b.category}</span></td>
       <td>${b.date || 'Recent'}</td>
       <td>${b.author || 'Staff'}</td>
-      <td class="action-btns-cell">
-        <button class="btn-icon" title="Edit Article" onclick="openEditBlogModal('${b.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem; color:#3b82f6;">edit</span></button>
-        <button class="btn-icon danger" title="Delete Article" onclick="deleteBlog('${b.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span></button>
+      <td style="text-align: right;">
+        <div class="td-actions">
+          <button class="btn-icon" title="Edit Article" onclick="openEditBlogModal('${b.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem; color:#3b82f6;">edit</span></button>
+          <button class="btn-icon danger" title="Delete Article" onclick="deleteBlog('${b.id}')"><span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span></button>
+        </div>
       </td>
     </tr>
   `).join("");

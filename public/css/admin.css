@@ -4446,3 +4446,67 @@ body.admin-body {
   border-radius: 50%;
   animation: adminToastSpin 0.75s linear infinite;
 }
+
+/* ==========================================================================
+   PERFECT GLOBAL BACKEND TABLE & COLUMN ALIGNMENT SYSTEM
+   ========================================================================== */
+table.data-table,
+.table-wrap table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+}
+
+table.data-table th,
+.table-wrap th {
+  padding: 14px 18px;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+  text-align: left;
+  white-space: nowrap;
+}
+
+table.data-table td,
+.table-wrap td {
+  padding: 14px 18px;
+  color: #1e293b;
+  font-size: 0.875rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+  text-align: left;
+}
+
+/* Row Hover Effect */
+table.data-table tbody tr:hover,
+.table-wrap tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+/* First Column (Sl No / Thumbnail) Alignment */
+table.data-table th:first-child,
+table.data-table td:first-child {
+  text-align: center;
+}
+
+/* Last Column (Actions Column) Right Alignment */
+table.data-table th:last-child,
+table.data-table td:last-child {
+  text-align: right !important;
+  padding-right: 1.5rem !important;
+}
+
+.td-actions,
+.action-btns-cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
