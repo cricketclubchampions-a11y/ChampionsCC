@@ -1378,7 +1378,8 @@ async function initSocialLinks() {
 
 // --- Interactive Location Map & Contact Information Controller ---
 function getMapEmbedUrl(data) {
-  const defaultEmbed = 'https://www.openstreetmap.org/export/embed.html?bbox=86.061392,20.468159,86.091392,20.498159&layer=mapnik&marker=20.4831593,86.0763922';
+  const fallbackAddress = "Baragae Balijatra Ground, Sisua, Salipur, Cuttack, Odisha";
+  const defaultEmbed = `https://maps.google.com/maps?q=${encodeURIComponent(fallbackAddress)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
   if (!data) return defaultEmbed;
 
   let rawLink = (data.mapLink || '').trim();
@@ -1386,7 +1387,7 @@ function getMapEmbedUrl(data) {
   const rawAddress = (data.address || '').trim();
   const zoom = parseInt(data.zoom, 10) || 14;
 
-  // Extract iframe src if user pasted <iframe src="...">
+  // 1. Extract iframe src if user pasted full <iframe src="...">
   if (rawLink.includes('<iframe')) {
     const srcMatch = rawLink.match(/src=["']([^"']+)["']/i);
     if (srcMatch && srcMatch[1]) {
@@ -1394,40 +1395,39 @@ function getMapEmbedUrl(data) {
     }
   }
 
-  // 1. Explicit Google Maps Embed URL
-  if (rawLink.includes('google.com/maps/embed')) {
+  // 2. Direct Google Maps Embed URL or output=embed
+  if (rawLink.includes('google.com/maps/embed') || rawLink.includes('output=embed')) {
     return rawLink;
   }
 
-  // 2. Parse Lat, Lon from coords or mapLink
-  let lat = null;
-  let lon = null;
+  // 3. Extract coordinates or place queries from Google Maps share/place link
+  if (rawLink) {
+    const atMatch = rawLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (atMatch) {
+      return `https://maps.google.com/maps?q=${atMatch[1]},${atMatch[2]}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
+    }
 
+    const qMatch = rawLink.match(/(?:q|destination|ll)=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (qMatch) {
+      return `https://maps.google.com/maps?q=${qMatch[1]},${qMatch[2]}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
+    }
+
+    const placeMatch = rawLink.match(/\/maps\/place\/([^\/@?]+)/);
+    if (placeMatch && placeMatch[1]) {
+      const placeName = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+      return `https://maps.google.com/maps?q=${encodeURIComponent(placeName)}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
+    }
+  }
+
+  // 4. GPS Coordinates input field (e.g. "20.4831593, 86.0763922")
   if (rawCoords) {
-    const parts = rawCoords.split(',').map(s => parseFloat(s.trim()));
-    if (parts.length >= 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-      lat = parts[0];
-      lon = parts[1];
+    const parts = rawCoords.split(',').map(s => s.trim());
+    if (parts.length >= 2 && !isNaN(parseFloat(parts[0])) && !isNaN(parseFloat(parts[1]))) {
+      return `https://maps.google.com/maps?q=${parseFloat(parts[0])},${parseFloat(parts[1])}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
     }
   }
 
-  if ((lat === null || lon === null) && rawLink) {
-    const m = rawLink.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
-    if (m) {
-      lat = parseFloat(m[1]);
-      lon = parseFloat(m[2]);
-    }
-  }
-
-  if (lat !== null && lon !== null) {
-    const delta = 0.015;
-    const minLon = (lon - delta).toFixed(6);
-    const minLat = (lat - delta).toFixed(6);
-    const maxLon = (lon + delta).toFixed(6);
-    const maxLat = (lat + delta).toFixed(6);
-    return `https://www.openstreetmap.org/export/embed.html?bbox=${minLon},${minLat},${maxLon},${maxLat}&layer=mapnik&marker=${lat},${lon}`;
-  }
-
+  // 5. Facility Address input field
   if (rawAddress) {
     return `https://maps.google.com/maps?q=${encodeURIComponent(rawAddress)}&t=&z=${zoom}&ie=UTF8&iwloc=&output=embed`;
   }
