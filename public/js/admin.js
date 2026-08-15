@@ -140,6 +140,7 @@ window.showAdminNotification = showAdminNotification;
 window.closeAdminNotification = closeAdminNotification;
 window.updateAdminNotification = updateAdminNotification;
 window.showAdminToast = showAdminToast;
+window.showToast = showAdminToast;
 
 document.addEventListener("DOMContentLoaded", async () => {
   if ('scrollRestoration' in history) {
@@ -2774,25 +2775,8 @@ function closeAdminModal(modalId) {
   }
 }
 
-function showAdminToast(msg) {
-  let container = document.getElementById("admin-toast-container");
-  if (!container) {
-    container = document.createElement("div");
-    container.id = "admin-toast-container";
-    container.className = "admin-toast-container";
-    document.body.appendChild(container);
-  }
-
-  const toast = document.createElement("div");
-  toast.className = "admin-toast";
-  toast.innerHTML = `<span>✨</span><span>${msg}</span>`;
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = "0";
-    toast.style.transform = "translateY(10px)";
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+function showAdminToast(msg, type = 'success') {
+  return showAdminNotification(msg, type);
 }
 
 
