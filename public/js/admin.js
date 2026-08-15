@@ -8,41 +8,67 @@ function showAdminNotification(message, type = 'success', title = null, duration
     document.body.appendChild(toastContainer);
   }
 
-  // Clean leading emojis for clean text matching design
+  // Force container styling at bottom-right corner
+  toastContainer.style.cssText = "position: fixed !important; bottom: 24px !important; right: 24px !important; top: auto !important; left: auto !important; z-index: 99999999 !important; display: flex !important; flex-direction: column-reverse !important; gap: 10px !important; pointer-events: none !important; max-width: 420px !important; width: calc(100vw - 48px) !important;";
+
+  // Strip leading emojis for clean text matching design
   let cleanMessage = (message || '').replace(/^[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F600}-\u{1F64F}\u{1F680}-\u{1F6FF}\u{1F1E6}-\u{1F1FF}\u{26A0}-\u{2705}]\s*/u, '').trim();
   if (!cleanMessage) cleanMessage = message;
 
   const toastId = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5);
   const toast = document.createElement("div");
   toast.id = toastId;
-  
-  let typeClass = 'toast-success';
-  let iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+  let accentColor = '#10b981'; // Emerald Green
+  let iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
 
   if (type === 'error' || type === 'failed' || message.includes('Failed') || message.includes('Error') || message.includes('🚫')) {
-    typeClass = 'toast-error';
-    iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+    accentColor = '#ef4444';
+    iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
   } else if (type === 'warning' || type === 'warn' || message.includes('⚠️')) {
-    typeClass = 'toast-warning';
-    iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+    accentColor = '#f59e0b';
+    iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
   } else if (type === 'loading' || message.includes('Saving') || message.includes('Uploading')) {
-    typeClass = 'toast-loading';
-    iconSvg = `<svg class="admin-toast-spin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`;
+    accentColor = '#3b82f6';
+    iconSvg = `<svg style="animation: adminToastSpin 1s linear infinite;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>`;
   }
 
-  toast.className = `admin-toast-card ${typeClass}`;
+  toast.className = `admin-toast-card toast-${type}`;
+  toast.style.cssText = `
+    pointer-events: auto !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background: #091a12 !important;
+    background-color: #091a12 !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    padding: 12px 18px !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    border-left: 5px solid ${accentColor} !important;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  `;
+
   toast.innerHTML = `
-    <div class="admin-toast-icon-wrap">
+    <div style="display:flex !important; align-items:center !important; justify-content:center !important; width:28px !important; height:28px !important; border-radius:50% !important; background:${accentColor} !important; flex-shrink:0 !important;">
       ${iconSvg}
     </div>
-    <div class="admin-toast-message">${cleanMessage}</div>
-    <button type="button" class="admin-toast-close" onclick="closeAdminNotification('${toastId}')" aria-label="Close">&times;</button>
+    <div style="font-family:system-ui,-apple-system,sans-serif !important; font-size:0.92rem !important; font-weight:600 !important; color:#ffffff !important; line-height:1.35 !important; flex:1 !important; margin-right:8px !important;">
+      ${cleanMessage}
+    </div>
+    <button type="button" onclick="closeAdminNotification('${toastId}')" aria-label="Close" style="background:transparent !important; border:none !important; color:#94a3b8 !important; font-size:1.2rem !important; cursor:pointer !important; padding:0 4px !important; line-height:1 !important; margin-left:auto !important;">&times;</button>
   `;
 
   toastContainer.appendChild(toast);
 
   requestAnimationFrame(() => {
-    toast.classList.add('show');
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0) scale(1)';
   });
 
   if (type !== 'loading' && duration > 0) {
@@ -57,11 +83,11 @@ function showAdminNotification(message, type = 'success', title = null, duration
 function closeAdminNotification(toastId) {
   const toast = document.getElementById(toastId);
   if (toast) {
-    toast.classList.remove('show');
-    toast.classList.add('hide');
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(12px) scale(0.94)';
     setTimeout(() => {
       if (toast.parentNode) toast.remove();
-    }, 350);
+    }, 300);
   }
 }
 
