@@ -4482,7 +4482,13 @@ table.data-table td,
   font-size: 0.875rem;
   border-bottom: 1px solid #f1f5f9;
   vertical-align: middle;
-  text-align: left;
+  text-align: center !important;
+}
+
+/* Ensure inner flex containers in td are centered */
+table.data-table td > div,
+.table-wrap td > div {
+  text-align: center !important;
 }
 
 /* Row Hover Effect */
@@ -4491,24 +4497,13 @@ table.data-table tbody tr:hover,
   background-color: #f8fafc;
 }
 
-/* First Column (Sl No / Thumbnail) Body Cell Alignment */
-table.data-table td:first-child,
-.table-wrap td:first-child {
-  text-align: center;
-}
-
-/* Last Column (Actions Column) Body Cell Right Alignment */
-table.data-table td:last-child,
-.table-wrap td:last-child {
-  text-align: right !important;
-  padding-right: 1.5rem !important;
-}
-
+/* Action Buttons Container Centering */
 .td-actions,
 .action-btns-cell {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  width: 100%;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  margin: 0 auto !important;
 }

@@ -2388,8 +2388,8 @@ function renderLeadsTable() {
         </td>
         <td>${statusBadge}</td>
         <td style="font-size: 0.8rem; color: #64748b; white-space: nowrap;">${dateStr}</td>
-        <td style="text-align: right;">
-          <div style="display: flex; align-items: center; justify-content: flex-end; gap: 6px;">
+        <td style="text-align: center;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
             <button class="btn-icon" onclick="viewLeadModal(${lead.id})" title="View Inquiry Details" style="color: #6366f1; background: rgba(99, 102, 241, 0.08); padding: 5px; border-radius: 8px;">
               <span class="material-symbols-outlined" style="font-size: 18px;">visibility</span>
             </button>
@@ -2583,7 +2583,7 @@ function renderSquadAdminTable() {
   container.innerHTML = ADMIN_STATE.squad.map((m, idx) => `
     <tr>
       <td style="font-weight:700; color:#64748b;">#${idx + 1}</td>
-      <td style="display:flex; align-items:center; gap:0.75rem;">
+      <td style="display:flex; align-items:center; justify-content:center; gap:0.75rem;">
         <img src="${m.photo || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=500'}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; border:1px solid var(--accent-emerald);">
         <strong>${m.name}</strong>
       </td>
