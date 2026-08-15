@@ -368,6 +368,11 @@ img {
   background-color: var(--bg-card-hover);
 }
 
+/* Mobile Extra Drawer Element (Hidden by default on Desktop / Large screens) */
+.mobile-drawer-extra {
+  display: none !important;
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
