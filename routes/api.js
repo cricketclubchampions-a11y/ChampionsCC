@@ -443,9 +443,29 @@ const saveUploadedImage = async (base64Data, originalName = 'image') => {
     const filename = `img_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${ext}`;
     
     // Abstracted Cloudinary Storage Hook (Triggers when Cloudinary env vars are set)
-    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY) {
-        console.log("[Cloudinary Pipeline] Uploading image to Cloudinary cloud storage...");
-        // Cloudinary upload pipeline logic triggers here on production deployment
+    if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+        try {
+            console.log("[Cloudinary Pipeline] Uploading image to Cloudinary cloud storage...");
+            const cloudinary = require('cloudinary').v2;
+            cloudinary.config({
+                cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+                api_key: process.env.CLOUDINARY_API_KEY,
+                api_secret: process.env.CLOUDINARY_API_SECRET
+            });
+            const uploadRes = await cloudinary.uploader.upload(base64Data, {
+                folder: 'champions_cc_uploads'
+            });
+            return {
+                id: 'img-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+                filename: uploadRes.public_id,
+                originalName: originalName,
+                url: uploadRes.secure_url,
+                size: (uploadRes.bytes ? Math.round(uploadRes.bytes / 1024) : 0) + ' KB',
+                created_at: new Date().toISOString()
+            };
+        } catch (cErr) {
+            console.error("Cloudinary upload failed, falling back to local file storage:", cErr.message || cErr);
+        }
     }
 
     // Default Local File Storage inside public/uploads/
