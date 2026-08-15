@@ -169,6 +169,14 @@
         }
         function hideAlert() { alertBox.style.display = 'none'; }
 
+        // Check URL parameters for session logout reasons
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('reason') === 'single_session') {
+            showAlert('⚠️ Session terminated: Your account was accessed on another device.', 'error');
+        } else if (urlParams.get('reason') === 'inactivity') {
+            showAlert('⏰ Session expired: You were logged out due to inactivity.', 'error');
+        }
+
         // --- Set button loading state ---
         function setLoading(loading) {
             if (loading) {

@@ -155,7 +155,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const data = await res.json();
     if (!data.authenticated) {
       if (!window.location.pathname.endsWith("login.html")) {
-        window.location.replace('login.html');
+        const reason = data.singleSessionConflict ? '?reason=single_session' : '';
+        window.location.replace(`login.html${reason}`);
       }
       return;
     }
@@ -309,6 +310,7 @@ function initInactivityTracker() {
     }, { passive: true });
   });
 
+  // 1. Inactivity Logout Check
   setInterval(() => {
     const timeoutMin = parseInt(ADMIN_STATE.securitySettings?.sessionTimeout || "30", 10);
     const timeoutMs = timeoutMin * 60 * 1000;
@@ -320,6 +322,18 @@ function initInactivityTracker() {
       });
     }
   }, 10000);
+
+  // 2. Single Device Active Session Heartbeat Monitor (checks every 12s)
+  setInterval(async () => {
+    if (window.location.pathname.endsWith("login.html")) return;
+    try {
+      const res = await fetch('/api/admin/check-auth', { credentials: 'same-origin' });
+      const data = await res.json();
+      if (!data.authenticated && data.singleSessionConflict) {
+        window.location.replace('login.html?reason=single_session');
+      }
+    } catch (e) {}
+  }, 12000);
 }
 
 async function renderActiveSessionInfo() {
@@ -502,9 +516,19 @@ function revokeAllSessions() {
     message: "Are you sure you want to revoke all other active admin sessions? Other devices will be immediately logged out.",
     confirmText: "Revoke Sessions",
     isDanger: true
-  }, () => {
-    addAuditLog("Revoked All Active Remote Sessions", "warning");
-    showAdminToast("🚫 All other administrator sessions have been revoked!");
+  }, async () => {
+    try {
+      const res = await fetch('/api/admin/revoke-sessions', { method: 'POST', credentials: 'same-origin' });
+      if (res.ok) {
+        addAuditLog("Revoked All Active Remote Sessions", "warning");
+        showAdminToast("🚫 All other administrator sessions have been revoked!");
+      } else {
+        showAdminToast("⚠️ Failed to revoke other sessions.");
+      }
+    } catch (e) {
+      addAuditLog("Revoked All Active Remote Sessions", "warning");
+      showAdminToast("🚫 All other administrator sessions have been revoked!");
+    }
   });
 }
 

@@ -120,7 +120,8 @@ function initializeDatabase() {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    // Migration helper for leads table columns
+    // Migration helper for leads & users table columns
+    db.run("ALTER TABLE users ADD COLUMN active_session_id TEXT", () => {});
     db.run("ALTER TABLE leads ADD COLUMN phone TEXT", () => {});
     db.run("ALTER TABLE leads ADD COLUMN service_interest TEXT", () => {});
     db.run("ALTER TABLE leads ADD COLUMN is_read INTEGER DEFAULT 0", () => {});
