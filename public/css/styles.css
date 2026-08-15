@@ -463,7 +463,8 @@ img {
   object-fit: cover;
   object-position: center;
   display: block;
-  opacity: 1;
+  opacity: 0.95 !important;
+  filter: saturate(1.15) contrast(1.05);
 }
 
 .hero-gradient-overlay,
@@ -471,8 +472,9 @@ img {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: radial-gradient(circle at 50% 0%, rgba(5, 150, 105, 0.12) 0%, transparent 70%),
-              linear-gradient(180deg, rgba(248, 250, 252, 0.25) 0%, rgba(255, 255, 255, 0.65) 100%);
+  background: radial-gradient(circle at 50% 0%, rgba(5, 150, 105, 0.08) 0%, transparent 70%),
+              linear-gradient(180deg, rgba(248, 250, 252, 0.1) 0%, rgba(255, 255, 255, 0.25) 100%);
+  pointer-events: none;
 }
 
 .hero-content {

@@ -1650,6 +1650,56 @@ function initMobileNavigation() {
   });
 }
 
+// --- Modal and Form Handlers ---
+function initModals() {
+  const modalCloses = document.querySelectorAll('.modal-close, [data-close-modal]');
+  modalCloses.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const modal = btn.closest('.modal-overlay, .modal');
+      if (modal) modal.style.display = 'none';
+    });
+  });
+}
+
+function initForms() {
+  const contactForm = document.getElementById('contact-form') || document.querySelector('form.contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = 'Sending...';
+      }
+
+      const formData = new FormData(contactForm);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch('/api/leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (res.ok) {
+          alert('Thank you! Your inquiry has been submitted successfully.');
+          contactForm.reset();
+        } else {
+          alert('Submission failed. Please try again.');
+        }
+      } catch (err) {
+        console.error("Error submitting contact form:", err);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }
+      }
+    });
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initGallery();
   initMobileNavigation();
