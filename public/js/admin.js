@@ -192,7 +192,8 @@ const ADMIN_STATE = {
     { id: 2, event: "Admin Dashboard Session Authenticated", user: "admin", ip: "127.0.0.1", timestamp: new Date(Date.now() - 1000 * 60 * 20).toLocaleString(), status: "info" },
     { id: 3, event: "SSL Encryption Active", user: "system", ip: "127.0.0.1", timestamp: new Date(Date.now() - 1000 * 60 * 10).toLocaleString(), status: "success" }
   ],
-  leads: [],
+  leads: JSON.parse(localStorage.getItem("ccc_admin_leads_cache")) || [],
+  gallery: JSON.parse(localStorage.getItem("ccc_admin_gallery_cache")) || [],
   liveScore: JSON.parse(localStorage.getItem("ccc_live_score")) || {
     stumpsUrl: "",
     team1: "CHAMPIONS CC 1st XI",
@@ -206,8 +207,8 @@ const ADMIN_STATE = {
     statusNote: "Champions CC leads by 36 runs",
     stopReason: ""
   },
-  squad: JSON.parse(localStorage.getItem("ccc_squad")) || (window.APP_DATA ? window.APP_DATA.squad : []),
-  blogs: JSON.parse(localStorage.getItem("ccc_blogs")) || (window.APP_DATA ? window.APP_DATA.blogs : []),
+  squad: JSON.parse(localStorage.getItem("ccc_admin_squad_cache")) || JSON.parse(localStorage.getItem("ccc_squad")) || (window.APP_DATA ? window.APP_DATA.squad : []),
+  blogs: JSON.parse(localStorage.getItem("ccc_admin_blogs_cache")) || JSON.parse(localStorage.getItem("ccc_blogs")) || (window.APP_DATA ? window.APP_DATA.blogs : []),
   fixtures: JSON.parse(localStorage.getItem("ccc_fixtures")) || (window.APP_DATA ? window.APP_DATA.fixtures : [])
 };
 
@@ -719,27 +720,39 @@ function initAdminTabs() {
   });
 }
 
-/* --------------------------------------------------------------------------
-   3. DATA RENDERING & DASHBOARD LOADER
-   -------------------------------------------------------------------------- */
-  async function loadDashboardData() {
-    await fetchLeads();
-    await fetchSquadAdmin();
-    renderLiveScoreForm();
-    renderSquadAdminTable();
-    renderBlogsAdminTable();
-    renderSettingsForm();
-    updateOverviewStats();
-    renderArchivedMatches();
-    loadPromoSettings();
-    loadOperationalSettings();
-    loadSocialMediaSettings();
-    loadContactSettings();
-    loadContactFormSettings();
-    fetchGallery();
-    loadMediaAssetsSettings();
-    fetchMediaLibrary();
-  }
+function renderInstantCachedUI() {
+  renderLiveScoreForm();
+  renderSquadAdminTable();
+  renderBlogsAdminTable();
+  if (typeof renderAdminGalleryCategoryFilters === 'function') renderAdminGalleryCategoryFilters();
+  if (typeof renderAdminGalleryGrid === 'function') renderAdminGalleryGrid();
+  if (typeof renderLeadsTable === 'function') renderLeadsTable();
+  renderSettingsForm();
+  updateOverviewStats();
+  renderArchivedMatches();
+}
+
+async function loadDashboardData() {
+  // 1. Render all UI components instantly in 0ms from localStorage cache (No blank page delays!)
+  renderInstantCachedUI();
+
+  // 2. Stream fresh server data in parallel without blocking initial view
+  Promise.allSettled([
+    fetchLeads(),
+    fetchSquadAdmin(),
+    fetchAdminBlogs(),
+    fetchGallery(),
+    loadPromoSettings(),
+    loadOperationalSettings(),
+    loadSocialMediaSettings(),
+    loadContactMapSettings(),
+    loadContactFormSettings(),
+    loadMediaAssetsSettings(),
+    fetchMediaLibrary()
+  ]).then(() => {
+    renderInstantCachedUI();
+  });
+}
 
 let mediaLibraryData = [];
 
@@ -2138,6 +2151,7 @@ async function fetchLeads() {
     const res = await fetch('/api/admin/leads');
     if (res.ok) {
       ADMIN_STATE.leads = await res.json();
+      localStorage.setItem("ccc_admin_leads_cache", JSON.stringify(ADMIN_STATE.leads));
       renderLeadsTable();
       renderOverviewRecentLeads();
       updateOverviewStats();
@@ -3005,6 +3019,7 @@ async function fetchGallery() {
     const res = await fetch('/api/admin/gallery');
     if (res.ok) {
       ADMIN_STATE.gallery = await res.json();
+      localStorage.setItem("ccc_admin_gallery_cache", JSON.stringify(ADMIN_STATE.gallery));
       renderAdminGalleryCategoryFilters();
       renderAdminGalleryGrid();
       updateOverviewStats();
