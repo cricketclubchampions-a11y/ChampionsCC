@@ -1288,99 +1288,111 @@ document.getElementById('popupMobileImageUrl')?.addEventListener('input', () => 
 document.getElementById('promoBarForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const saveBtn = document.getElementById('savePromoBtn');
-  const origHtml = saveBtn.innerHTML;
-  saveBtn.innerHTML = 'Saving...';
+  const origHtml = saveBtn ? saveBtn.innerHTML : 'Save Changes';
   
-  const payload = {
-    enabled: document.getElementById('promoEnabled').checked,
-    text: document.getElementById('promoText').value.trim(),
-    btnText: document.getElementById('promoBtnText').value.trim(),
-    btnUrl: document.getElementById('promoBtnUrl').value.trim(),
-    speed: parseInt(document.getElementById('promoSpeed').value, 10) || 15
-  };
-  
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  }
+
   try {
+    let currentPopup = null;
+    try {
+      const currentRes = await fetch('/api/promotion');
+      if (currentRes.ok) {
+        const currentData = await currentRes.json();
+        currentPopup = currentData.popup || null;
+      }
+    } catch (err) {
+      console.warn("Could not fetch current promo popup config", err);
+    }
+
+    const payload = {
+      enabled: document.getElementById('promoEnabled')?.checked ?? true,
+      text: (document.getElementById('promoText')?.value || '').trim(),
+      btnText: (document.getElementById('promoBtnText')?.value || '').trim(),
+      btnUrl: (document.getElementById('promoBtnUrl')?.value || '').trim(),
+      speed: parseInt(document.getElementById('promoSpeed')?.value, 10) || 15,
+      popup: currentPopup
+    };
+
     const res = await fetch('/api/admin/settings/promo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (res.ok) showAdminToast('✅ Promo bar saved successfully!');
-    else showAdminToast('⚠️ Failed to save promo bar');
+
+    if (res.ok) {
+      showAdminToast('Promotion bar saved successfully!');
+    } else {
+      showAdminToast('Failed to save promotion bar settings.', 'error');
+    }
   } catch (err) {
-    showAdminToast('⚠️ Error saving promo bar');
+    console.error("Error saving promo bar:", err);
+    showAdminToast('Error connecting to server while saving promo bar.', 'error');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origHtml;
+    }
   }
-  saveBtn.innerHTML = origHtml;
 });
 
 document.getElementById('promoPopupForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const saveBtn = document.getElementById('savePopupBtn');
-  const origHtml = saveBtn.innerHTML;
-  saveBtn.innerHTML = 'Saving...';
+  const origHtml = saveBtn ? saveBtn.innerHTML : 'Save Popup Settings';
   
-  const currentRes = await fetch('/api/promotion');
-  const currentData = await currentRes.json();
-  
-  const payload = {
-    enabled: currentData.is_active,
-    text: currentData.text,
-    btnText: currentData.link_text,
-    btnUrl: currentData.link_url,
-    speed: currentData.speed,
-    popup: {
-      enabled: document.getElementById('popupEnabled').checked,
-      link_url: document.getElementById('popupLinkUrl').value.trim(),
-      desktop_image: document.getElementById('popupDesktopImageUrl').value.trim(),
-      mobile_image: document.getElementById('popupMobileImageUrl').value.trim()
-    }
-  };
-  
-  try {
-    const res = await fetch('/api/admin/settings/promo', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) showAdminToast('✅ Popup settings saved successfully!');
-    else showAdminToast('⚠️ Failed to save popup settings');
-  } catch (err) {
-    showAdminToast('⚠️ Error saving popup settings');
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
   }
-  saveBtn.innerHTML = origHtml;
-});
 
-// Update promoBarForm logic to preserve popup:
-document.getElementById('promoBarForm')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const saveBtn = document.getElementById('savePromoBtn');
-  const origHtml = saveBtn.innerHTML;
-  saveBtn.innerHTML = 'Saving...';
-  
-  const currentRes = await fetch('/api/promotion');
-  const currentData = await currentRes.json();
-  
-  const payload = {
-    enabled: document.getElementById('promoEnabled').checked,
-    text: document.getElementById('promoText').value.trim(),
-    btnText: document.getElementById('promoBtnText').value.trim(),
-    btnUrl: document.getElementById('promoBtnUrl').value.trim(),
-    speed: parseInt(document.getElementById('promoSpeed').value, 10) || 15,
-    popup: currentData.popup
-  };
-  
   try {
+    let currentBarData = { is_active: true, text: '', link_text: '', link_url: '', speed: 15 };
+    try {
+      const currentRes = await fetch('/api/promotion');
+      if (currentRes.ok) {
+        currentBarData = await currentRes.json();
+      }
+    } catch (err) {
+      console.warn("Could not fetch current promotion data", err);
+    }
+
+    const payload = {
+      enabled: currentBarData.is_active,
+      text: currentBarData.text,
+      btnText: currentBarData.link_text,
+      btnUrl: currentBarData.link_url,
+      speed: currentBarData.speed,
+      popup: {
+        enabled: document.getElementById('popupEnabled')?.checked ?? false,
+        link_url: (document.getElementById('popupLinkUrl')?.value || '').trim(),
+        desktop_image: (document.getElementById('popupDesktopImageUrl')?.value || '').trim(),
+        mobile_image: (document.getElementById('popupMobileImageUrl')?.value || '').trim()
+      }
+    };
+
     const res = await fetch('/api/admin/settings/promo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (res.ok) showAdminToast('✅ Promo bar saved successfully!');
-    else showAdminToast('⚠️ Failed to save promo bar');
+
+    if (res.ok) {
+      showAdminToast('Popup settings saved successfully!');
+    } else {
+      showAdminToast('Failed to save popup settings.', 'error');
+    }
   } catch (err) {
-    showAdminToast('⚠️ Error saving promo bar');
+    console.error("Error saving popup settings:", err);
+    showAdminToast('Error connecting to server while saving popup settings.', 'error');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origHtml;
+    }
   }
-  saveBtn.innerHTML = origHtml;
 });
 
 /* --------------------------------------------------------------------------
