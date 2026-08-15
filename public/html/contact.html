@@ -130,33 +130,41 @@
               Send us a Message</h2>
             <p style="color: var(--text-secondary); font-size: var(--fs-body); line-height: 1.6; margin-bottom: 2rem;">
               Fill in your details below and our club representatives will respond within 24 hours.</p>
-            <form id="contact-form" style="display: flex; flex-direction: column; gap: 1.5rem;" onsubmit="handleContactSubmit(event)">
+            <form id="contact-form" style="display: flex; flex-direction: column; gap: 1.5rem;">
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                 <div class="form-group" style="margin-bottom: 0;">
                   <label class="form-label"
-                    style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Full
-                    Name</label>
+                    style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Full Name</label>
                   <input type="text" id="cf-name" placeholder="John Doe" required
                     style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1rem; font-size: 1rem; color: var(--text-primary);" />
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
                   <label class="form-label"
-                    style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Email
-                    Address</label>
+                    style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Email Address</label>
                   <input type="email" id="cf-email" placeholder="john@example.com" required
                     style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1rem; font-size: 1rem; color: var(--text-primary);" />
                 </div>
               </div>
 
+              <!-- Mobile Phone Field (Controlled by Contact Form Editor in Admin) -->
+              <div class="form-group" id="cf-phone-wrap" style="margin-bottom: 0;">
+                <label class="form-label"
+                  style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Mobile / Phone Number</label>
+                <input type="tel" id="cf-phone" placeholder="+91 9938648742"
+                  style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1rem; font-size: 1rem; color: var(--text-primary);" />
+              </div>
+
               <div class="form-group" style="margin-bottom: 0;">
                 <label class="form-label"
-                  style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Subject</label>
+                  style="font-size: 0.9rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">Subject / Inquiry Area</label>
                 <select id="cf-subject"
                   style="width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem 1rem; font-size: 1rem; color: var(--text-primary);">
-                  <option>Friendly Match Request</option>
-                  <option>Join the Community</option>
-                  <option>Sponsorship / Collab</option>
-                  <option>General Inquiry</option>
+                  <option value="Club Membership Inquiry">Club Membership Inquiry</option>
+                  <option value="Cricket Academy Training">Cricket Academy Training</option>
+                  <option value="Match & Tournament Booking">Match & Tournament Booking</option>
+                  <option value="Sponsorship & Partnership">Sponsorship & Partnership</option>
+                  <option value="Ground & Net Rental">Ground & Net Rental</option>
+                  <option value="General / Other Inquiry">General / Other Inquiry</option>
                 </select>
               </div>
 
@@ -172,42 +180,6 @@
                 Send Message
               </button>
             </form>
-            <script>
-              async function handleContactSubmit(e) {
-                e.preventDefault();
-                const btn = document.getElementById('cf-submit-btn');
-                const ogText = btn.innerText;
-                btn.innerText = 'Sending...';
-                btn.disabled = true;
-
-                const payload = {
-                  name: document.getElementById('cf-name').value,
-                  email: document.getElementById('cf-email').value,
-                  subject: document.getElementById('cf-subject').value,
-                  message: document.getElementById('cf-message').value
-                };
-
-                try {
-                  const res = await fetch('/api/contact', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                  });
-                  const data = await res.json();
-                  if (res.ok) {
-                    showToast('Message sent successfully! We will get back to you soon.');
-                    document.getElementById('contact-form').reset();
-                  } else {
-                    showToast(data.error || 'Failed to send message.', true);
-                  }
-                } catch (err) {
-                  showToast('An error occurred. Please try again.', true);
-                } finally {
-                  btn.innerText = ogText;
-                  btn.disabled = false;
-                }
-              }
-            </script>
           </div>
 
           <!-- Info Cards Column (Takes up less space) -->

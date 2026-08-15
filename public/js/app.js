@@ -849,17 +849,58 @@ function applyPageStatusAccessControl(pageStatus) {
   }
 }
 
+async function initContactFormConfig() {
+  const contactForm = document.getElementById("contact-form");
+  if (!contactForm) return;
+
+  try {
+    const res = await fetch('/api/contact-form-config');
+    if (!res.ok) return;
+    const config = await res.json();
+
+    const phoneWrap = document.getElementById('cf-phone-wrap') || document.getElementById('contact-phone-wrap');
+    if (phoneWrap) {
+      const showMobile = config.fields && config.fields.mobile ? config.fields.mobile.show !== false : true;
+      phoneWrap.style.display = showMobile ? 'block' : 'none';
+    }
+
+    const select = document.getElementById('cf-subject') || document.getElementById('contact-subject');
+    if (select && Array.isArray(config.services) && config.services.length > 0) {
+      const visibleOptions = config.services.filter(s => s.show !== false && s.name && s.name.trim());
+      if (visibleOptions.length > 0) {
+        select.innerHTML = visibleOptions.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+      }
+    }
+  } catch (err) {
+    console.error("Failed to load contact form config:", err);
+  }
+}
+
 function initForms() {
+  initContactFormConfig();
+
   const contactForm = document.getElementById("contact-form");
   if (contactForm) {
     contactForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const name = (document.getElementById("contact-name") || {}).value || "";
-      const email = (document.getElementById("contact-email") || {}).value || "";
-      const phone = (document.getElementById("contact-phone") || {}).value || "";
-      const subject = (document.getElementById("contact-subject") || {}).value || "General Inquiry";
-      const message = (document.getElementById("contact-message") || {}).value || "";
+      const name = (document.getElementById("cf-name") || document.getElementById("contact-name") || {}).value || "";
+      const email = (document.getElementById("cf-email") || document.getElementById("contact-email") || {}).value || "";
+      const phone = (document.getElementById("cf-phone") || document.getElementById("contact-phone") || {}).value || "";
+      const subject = (document.getElementById("cf-subject") || document.getElementById("contact-subject") || {}).value || "General Inquiry";
+      const message = (document.getElementById("cf-message") || document.getElementById("contact-message") || {}).value || "";
+
+      if (!name || !email || !message) {
+        showToast("⚠️ Please fill in all required fields (Name, Email, Message).");
+        return;
+      }
+
+      const submitBtn = document.getElementById('cf-submit-btn') || contactForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.innerText : 'Send Message';
+      if (submitBtn) {
+        submitBtn.innerText = 'Sending Message...';
+        submitBtn.disabled = true;
+      }
 
       try {
         const res = await fetch('/api/contact', {
@@ -878,6 +919,11 @@ function initForms() {
         contactForm.reset();
       } catch (err) {
         showToast("⚠️ Network error while sending message");
+      } finally {
+        if (submitBtn) {
+          submitBtn.innerText = originalText;
+          submitBtn.disabled = false;
+        }
       }
     });
   }
