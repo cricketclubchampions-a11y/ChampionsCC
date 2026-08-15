@@ -720,6 +720,57 @@ function initAdminTabs() {
   });
 }
 
+/* --------------------------------------------------------------------------
+   SECTION LOADING & SKELETON ENGINE
+   -------------------------------------------------------------------------- */
+function getTableSkeletonHtml(columns = 4, rows = 3) {
+  let html = '';
+  for (let r = 0; r < rows; r++) {
+    html += `<tr class="skeleton-table-row">`;
+    for (let c = 0; c < columns; c++) {
+      const width = Math.floor(Math.random() * 40) + 40;
+      html += `<td><span class="skeleton-shimmer" style="width:${width}%; height:16px;"></span></td>`;
+    }
+    html += `</tr>`;
+  }
+  return html;
+}
+
+function getGridSkeletonHtml(cardsCount = 4) {
+  let html = '';
+  for (let i = 0; i < cardsCount; i++) {
+    html += `
+      <div class="skeleton-card">
+        <div class="skeleton-shimmer" style="width:100%; height:130px; border-radius:8px;"></div>
+        <div class="skeleton-shimmer" style="width:75%; height:16px;"></div>
+        <div class="skeleton-shimmer" style="width:45%; height:12px;"></div>
+      </div>
+    `;
+  }
+  return html;
+}
+
+function setSectionLoadingBadge(sectionId, isLoading, label = 'Syncing live data...') {
+  const sec = document.getElementById(sectionId);
+  if (!sec) return;
+
+  const header = sec.querySelector('.card-header, .section-header, h2, h3, .section-title');
+  if (!header) return;
+
+  let badge = header.querySelector('.section-loader-badge');
+  if (isLoading) {
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'section-loader-badge';
+      header.appendChild(badge);
+    }
+    badge.innerHTML = `<span class="section-loader-spinner"></span> ${label}`;
+    badge.style.display = 'inline-flex';
+  } else if (badge) {
+    badge.style.display = 'none';
+  }
+}
+
 function renderInstantCachedUI() {
   renderLiveScoreForm();
   renderSquadAdminTable();
@@ -757,6 +808,12 @@ async function loadDashboardData() {
 let mediaLibraryData = [];
 
 async function fetchMediaLibrary() {
+  const container = document.getElementById('mediaLibraryGridContainer');
+  if (container && (!mediaLibraryData || mediaLibraryData.length === 0)) {
+    container.innerHTML = getGridSkeletonHtml(4);
+  }
+  setSectionLoadingBadge('sec-media-assets', true);
+
   try {
     const res = await fetch('/api/media-library');
     const data = await res.json();
@@ -764,6 +821,8 @@ async function fetchMediaLibrary() {
     renderMediaLibraryGrid(mediaLibraryData);
   } catch (err) {
     console.error("Failed to load media library assets:", err);
+  } finally {
+    setSectionLoadingBadge('sec-media-assets', false);
   }
 }
 
@@ -1384,6 +1443,7 @@ async function saveSocialMediaSettings(e) {
 }
 
 async function loadContactMapSettings() {
+  setSectionLoadingBadge('sec-maps-location', true);
   try {
     const res = await fetch('/api/admin/settings/contact');
     if (!res.ok) return;
@@ -1414,6 +1474,8 @@ async function loadContactMapSettings() {
     if (phoneEl) phoneEl.value = data.phone || '+91 9938648742';
   } catch (err) {
     console.error("Error loading maps & location settings:", err);
+  } finally {
+    setSectionLoadingBadge('sec-maps-location', false);
   }
 }
 
