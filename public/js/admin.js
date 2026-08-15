@@ -1343,6 +1343,9 @@ async function saveSocialMediaSettings(e) {
       item.btn.disabled = false;
       item.btn.innerHTML = item.html;
     });
+  }
+}
+
 async function loadContactMapSettings() {
   try {
     const res = await fetch('/api/admin/settings/contact');
