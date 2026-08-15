@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
