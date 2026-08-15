@@ -3432,13 +3432,14 @@ img {
     cursor: pointer;
   }
 
-  .nav-icon-group {
-    display: flex;
-    gap: 0.4rem;
+  /* Hide Top Navbar Join Us Button & Social Media Icons on Mobile (Clean Header) */
+  .navbar .nav-actions .nav-icon-group,
+  .navbar .nav-actions > .btn-primary {
+    display: none !important;
   }
 
   .nav-actions {
-    gap: 0.5rem;
+    gap: 0;
   }
 
   /* Hero & Subpage Hero Typography */
@@ -3512,10 +3513,6 @@ img {
   .page-hero-badge {
     font-size: 0.75rem;
     padding: 4px 10px;
-  }
-
-  .nav-icon-group {
-    display: none;
   }
 }
 
