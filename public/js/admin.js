@@ -143,6 +143,9 @@ window.showAdminToast = showAdminToast;
 window.showToast = showAdminToast;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Restore active tab immediately on DOMReady to prevent tab flicker
+  initAdminTabs();
+
   if ('scrollRestoration' in history) {
     history.scrollRestoration = 'manual';
   }
@@ -163,9 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-
   fetchAdminBlogs();
-  initAdminTabs();
   loadDashboardData();
   loadContactMapSettings();
   fetchGallery();
@@ -1342,8 +1343,84 @@ async function saveSocialMediaSettings(e) {
       item.btn.disabled = false;
       item.btn.innerHTML = item.html;
     });
+async function loadContactMapSettings() {
+  try {
+    const res = await fetch('/api/admin/settings/contact');
+    if (!res.ok) return;
+    const data = await res.json();
+
+    const showMapEl = document.getElementById('contactShowMap');
+    if (showMapEl) showMapEl.checked = !(data.showMap === false || data.showMap === 'false' || data.showMap === 0 || data.showMap === 'off');
+
+    const addressEl = document.getElementById('contactAddress');
+    if (addressEl) addressEl.value = data.address || 'Baragae Balijatra Ground, Sisua, Salipur, Cuttack, Odisha';
+
+    const labelEl = document.getElementById('contactMarkerLabel');
+    if (labelEl) labelEl.value = data.markerLabel || 'Champions Cricket Club HQ';
+
+    const coordsEl = document.getElementById('contactCoords');
+    if (coordsEl) coordsEl.value = data.coords || '20.4831593, 86.0763922';
+
+    const mapLinkEl = document.getElementById('contactMapLink');
+    if (mapLinkEl) mapLinkEl.value = data.mapLink || 'https://www.google.com/maps/dir/?api=1&destination=20.4831593,86.0763922';
+
+    const zoomEl = document.getElementById('contactZoom');
+    if (zoomEl) zoomEl.value = data.zoom || 14;
+
+    const emailEl = document.getElementById('contactEmail');
+    if (emailEl) emailEl.value = data.email || 'cricketclubchampions@gmail.com';
+
+    const phoneEl = document.getElementById('contactPhone');
+    if (phoneEl) phoneEl.value = data.phone || '+91 9938648742';
+  } catch (err) {
+    console.error("Error loading maps & location settings:", err);
   }
 }
+
+async function saveContactMapSettings(e) {
+  if (e) e.preventDefault();
+
+  const showMap = document.getElementById('contactShowMap')?.checked ?? true;
+  const address = (document.getElementById('contactAddress')?.value || '').trim();
+  const markerLabel = (document.getElementById('contactMarkerLabel')?.value || '').trim();
+  const coords = (document.getElementById('contactCoords')?.value || '').trim();
+  const mapLink = (document.getElementById('contactMapLink')?.value || '').trim();
+  const zoom = parseInt(document.getElementById('contactZoom')?.value || '14', 10);
+  const email = (document.getElementById('contactEmail')?.value || '').trim();
+  const phone = (document.getElementById('contactPhone')?.value || '').trim();
+
+  const saveBtn = document.getElementById('saveContactMapBtn');
+  const origHtml = saveBtn ? saveBtn.innerHTML : 'Save Maps & Location Settings';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px; animation:spin 0.8s linear infinite;">sync</span> Saving...';
+  }
+
+  try {
+    const res = await fetch('/api/admin/settings/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ showMap, address, markerLabel, coords, mapLink, zoom, email, phone })
+    });
+
+    if (res.ok) {
+      showAdminToast('📍 Maps & Location settings saved successfully!');
+    } else {
+      showAdminToast('⚠️ Failed to save maps settings.');
+    }
+  } catch (err) {
+    console.error("Error saving contact map settings:", err);
+    showAdminToast('⚠️ Error connecting to server.');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origHtml;
+    }
+  }
+}
+
+window.loadContactMapSettings = loadContactMapSettings;
+window.saveContactMapSettings = saveContactMapSettings;
 
 async function loadPromoSettings() {
   try {
