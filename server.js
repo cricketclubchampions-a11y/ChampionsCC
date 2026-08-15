@@ -106,7 +106,7 @@ function sendHtmlWithDynamicCanonical(req, res, pageName) {
                 // Replace or inject meta description
                 if (settings.siteDescription) {
                     if (html.includes('name="description"')) {
-                        html = html.replace(/<meta\s+name="description"\s+content=".*?"/gi, `<meta name="description" content="${settings.siteDescription}">`);
+                        html = html.replace(/<meta\s+[\s\S]*?name="description"[\s\S]*?>/gi, `<meta name="description" content="${settings.siteDescription}">`);
                     } else {
                         html = html.replace('</head>', `<meta name="description" content="${settings.siteDescription}">\n</head>`);
                     }
