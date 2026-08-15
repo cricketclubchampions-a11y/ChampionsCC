@@ -1621,6 +1621,36 @@ function renderFrontGallery(items, filterCategory) {
   `).join('');
 }
 
+// --- Mobile Menu Toggle Controller ---
+function initMobileNavigation() {
+  const menuBtn = document.getElementById('mobile-menu-btn') || document.querySelector('.mobile-menu-btn');
+  const navLinks = document.getElementById('nav-links') || document.querySelector('.nav-links');
+
+  if (!menuBtn || !navLinks) return;
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navLinks.classList.toggle('active');
+    navLinks.classList.toggle('open');
+    menuBtn.innerHTML = navLinks.classList.contains('active') ? '✕' : '☰';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (navLinks.classList.contains('active') && !navLinks.contains(e.target) && !menuBtn.contains(e.target)) {
+      navLinks.classList.remove('active', 'open');
+      menuBtn.innerHTML = '☰';
+    }
+  });
+
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('active', 'open');
+      menuBtn.innerHTML = '☰';
+    });
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initGallery();
+  initMobileNavigation();
 });
