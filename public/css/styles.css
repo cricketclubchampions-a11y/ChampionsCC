@@ -491,21 +491,21 @@ img {
   height: 100%;
 }
 
-/* Homepage Hero Background Image - Enhanced depth blur effect */
+/* Homepage Hero Background Image - Light blur & white-washed soft glow (Homepage index.html only) */
 .hero .hero-bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
-  opacity: 0.98 !important;
-  filter: blur(5px) brightness(0.94) contrast(1.03) !important;
-  -webkit-filter: blur(5px) brightness(0.94) contrast(1.03) !important;
-  transform: scale(1.06);
+  opacity: 0.95 !important;
+  filter: blur(4px) brightness(1.15) contrast(0.94) saturate(0.92) !important;
+  -webkit-filter: blur(4px) brightness(1.15) contrast(0.94) saturate(0.92) !important;
+  transform: scale(1.05);
   transition: filter 0.5s ease, transform 0.5s ease;
 }
 
-/* Subpage Hero Background Image */
+/* Homepage Subpage Hero Background Image (Unchanged for subpages) */
 .page-hero-bg-img {
   width: 100%;
   height: 100%;
@@ -515,12 +515,12 @@ img {
   opacity: 0.95 !important;
 }
 
-/* Homepage Transparent Vignette Overlay */
+/* Homepage White-Washed Translucent Overlay (index.html only) */
 .hero-gradient-overlay {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, rgba(15, 23, 42, 0.18) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(15, 23, 42, 0.35) 100%);
   pointer-events: none;
 }
 
