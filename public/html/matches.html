@@ -106,8 +106,10 @@
   <section class="page-hero">
     <div class="page-hero-bg">
       <picture>
+        <source media="(max-width: 768px)" srcset="/images/page-hero-bg-mobile.webp" type="image/webp" />
         <source media="(max-width: 768px)" srcset="/images/page-hero-bg-mobile.png" />
-        <img src="/images/page-hero-bg-desktop.png" alt="Section background" class="page-hero-bg-img" />
+        <source srcset="/images/page-hero-bg-desktop.webp" type="image/webp" />
+        <img src="/images/page-hero-bg-desktop.webp" alt="Section background" class="page-hero-bg-img" decoding="async" onerror="this.onerror=null; this.src='../images/page-hero-bg-desktop.png';" />
       </picture>
       <div class="page-hero-bg-overlay"></div>
     </div>

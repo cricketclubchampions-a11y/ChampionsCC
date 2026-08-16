@@ -28,9 +28,10 @@ function initPreloader() {
       if (progressBar) progressBar.style.width = '60%';
       if (statusText) statusText.textContent = 'Welcome to Champions CC...';
     }
-  }, 100);
+  }, 50);
 
   const dismissPreloader = () => {
+    if (isLoaded) return;
     isLoaded = true;
     if (showTimer) clearTimeout(showTimer);
 
@@ -45,18 +46,19 @@ function initPreloader() {
         p.classList.add('fade-out');
         setTimeout(() => {
           if (p.parentNode) p.style.display = 'none';
-        }, 400);
-      }, 150);
+        }, 250);
+      }, 80);
     } else {
       p.style.display = 'none';
     }
   };
 
-  if (document.readyState === 'complete') {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
     dismissPreloader();
   } else {
+    document.addEventListener('DOMContentLoaded', dismissPreloader);
     window.addEventListener('load', dismissPreloader);
-    setTimeout(dismissPreloader, 1200);
+    setTimeout(dismissPreloader, 350);
   }
 }
 
@@ -381,6 +383,16 @@ function handleRsvp(title) {
    5. RENDER SQUAD & LEADERSHIP (LIVE BACKEND LINK)
    -------------------------------------------------------------------------- */
 async function fetchSquad() {
+  // 1. Render instant 0ms local cached squad
+  const cachedSquad = localStorage.getItem("ccc_squad");
+  if (cachedSquad) {
+    try {
+      window.LIVE_SQUAD_DATA = JSON.parse(cachedSquad);
+      renderSquad("all");
+    } catch (e) {}
+  }
+
+  // 2. Fetch fresh squad data silently in background
   try {
     const res = await fetch('/api/squad');
     if (res.ok) {
@@ -388,12 +400,13 @@ async function fetchSquad() {
       if (Array.isArray(data) && data.length > 0) {
         window.LIVE_SQUAD_DATA = data;
         localStorage.setItem("ccc_squad", JSON.stringify(data));
+        renderSquad("all");
       }
     }
   } catch (err) {
     console.warn("Using local cache for squad data on frontend", err);
+    renderSquad("all");
   }
-  renderSquad("all");
 }
 
 function renderSquad(filterRole = "all") {
@@ -1089,12 +1102,25 @@ async function initGallery() {
   const grid = document.getElementById('gallery-grid');
   if (!grid) return; // not on page
 
+  const cachedGallery = localStorage.getItem('ccc_gallery_cache');
+  if (cachedGallery) {
+    try {
+      allGalleryItems = JSON.parse(cachedGallery);
+      renderGalleryFilters();
+      renderGalleryItems('all');
+    } catch (e) {}
+  }
+
   try {
     const res = await fetch('/api/gallery');
-    allGalleryItems = await res.json();
-    
-    renderGalleryFilters();
-    renderGalleryItems('all');
+    if (!res.ok) return;
+    const items = await res.json();
+    if (Array.isArray(items)) {
+      allGalleryItems = items;
+      localStorage.setItem('ccc_gallery_cache', JSON.stringify(items));
+      renderGalleryFilters();
+      renderGalleryItems('all');
+    }
   } catch (err) {
     console.error('Failed to load gallery', err);
   }

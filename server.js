@@ -148,14 +148,19 @@ app.get(['/scoring', '/scoring.html', '/html/scoring-app.html'], (req, res) => s
 // Serve uploads folder explicitly
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-// Serve static files with no-cache for CSS/JS/HTML during development
+// Serve static files with optimized browser caching for media assets
 app.use(express.static(path.join(__dirname, 'public'), {
     etag: true,
+    maxAge: '1d',
     setHeaders: (res, filePath) => {
-        if (filePath.endsWith('.html') || filePath.endsWith('.css') || filePath.endsWith('.js')) {
+        if (filePath.endsWith('.html')) {
             res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
             res.setHeader('Pragma', 'no-cache');
             res.setHeader('Expires', '0');
+        } else if (filePath.match(/\.(webp|png|jpg|jpeg|gif|svg|ico|woff2|ttf|eot)$/i)) {
+            res.setHeader('Cache-Control', 'public, max-age=86400, immutable');
+        } else if (filePath.endsWith('.css') || filePath.endsWith('.js')) {
+            res.setHeader('Cache-Control', 'public, max-age=3600');
         }
     }
 }));
