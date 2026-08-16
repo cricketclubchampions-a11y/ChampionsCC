@@ -649,11 +649,11 @@ img {
    -------------------------------------------------------------------------- */
 .page-hero {
   position: relative;
-  min-height: 44vh;
+  min-height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8.5rem 0 6rem;
+  padding: 4.5rem 0 2.5rem;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   overflow: hidden;
@@ -3519,10 +3519,15 @@ img {
   }
 
   /* Hero & Subpage Hero Typography */
-  .hero,
-  .page-hero {
+  .hero {
     padding-top: 6.5rem;
     padding-bottom: 3rem;
+    min-height: auto;
+  }
+
+  .page-hero {
+    padding-top: 4.25rem;
+    padding-bottom: 2rem;
     min-height: auto;
   }
 
