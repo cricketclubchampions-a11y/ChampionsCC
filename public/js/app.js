@@ -231,30 +231,43 @@ function initNavigation() {
   const navLinksContainer = document.getElementById("nav-links");
 
   if (mobileBtn && navLinksContainer) {
-    mobileBtn.addEventListener("click", () => {
-      navLinksContainer.classList.toggle("mobile-active");
-      if (navLinksContainer.classList.contains("mobile-active")) {
-        navLinksContainer.style.display = "flex";
-        navLinksContainer.style.flexDirection = "column";
-        navLinksContainer.style.position = "absolute";
-        navLinksContainer.style.top = "100%";
-        navLinksContainer.style.left = "0";
-        navLinksContainer.style.right = "0";
-        navLinksContainer.style.background = "var(--bg-card)";
-        navLinksContainer.style.padding = "1.5rem";
-        navLinksContainer.style.borderBottom = "1px solid var(--border-color)";
+    mobileBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = navLinksContainer.classList.contains("active") || navLinksContainer.classList.contains("open");
+      if (isOpen) {
+        navLinksContainer.classList.remove("active", "open", "mobile-active");
+        mobileBtn.classList.remove("active", "open");
+        mobileBtn.setAttribute("aria-expanded", "false");
       } else {
-        navLinksContainer.style.display = "";
+        navLinksContainer.classList.add("active", "open", "mobile-active");
+        mobileBtn.classList.add("active", "open");
+        mobileBtn.setAttribute("aria-expanded", "true");
+      }
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!navLinksContainer.contains(e.target) && !mobileBtn.contains(e.target)) {
+        navLinksContainer.classList.remove("active", "open", "mobile-active");
+        mobileBtn.classList.remove("active", "open");
+        mobileBtn.setAttribute("aria-expanded", "false");
       }
     });
   }
 
-  // Smooth scroll active links
+  // Smooth scroll & close menu on click link
   const links = document.querySelectorAll(".nav-link");
   links.forEach(link => {
-    link.addEventListener("click", (e) => {
+    link.addEventListener("click", () => {
       links.forEach(l => l.classList.remove("active"));
       link.classList.add("active");
+      if (navLinksContainer) {
+        navLinksContainer.classList.remove("active", "open", "mobile-active");
+      }
+      if (mobileBtn) {
+        mobileBtn.classList.remove("active", "open");
+        mobileBtn.setAttribute("aria-expanded", "false");
+      }
     });
   });
 
