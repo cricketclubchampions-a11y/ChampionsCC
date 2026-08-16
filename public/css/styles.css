@@ -653,7 +653,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4.5rem 0 2.5rem;
+  padding: 6.5rem 0 2.75rem;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   overflow: hidden;
@@ -3526,7 +3526,7 @@ img {
   }
 
   .page-hero {
-    padding-top: 4.25rem;
+    padding-top: 5.75rem;
     padding-bottom: 2rem;
     min-height: auto;
   }
